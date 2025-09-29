@@ -95,6 +95,13 @@ DATABASES = {
     )
 }
 
+# Настройки для PostgreSQL
+if 'postgresql' in DATABASES['default']['ENGINE']:
+    DATABASES['default']['OPTIONS'] = {
+        'connect_timeout': 10,
+        'options': '-c default_transaction_isolation=read_committed'
+    }
+
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {
