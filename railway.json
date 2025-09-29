@@ -4,9 +4,9 @@
     "builder": "NIXPACKS"
   },
   "deploy": {
-    "startCommand": "python manage.py runserver 0.0.0.0:$PORT",
+    "startCommand": "python app.py",
     "healthcheckPath": "/",
-    "healthcheckTimeout": 60,
+    "healthcheckTimeout": 30,
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 3
   }
