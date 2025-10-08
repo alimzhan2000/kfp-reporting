@@ -1,1 +1,1 @@
-web: python manage.py migrate && python manage.py runserver 0.0.0.0:$PORT
+web: python manage.py migrate && gunicorn kfp_reporting.wsgi:application --bind 0.0.0.0:$PORT --timeout 120 --workers 2 --access-logfile - --error-logfile -

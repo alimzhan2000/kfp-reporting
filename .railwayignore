@@ -1,0 +1,61 @@
+# Railway ignore file
+# Exclude files that are not needed for deployment
+
+# Virtual environment
+venv/
+env/
+.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Documentation
+*.md
+docs/
+
+# Local development files
+.env
+.env.local
+.env.development
+
+# Test files
+tests/
+test_*.py
+*_test.py
+
+# Frontend (if not needed for backend deployment)
+frontend/node_modules/
+frontend/build/
+frontend/dist/
+
+# Media files (will be handled separately)
+media/uploads/
+
+# Database
+db.sqlite3
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+tmp/
+temp/

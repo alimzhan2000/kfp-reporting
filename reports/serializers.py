@@ -20,3 +20,4 @@ class ReportTemplateSerializer(serializers.ModelSerializer):
         model = ReportTemplate
         fields = '__all__'
 
+
