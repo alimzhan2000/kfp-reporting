@@ -4,7 +4,6 @@ aptPkgs = ["python3-pip", "python3-dev", "build-essential", "libpq-dev"]
 [phases.build]
 commands = [
     "pip install --upgrade pip",
-    "pip uninstall -y numpy pandas",
     "pip install --no-cache-dir -r requirements.txt"
 ]
 

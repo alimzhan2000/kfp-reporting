@@ -1,5 +1,5 @@
-import pandas as pd
 import os
+import csv
 from django.core.files.storage import default_storage
 from django.utils import timezone
 from django.db import transaction

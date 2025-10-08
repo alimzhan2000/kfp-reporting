@@ -15,7 +15,6 @@ django.setup()
 
 from django.contrib.auth import get_user_model
 from reports.models import AgriculturalData
-import pandas as pd
 
 User = get_user_model()
 
@@ -63,23 +62,28 @@ def load_sample_data():
         if not user:
             user = User.objects.first()
         
-        # Читаем CSV файл
-        df = pd.read_csv('sample_data.csv')
-        
-        # Создаем записи
+        # Читаем CSV файл без pandas
+        import csv
         created_count = 0
-        for _, row in df.iterrows():
-            AgriculturalData.objects.create(
-                field_name=row['Поле'],
-                year=int(row['Год']),
-                planting_area=float(row['Площадь посева']),
-                yield_per_hectare=float(row['Урожайность ц/га']),
-                crop=row['Культура'],
-                variety=row['Сорт'],
-                final_product=row['Конечный продукт'],
-                uploaded_by=user
-            )
-            created_count += 1
+        
+        with open('sample_data.csv', 'r', encoding='utf-8') as file:
+            reader = csv.DictReader(file)
+            for row in reader:
+                try:
+                    AgriculturalData.objects.create(
+                        field_name=row['Поле'],
+                        year=int(row['Год']),
+                        planting_area=float(row['Площадь посева']),
+                        yield_per_hectare=float(row['Урожайность ц/га']),
+                        crop=row['Культура'],
+                        variety=row['Сорт'],
+                        final_product=row['Конечный продукт'],
+                        uploaded_by=user
+                    )
+                    created_count += 1
+                except (ValueError, KeyError) as e:
+                    print(f"⚠️  Пропущена строка из-за ошибки: {e}")
+                    continue
         
         print(f"✅ Загружено {created_count} тестовых записей")
         
