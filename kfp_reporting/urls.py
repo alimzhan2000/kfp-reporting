@@ -14,7 +14,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/auth/', include('accounts.urls')),
     path('api/reports/', include('reports.urls')),
-    path('api/upload/', include('data_upload.urls')),
+    # path('api/upload/', include('data_upload.urls')),  # Временно отключено
 ]
 
 if settings.DEBUG:
