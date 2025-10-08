@@ -1,14 +1,8 @@
 [phases.setup]
-aptPkgs = ["python3-pip", "python3-dev", "build-essential", "libpq-dev", "pkg-config", "curl"]
+aptPkgs = ["python3-pip", "python3-dev", "build-essential", "libpq-dev"]
 
 [phases.build]
-commands = [
-    "pip install --upgrade pip setuptools wheel",
-    "pip install -r requirements.txt"
-]
-
-[phases.install]
-cmds = ["python manage.py collectstatic --noinput"]
+commands = ["pip install -r requirements.txt"]
 
 [start]
-cmd = "python manage.py migrate && gunicorn kfp_reporting.wsgi:application --bind 0.0.0.0:$PORT --timeout 120 --workers 2 --access-logfile - --error-logfile -"
+cmd = "python manage.py migrate && gunicorn kfp_reporting.wsgi:application --bind 0.0.0.0:$PORT"
