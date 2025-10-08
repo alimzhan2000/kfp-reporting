@@ -10,6 +10,7 @@ from . import views
 urlpatterns = [
     path('', views.home, name='home'),
     path('api/health/', views.health_check, name='health_check'),
+    path('health/', views.simple_health, name='simple_health'),
     path('admin/', admin.site.urls),
     path('api/auth/', include('accounts.urls')),
     path('api/reports/', include('reports.urls')),

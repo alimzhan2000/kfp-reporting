@@ -16,14 +16,29 @@ def health_check(request):
 
 @csrf_exempt
 @require_http_methods(["GET"])
+def simple_health(request):
+    """
+    Максимально простой health check для Railway
+    """
+    from django.http import HttpResponse
+    return HttpResponse("OK", status=200)
+
+@csrf_exempt
+@require_http_methods(["GET"])
 def home(request):
     """
     Главная страница приложения
     """
+    # Если это health check запрос, возвращаем простой ответ
+    if request.path == '/' and 'health' in request.META.get('HTTP_USER_AGENT', '').lower():
+        from django.http import HttpResponse
+        return HttpResponse("OK", status=200)
+    
     return JsonResponse({
         'message': 'KFP Reporting System',
         'api_endpoints': {
             'health': '/api/health/',
+            'simple_health': '/health/',
             'dashboard': '/api/reports/dashboard-stats/',
             'upload': '/api/upload/file/',
             'reports': '/api/reports/',
