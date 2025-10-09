@@ -145,7 +145,7 @@ class DataProcessingService:
         # Ищем строку, которая содержит все обязательные колонки
         header_row = None
         for i in range(min(20, len(df_raw))):  # Проверяем первые 20 строк
-            row_values = [str(val) for val in df_raw.iloc[i].values if pd.notna(val)]
+            row_values = [str(val) for val in df_raw.iloc[i].values if val is not None and str(val).strip()]
             # Проверяем, содержит ли строка все обязательные колонки
             if all(col in row_values for col in cls.REQUIRED_COLUMNS):
                 header_row = i
@@ -203,15 +203,15 @@ class DataProcessingService:
                 }
                 
                 # Добавляем дополнительные поля, если они есть в данных
-                import pandas as pd
+                # import pandas as pd  # Временно отключено
                 
-                if 'Бригада' in df.columns and pd.notna(row['Бригада']):
+                if 'Бригада' in df.columns and row['Бригада'] and row['Бригада'].strip():
                     defaults['brigade'] = str(row['Бригада'])
                 
-                if 'Поле (старое название)' in df.columns and pd.notna(row['Поле (старое название)']):
+                if 'Поле (старое название)' in df.columns and row['Поле (старое название)'] and row['Поле (старое название)'].strip():
                     defaults['field_old_name'] = str(row['Поле (старое название)'])
                 
-                if 'Валовый сбор, тн' in df.columns and pd.notna(row['Валовый сбор, тн']):
+                if 'Валовый сбор, тн' in df.columns and row['Валовый сбор, тн'] and row['Валовый сбор, тн'].strip():
                     # Обрабатываем валовый сбор (может быть в формате "0 0" или числовом)
                     gross_harvest = str(row['Валовый сбор, тн']).replace(' ', '').replace(',', '.')
                     if gross_harvest and gross_harvest != '00' and gross_harvest != '0':
@@ -220,26 +220,26 @@ class DataProcessingService:
                         except (ValueError, TypeError):
                             pass
                 
-                if 'Репродукция' in df.columns and pd.notna(row['Репродукция']):
+                if 'Репродукция' in df.columns and row['Репродукция'] and row['Репродукция'].strip():
                     defaults['reproduction'] = str(row['Репродукция'])
                 
-                if 'Предшественник' in df.columns and pd.notna(row['Предшественник']):
+                if 'Предшественник' in df.columns and row['Предшественник'] and row['Предшественник'].strip():
                     defaults['predecessor'] = str(row['Предшественник'])
                 
-                if 'Балл продуктивности' in df.columns and pd.notna(row['Балл продуктивности']):
+                if 'Балл продуктивности' in df.columns and row['Балл продуктивности'] and row['Балл продуктивности'].strip():
                     try:
                         defaults['productivity_score'] = int(row['Балл продуктивности'])
                     except (ValueError, TypeError):
                         pass
                 
-                if 'Агрофон' in df.columns and pd.notna(row['Агрофон']):
+                if 'Агрофон' in df.columns and row['Агрофон'] and row['Агрофон'].strip():
                     defaults['agro_background'] = str(row['Агрофон'])
                 
-                if 'ПЗР' in df.columns and pd.notna(row['ПЗР']):
+                if 'ПЗР' in df.columns and row['ПЗР'] and row['ПЗР'].strip():
                     defaults['pzr'] = str(row['ПЗР'])
                 
                 # Сохраняем культуру, если она присутствует, но не используем её как ключ
-                if 'Культура' in df.columns and pd.notna(row['Культура']):
+                if 'Культура' in df.columns and row['Культура'] and row['Культура'].strip():
                     defaults['crop'] = str(row['Культура'])
                 else:
                     defaults['crop'] = ''
