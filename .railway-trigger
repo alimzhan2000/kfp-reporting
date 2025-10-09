@@ -1,0 +1,12 @@
+# Railway Deployment Trigger
+# This file forces Railway to detect changes and redeploy
+
+# Deployment timestamp: $(date)
+# All fixes applied:
+# - Fixed pandas/numpy compatibility issues
+# - Fixed django_filters import errors
+# - Updated to use gunicorn instead of runserver
+# - Configured health check to use root path '/'
+# - Reduced health check timeout to 30 seconds
+
+# This should trigger automatic redeployment
