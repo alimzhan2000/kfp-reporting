@@ -54,11 +54,15 @@ LOCAL_APPS = [
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
-# МИНИМАЛЬНЫЙ MIDDLEWARE ДЛЯ ДИАГНОСТИКИ
+# ПОЛНЫЙ MIDDLEWARE ДЛЯ DJANGO ADMIN
 MIDDLEWARE = [
-    'django.middleware.common.CommonMiddleware',
+    'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',  # ОБЯЗАТЕЛЬНО для admin
     'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
 # CSRF settings - Railway domains
