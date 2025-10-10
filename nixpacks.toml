@@ -5,4 +5,4 @@ aptPkgs = ["python3-pip", "python3-dev", "build-essential", "libpq-dev"]
 commands = ["pip install -r requirements.txt"]
 
 [start]
-cmd = "python manage.py migrate && python manage.py collectstatic --noinput && gunicorn kfp_reporting.wsgi:application --bind 0.0.0.0:$PORT --timeout 120 --workers 1 --access-logfile - --error-logfile - --log-level info --preload"
+cmd = "python manage.py check --deploy && python manage.py migrate && python manage.py collectstatic --noinput && gunicorn kfp_reporting.wsgi:application --bind 0.0.0.0:$PORT --timeout 120 --workers 1 --access-logfile - --error-logfile - --log-level info --preload"

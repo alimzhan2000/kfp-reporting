@@ -11,21 +11,24 @@ import os
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config('SECRET_KEY', default='django-insecure-change-me')
+SECRET_KEY = config('SECRET_KEY', default='django-insecure-railway-production-key-2024')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=True, cast=bool)
+DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1').split(',')
-if '*' in ALLOWED_HOSTS:
-    ALLOWED_HOSTS = ['*']
+# ALLOWED_HOSTS для Railway - максимально открытая конфигурация
+ALLOWED_HOSTS = ['*']  # Разрешаем все хосты для Railway
 
-# Добавляем Railway домен в ALLOWED_HOSTS
+# Дополнительно добавляем Railway домены
 if 'RAILWAY_PUBLIC_DOMAIN' in os.environ:
     ALLOWED_HOSTS.append(os.environ['RAILWAY_PUBLIC_DOMAIN'])
 
 # Принудительно добавляем все возможные Railway домены
-ALLOWED_HOSTS.extend(['*.up.railway.app', '*.railway.app'])
+ALLOWED_HOSTS.extend([
+    '*.up.railway.app',
+    '*.railway.app',
+    'web-production-ed541.up.railway.app'
+])
 
 # Application definition
 DJANGO_APPS = [
