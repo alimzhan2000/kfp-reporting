@@ -125,24 +125,14 @@ TIME_ZONE = 'Asia/Almaty'
 USE_I18N = True
 USE_TZ = True
 
-# Static files (CSS, JavaScript, Images)
+# Static files (CSS, JavaScript, Images) - УПРОЩЕННАЯ КОНФИГУРАЦИЯ
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# Проверяем существование директории static
-import os
-static_dir = BASE_DIR / 'static'
-if not static_dir.exists():
-    static_dir.mkdir(exist_ok=True)
-    # Создаем пустой .gitkeep файл
-    (static_dir / '.gitkeep').touch()
+# Минимальная конфигурация для Railway
+STATICFILES_DIRS = []
 
-STATICFILES_DIRS = [
-    BASE_DIR / 'static',
-]
-
-# WhiteNoise configuration for serving static files
-# Временно отключаем сжатие для Railway
+# Отключаем WhiteNoise для Railway
 # STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MEDIA_URL = '/media/'
@@ -188,7 +178,11 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024  # 10MB
 
 # Railway specific settings
 if 'RAILWAY_STATIC_URL' in os.environ:
-    STATIC_URL = os.environ['RAILWAY_STATIC_URL']
+    railway_static_url = os.environ['RAILWAY_STATIC_URL']
+    # Убеждаемся, что STATIC_URL заканчивается на слэш
+    if not railway_static_url.endswith('/'):
+        railway_static_url += '/'
+    STATIC_URL = railway_static_url
 
 # Security settings for production
 if not DEBUG:
@@ -198,4 +192,9 @@ if not DEBUG:
     SECURE_HSTS_SECONDS = 31536000
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
+
+# ПРИНУДИТЕЛЬНО УСТАНАВЛИВАЕМ ПРАВИЛЬНЫЙ STATIC_URL
+# Это гарантирует, что STATIC_URL всегда заканчивается на слэш
+if not STATIC_URL.endswith('/'):
+    STATIC_URL = STATIC_URL + '/'
 
