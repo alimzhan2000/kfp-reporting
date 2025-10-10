@@ -128,12 +128,22 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# Проверяем существование директории static
+import os
+static_dir = BASE_DIR / 'static'
+if not static_dir.exists():
+    static_dir.mkdir(exist_ok=True)
+    # Создаем пустой .gitkeep файл
+    (static_dir / '.gitkeep').touch()
+
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
 
 # WhiteNoise configuration for serving static files
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# Временно отключаем сжатие для Railway
+# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
