@@ -1,11 +1,8 @@
 [phases.setup]
-aptPkgs = ["python3-pip", "python3-dev", "build-essential", "libpq-dev", "nodejs", "npm"]
+aptPkgs = ["python3-pip", "python3-dev", "build-essential", "libpq-dev"]
 
 [phases.build]
-commands = [
-    "pip install -r requirements.txt",
-    "cd frontend && npm install && npm run build"
-]
+commands = ["pip install -r requirements.txt"]
 
 [start]
 cmd = "python start_railway.py"

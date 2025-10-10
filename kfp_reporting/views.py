@@ -30,25 +30,18 @@ def minimal_health(request):
 @csrf_exempt
 def home(request):
     """
-    Главная страница - обслуживает React приложение
+    Главная страница - показывает KFP Reporting dashboard
     """
     try:
-        # Пытаемся найти index.html из React build
-        import os
+        # Пытаемся найти index.html из static
         from django.conf import settings
+        from pathlib import Path
         
-        frontend_build_path = settings.FRONTEND_BUILD_DIR / 'index.html'
+        static_index_path = settings.BASE_DIR / 'static' / 'index.html'
         
-        if frontend_build_path.exists():
-            with open(frontend_build_path, 'r', encoding='utf-8') as f:
+        if static_index_path.exists():
+            with open(static_index_path, 'r', encoding='utf-8') as f:
                 html_content = f.read()
-            
-            # Обновляем API URL для production
-            html_content = html_content.replace(
-                'http://localhost:8000',
-                'https://kfp-reporting.up.railway.app'
-            )
-            
             return HttpResponse(html_content, content_type="text/html")
         else:
             # Fallback - показываем простую страницу с инструкциями

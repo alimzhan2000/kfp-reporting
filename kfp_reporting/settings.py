@@ -139,7 +139,6 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 FRONTEND_BUILD_DIR = BASE_DIR / 'frontend' / 'build'
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
-    FRONTEND_BUILD_DIR / 'static',  # React build static files
 ]
 
 # WhiteNoise configuration for serving static files
