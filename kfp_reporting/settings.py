@@ -51,9 +51,10 @@ LOCAL_APPS = [
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
-# УПРОЩЕННЫЙ MIDDLEWARE ДЛЯ RAILWAY
+# УПРОЩЕННЫЙ MIDDLEWARE ДЛЯ RAILWAY - ПРАВИЛЬНЫЙ ПОРЯДОК
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',  # ДОЛЖЕН БЫТЬ ПЕРЕД AuthenticationMiddleware
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
