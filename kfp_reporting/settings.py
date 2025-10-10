@@ -24,6 +24,9 @@ if '*' in ALLOWED_HOSTS:
 if 'RAILWAY_PUBLIC_DOMAIN' in os.environ:
     ALLOWED_HOSTS.append(os.environ['RAILWAY_PUBLIC_DOMAIN'])
 
+# Принудительно добавляем все возможные Railway домены
+ALLOWED_HOSTS.extend(['*.up.railway.app', '*.railway.app'])
+
 # Application definition
 DJANGO_APPS = [
     'django.contrib.admin',
