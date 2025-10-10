@@ -131,15 +131,19 @@ TIME_ZONE = 'Asia/Almaty'
 USE_I18N = True
 USE_TZ = True
 
-# Static files (CSS, JavaScript, Images) - УПРОЩЕННАЯ КОНФИГУРАЦИЯ
+# Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# Минимальная конфигурация для Railway
-STATICFILES_DIRS = []
+# Frontend build directory
+FRONTEND_BUILD_DIR = BASE_DIR / 'frontend' / 'build'
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+    FRONTEND_BUILD_DIR / 'static',  # React build static files
+]
 
-# Отключаем WhiteNoise для Railway
-# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# WhiteNoise configuration for serving static files
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'

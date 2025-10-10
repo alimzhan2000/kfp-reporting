@@ -6,6 +6,7 @@
 import os
 import sys
 import subprocess
+from pathlib import Path
 
 def setup_admin():
     """Создает суперпользователя если его нет"""
@@ -40,12 +41,42 @@ def setup_admin():
     except Exception as e:
         print(f"⚠️  Could not create admin user: {e}")
 
+def build_frontend():
+    """Собирает React frontend для production"""
+    try:
+        print("🔧 Building React frontend...")
+        
+        frontend_dir = Path(__file__).parent / 'frontend'
+        if not frontend_dir.exists():
+            print("⚠️  Frontend directory not found, skipping build")
+            return
+        
+        # Устанавливаем зависимости
+        print("📦 Installing npm dependencies...")
+        subprocess.run(['npm', 'install'], cwd=frontend_dir, check=True)
+        
+        # Собираем приложение
+        print("🏗️  Building React app for production...")
+        subprocess.run(['npm', 'run', 'build'], cwd=frontend_dir, check=True)
+        
+        print("✅ Frontend built successfully!")
+        
+    except subprocess.CalledProcessError as e:
+        print(f"⚠️  Frontend build failed: {e}")
+        print("Continuing with Django startup...")
+    except FileNotFoundError:
+        print("⚠️  npm not found, skipping frontend build")
+        print("Make sure Node.js is installed in Railway")
+
 def main():
     # Получаем порт из переменной окружения
     port = os.environ.get('PORT', '8000')
     
     print(f"🚀 Starting Django on port: {port}")
     print(f"Environment PORT: {os.environ.get('PORT', 'NOT SET')}")
+    
+    # Собираем React frontend
+    build_frontend()
     
     # Создаем админа перед запуском
     setup_admin()
