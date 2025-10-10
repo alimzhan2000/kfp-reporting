@@ -32,5 +32,5 @@ def home(request):
     """
     Главная страница приложения - максимально простая
     """
-    # Всегда возвращаем простой ответ для health check
-    return HttpResponse("OK")
+    # Максимально простой ответ для диагностики
+    return HttpResponse("KFP Reporting API is running!", content_type="text/plain")

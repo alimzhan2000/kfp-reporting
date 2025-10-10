@@ -51,19 +51,22 @@ LOCAL_APPS = [
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
-# УПРОЩЕННЫЙ MIDDLEWARE ДЛЯ RAILWAY - ПРАВИЛЬНЫЙ ПОРЯДОК
+# МИНИМАЛЬНЫЙ MIDDLEWARE ДЛЯ RAILWAY - ТОЛЬКО НЕОБХОДИМОЕ
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',  # ДОЛЖЕН БЫТЬ ПЕРЕД AuthenticationMiddleware
+    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# CSRF settings
+# CSRF settings - Railway domains
 CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS', default='http://localhost:3000').split(',')
+CSRF_TRUSTED_ORIGINS.extend([
+    'https://*.up.railway.app',
+    'https://*.railway.app',
+    'https://web-production-ed541.up.railway.app'
+])
 
 ROOT_URLCONF = 'kfp_reporting.urls'
 
