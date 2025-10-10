@@ -5,4 +5,4 @@ aptPkgs = ["python3-pip", "python3-dev", "build-essential", "libpq-dev"]
 commands = ["pip install -r requirements.txt"]
 
 [start]
-cmd = "python manage.py runserver 0.0.0.0:${PORT} --noreload"
+cmd = "python start_railway.py"
