@@ -43,24 +43,26 @@ DJANGO_APPS = [
 THIRD_PARTY_APPS = [
     'rest_framework',
     'corsheaders',
-    # 'django_filters',  # Временно отключено
+    'django_filters',  # Восстановлено
 ]
 
 LOCAL_APPS = [
     'accounts',
     'reports',
-    # 'data_upload',  # Временно отключено
+    'data_upload',  # Восстановлено
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
-# ПОЛНЫЙ MIDDLEWARE ДЛЯ DJANGO ADMIN
+# ПОЛНЫЙ MIDDLEWARE ДЛЯ DJANGO ADMIN И API
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'kfp_reporting.middleware.DisableCSRFForAPI',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',  # ОБЯЗАТЕЛЬНО для admin
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]

@@ -3,7 +3,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-# from django_filters.rest_framework import DjangoFilterBackend  # Временно отключено
+from django_filters.rest_framework import DjangoFilterBackend  # Восстановлено
 from rest_framework import filters
 from rest_framework.generics import ListAPIView
 from django.db.models import Avg, Sum
@@ -19,8 +19,8 @@ class AgriculturalDataListView(ListAPIView):
     queryset = AgriculturalData.objects.all()
     serializer_class = AgriculturalDataSerializer
     permission_classes = [IsAuthenticated]
-    filter_backends = [filters.SearchFilter, filters.OrderingFilter]  # Убрали DjangoFilterBackend
-    # filterset_fields = ['field_name', 'year', 'variety', 'final_product']  # Временно отключено
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]  # Восстановлено
+    filterset_fields = ['field_name', 'year', 'variety', 'final_product']  # Восстановлено
     search_fields = ['field_name', 'variety', 'final_product']
     ordering_fields = ['year', 'yield_per_hectare', 'planting_area', 'created_at']
     ordering = ['-year', 'field_name']
