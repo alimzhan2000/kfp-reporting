@@ -87,20 +87,18 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'kfp_reporting.wsgi.application'
 
-# Database
+# Database - УПРОЩЕННАЯ КОНФИГУРАЦИЯ ДЛЯ RAILWAY
 DATABASES = {
     'default': dj_database_url.config(
         default=config('DATABASE_URL', default='sqlite:///db.sqlite3'),
         conn_max_age=600,
-        conn_health_checks=True,
     )
 }
 
-# Настройки для PostgreSQL
+# Минимальные настройки для PostgreSQL на Railway
 if 'postgresql' in DATABASES['default']['ENGINE']:
     DATABASES['default']['OPTIONS'] = {
         'connect_timeout': 10,
-        'options': '-c default_transaction_isolation=read_committed'
     }
 
 # Password validation
