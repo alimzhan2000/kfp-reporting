@@ -764,6 +764,205 @@ def yield_comparison_report(request):
     """
     return HttpResponse(html_content, content_type="text/html")
 
+@csrf_exempt
+def test_upload_page(request):
+    """Тестовая страница загрузки файлов с диагностикой"""
+    html_content = """
+    <!DOCTYPE html>
+    <html lang="ru">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>KFP Reporting - Тестовая загрузка</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+    </head>
+    <body class="bg-gray-50">
+        <!-- Header -->
+        <nav class="bg-white shadow">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="flex justify-between items-center py-4">
+                    <div class="flex items-center">
+                        <div class="text-2xl mr-3">🧪</div>
+                        <h1 class="text-gray-900 text-xl font-bold">KFP Reporting - Тестовая загрузка</h1>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <a href="/" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded">Дашборд</a>
+                        <a href="/upload/" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded">Обычная загрузка</a>
+                        <a href="/admin/" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded">Admin</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="max-w-4xl mx-auto px-4 py-8">
+            <div class="mb-8">
+                <h1 class="text-2xl font-bold text-gray-900">Тестовая загрузка файлов</h1>
+                <p class="mt-1 text-sm text-gray-500">
+                    Эта страница предназначена для диагностики проблем с загрузкой файлов
+                </p>
+            </div>
+
+            <!-- Upload Area -->
+            <div class="bg-white shadow rounded-lg p-8">
+                <div id="upload-area" class="border-2 border-dashed border-gray-300 rounded-lg p-12 text-center hover:border-blue-400 transition-colors cursor-pointer">
+                    <div class="mx-auto w-12 h-12 text-gray-400 mb-4">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">Перетащите файлы сюда</h3>
+                    <p class="text-sm text-gray-500 mb-4">или нажмите для выбора файлов</p>
+                    <input type="file" id="file-input" class="hidden" accept=".csv,.xlsx,.xls" multiple>
+                    <button onclick="document.getElementById('file-input').click()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
+                        Выбрать файлы
+                    </button>
+                </div>
+                
+                <!-- Upload Progress -->
+                <div id="upload-progress" class="mt-6 hidden">
+                    <div class="bg-blue-50 border border-blue-200 rounded-md p-4">
+                        <div class="flex items-center">
+                            <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-3"></div>
+                            <span class="text-blue-800">Загружается...</span>
+                        </div>
+                        <div class="mt-2 bg-gray-200 rounded-full h-2">
+                            <div id="progress-bar" class="bg-blue-600 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Upload Result -->
+                <div id="upload-result" class="mt-6 hidden">
+                    <div class="bg-green-50 border border-green-200 rounded-md p-4">
+                        <div class="flex items-center">
+                            <svg class="h-5 w-5 text-green-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span class="text-green-800 font-medium">Файл успешно загружен!</span>
+                        </div>
+                        <p id="result-message" class="text-green-700 text-sm mt-1"></p>
+                        <pre id="result-details" class="text-green-700 text-xs mt-2 bg-green-100 p-2 rounded overflow-auto max-h-40"></pre>
+                    </div>
+                </div>
+
+                <!-- Error Result -->
+                <div id="upload-error" class="mt-6 hidden">
+                    <div class="bg-red-50 border border-red-200 rounded-md p-4">
+                        <div class="flex items-center">
+                            <svg class="h-5 w-5 text-red-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span class="text-red-800 font-medium">Ошибка загрузки</span>
+                        </div>
+                        <p id="error-message" class="text-red-700 text-sm mt-1"></p>
+                        <pre id="error-details" class="text-red-700 text-xs mt-2 bg-red-100 p-2 rounded overflow-auto max-h-40"></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Instructions -->
+            <div class="mt-8 bg-white shadow rounded-lg p-6">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Инструкции по тестированию</h3>
+                <div class="space-y-3 text-sm text-gray-600">
+                    <p>• Используется тестовый endpoint /api/upload/test/</p>
+                    <p>• Подробные логи будут видны в Railway Dashboard</p>
+                    <p>• Поддерживаемые форматы: CSV, XLSX, XLS</p>
+                    <p>• Проверьте логи в Railway для диагностики ошибок</p>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            const uploadArea = document.getElementById('upload-area');
+            const fileInput = document.getElementById('file-input');
+            const progressDiv = document.getElementById('upload-progress');
+            const resultDiv = document.getElementById('upload-result');
+            const errorDiv = document.getElementById('upload-error');
+            const progressBar = document.getElementById('progress-bar');
+
+            // Drag and drop handlers
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.classList.add('border-blue-400', 'bg-blue-50');
+            });
+
+            uploadArea.addEventListener('dragleave', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('border-blue-400', 'bg-blue-50');
+            });
+
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('border-blue-400', 'bg-blue-50');
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    handleFileUpload(files[0]);
+                }
+            });
+
+            // File input handler
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    handleFileUpload(e.target.files[0]);
+                }
+            });
+
+            // Upload function
+            async function handleFileUpload(file) {
+                const formData = new FormData();
+                formData.append('file', file);
+
+                // Show progress
+                progressDiv.classList.remove('hidden');
+                resultDiv.classList.add('hidden');
+                errorDiv.classList.add('hidden');
+
+                try {
+                    console.log('Uploading to test endpoint...');
+                    const response = await fetch('/api/upload/test/', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const result = await response.json();
+                    console.log('Response:', result);
+
+                    if (response.ok) {
+                        progressDiv.classList.add('hidden');
+                        resultDiv.classList.remove('hidden');
+                        document.getElementById('result-message').textContent = 
+                            `Обработано ${result.upload?.records_processed || 0} записей`;
+                        document.getElementById('result-details').textContent = JSON.stringify(result, null, 2);
+                    } else {
+                        throw new Error(result.error || 'Ошибка загрузки файла');
+                    }
+                } catch (error) {
+                    progressDiv.classList.add('hidden');
+                    errorDiv.classList.remove('hidden');
+                    document.getElementById('error-message').textContent = error.message;
+                    document.getElementById('error-details').textContent = error.stack || 'No additional details';
+                    console.error('Upload error:', error);
+                }
+            }
+
+            // Simulate progress
+            function simulateProgress() {
+                let width = 0;
+                const interval = setInterval(() => {
+                    width += 10;
+                    progressBar.style.width = width + '%';
+                    if (width >= 100) {
+                        clearInterval(interval);
+                    }
+                }, 200);
+            }
+        </script>
+    </body>
+    </html>
+    """
+    return HttpResponse(html_content, content_type="text/html")
+
 def render_react_setup_page():
     """Показывает страницу с инструкциями по сборке React"""
     html_content = """

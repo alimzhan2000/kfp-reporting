@@ -15,6 +15,7 @@ urlpatterns = [
     
     # Frontend pages
     path('upload/', views.upload_page, name='upload_page'),
+    path('upload-test/', views.test_upload_page, name='test_upload_page'),
     path('reports/', views.reports_page, name='reports_page'),
     path('reports/yield-comparison/', views.yield_comparison_report, name='yield_comparison_report'),
     path('data/', views.home, name='data_page'),  # Redirect to dashboard

@@ -191,3 +191,76 @@ def delete_all_data(request):
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
+
+@method_decorator(csrf_exempt, name='dispatch')
+class TestFileProcessingView(APIView):
+    """
+    Тестовый endpoint для проверки обработки файлов
+    """
+    parser_classes = (MultiPartParser, FormParser)
+    permission_classes = []  # Без аутентификации для тестирования
+    
+    def post(self, request, format=None):
+        """
+        Тестирование обработки файла
+        """
+        if 'file' not in request.FILES:
+            return Response(
+                {'error': 'Файл не найден'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        uploaded_file = request.FILES['file']
+        
+        # Проверяем тип файла
+        allowed_extensions = ['.csv', '.xlsx', '.xls']
+        file_extension = os.path.splitext(uploaded_file.name)[1].lower()
+        
+        if file_extension not in allowed_extensions:
+            return Response(
+                {'error': 'Неподдерживаемый формат файла. Разрешены: CSV, XLSX, XLS'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        try:
+            # Сохраняем файл
+            file_path = default_storage.save(
+                f'uploads/test_{uploaded_file.name}',
+                ContentFile(uploaded_file.read())
+            )
+            
+            # Создаем запись о загрузке
+            upload_instance = DataUpload.objects.create(
+                file_name=uploaded_file.name,
+                file_path=file_path,
+                file_size=uploaded_file.size,
+                uploaded_by=None
+            )
+            
+            # Обрабатываем файл
+            full_file_path = default_storage.path(file_path)
+            success, message = DataProcessingService.process_file(upload_instance, full_file_path)
+            
+            if success:
+                return Response({
+                    'message': 'Файл успешно обработан',
+                    'upload': DataUploadSerializer(upload_instance).data,
+                    'details': message,
+                    'file_path': file_path,
+                    'logs': 'Check Railway logs for detailed processing information'
+                }, status=status.HTTP_201_CREATED)
+            else:
+                return Response({
+                    'error': 'Ошибка обработки файла',
+                    'details': message,
+                    'upload': DataUploadSerializer(upload_instance).data,
+                    'file_path': file_path,
+                    'logs': 'Check Railway logs for detailed error information'
+                }, status=status.HTTP_400_BAD_REQUEST)
+                
+        except Exception as e:
+            return Response(
+                {'error': f'Ошибка загрузки файла: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
