@@ -151,8 +151,32 @@ class ReportService:
                 item['efficiency_level'] = 'low'
                 item['color'] = '#ef4444'  # красный
         
+        # Подготавливаем данные для фронтенда
+        field_names = [item['field_name'] for item in field_data]
+        yields = [float(item['avg_yield']) if item['avg_yield'] else 0 for item in field_data]
+        colors = [item['color'] for item in field_data]
+        
+        # Scatter plot data (area vs yield)
+        scatter_data = []
+        for item in field_data:
+            if item['total_area'] and item['avg_yield']:
+                scatter_data.append({
+                    'x': float(item['total_area']),
+                    'y': float(item['avg_yield'])
+                })
+        
+        # Years and products for filters
+        years = list(queryset.values_list('year', flat=True).distinct().order_by('year'))
+        products = list(queryset.values_list('final_product', flat=True).distinct())
+        
         return {
             'field_data': list(field_data),
+            'field_names': field_names,
+            'yields': yields,
+            'colors': colors,
+            'scatter_data': scatter_data,
+            'years': years,
+            'products': products,
             'statistics': {
                 'min_yield': min_yield,
                 'max_yield': max_yield,
@@ -210,8 +234,26 @@ class ReportService:
                         'variety_count': len(prod_varieties)
                     }
         
+        # Подготавливаем данные для фронтенда
+        variety_names = [f"{item['variety']} ({item['final_product']})" for item in variety_data]
+        variety_yields = [float(item['avg_yield']) if item['avg_yield'] else 0 for item in variety_data]
+        
+        # Product distribution data
+        product_labels = [item['final_product'] for item in product_summary]
+        product_data = [item['variety_count'] for item in product_summary]
+        
+        # Years and products for filters
+        years = list(queryset.values_list('year', flat=True).distinct().order_by('year'))
+        products = list(queryset.values_list('final_product', flat=True).distinct())
+        
         return {
             'variety_data': list(variety_data),
+            'variety_names': variety_names,
+            'variety_yields': variety_yields,
+            'product_labels': product_labels,
+            'product_data': product_data,
+            'years': years,
+            'products': products,
             'product_summary': list(product_summary),
             'product_variety_stats': product_variety_stats,
             'total_records': queryset.count()

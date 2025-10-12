@@ -10,6 +10,8 @@ from minimal_pandas_view import minimal_pandas_test_page
 from original_dashboard import get_original_dashboard
 from original_yield_report import get_original_yield_comparison_report
 from management_yield_report import get_management_yield_comparison_report
+from field_efficiency_report import get_field_efficiency_report
+from variety_performance_report import get_variety_performance_report
 
 @csrf_exempt
 def health_check(request):
@@ -619,3 +621,14 @@ def render_react_setup_page():
     </html>
     """
     return HttpResponse(html_content, content_type="text/html")
+
+@csrf_exempt
+def field_efficiency_report(request):
+    """Отчет эффективности полей для менеджмента"""
+    return HttpResponse(get_field_efficiency_report(), content_type="text/html")
+
+@csrf_exempt
+def variety_performance_report(request):
+    """Отчет производительности сортов для менеджмента"""
+    return HttpResponse(get_variety_performance_report(), content_type="text/html")
+

@@ -24,6 +24,8 @@ urlpatterns = [
     path('minimal-pandas-test/', views.minimal_pandas_test_page, name='minimal_pandas_test_page'),
     path('reports/', views.reports_page, name='reports_page'),
     path('reports/yield-comparison/', views.yield_comparison_report, name='yield_comparison_report'),
+    path('reports/field-efficiency/', views.field_efficiency_report, name='field_efficiency_report'),
+    path('reports/variety-performance/', views.variety_performance_report, name='variety_performance_report'),
     path('data/', views.home, name='data_page'),  # Redirect to dashboard
     
     # API endpoints

@@ -53,7 +53,6 @@ def yield_comparison_report(request):
 
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
 def field_efficiency_report(request):
     """
     Отчет по эффективности полей
@@ -78,7 +77,6 @@ def field_efficiency_report(request):
 
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
 def variety_performance_report(request):
     """
     Отчет по производительности сортов
