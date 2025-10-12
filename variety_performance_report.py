@@ -14,6 +14,62 @@ def get_variety_performance_report():
         <title>KFP Reporting - Производительность сортов</title>
         <script src="https://cdn.tailwindcss.com"></script>
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <style>
+            /* Prevent table from stretching the page */
+            body {
+                overflow-x: hidden;
+            }
+            
+            .max-w-7xl {
+                max-width: 80rem;
+            }
+            
+            /* Force table to stay within container */
+            table {
+                table-layout: fixed;
+                width: 100%;
+            }
+            
+            /* Ensure text truncation works */
+            .truncate {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+            
+            /* Set specific column widths */
+            table th:nth-child(1), table td:nth-child(1) {
+                width: 25%;
+                max-width: 200px;
+            }
+            
+            table th:nth-child(2), table td:nth-child(2) {
+                width: 25%;
+                max-width: 200px;
+            }
+            
+            table th:nth-child(3), table td:nth-child(3) {
+                width: 15%;
+            }
+            
+            table th:nth-child(4), table td:nth-child(4) {
+                width: 15%;
+            }
+            
+            table th:nth-child(5), table td:nth-child(5) {
+                width: 10%;
+            }
+            
+            table th:nth-child(6), table td:nth-child(6) {
+                width: 10%;
+            }
+            
+            /* Ensure charts don't overflow */
+            canvas {
+                max-width: 100% !important;
+                height: auto !important;
+            }
+        </style>
     </head>
     <body class="bg-gray-50">
         <!-- Header -->

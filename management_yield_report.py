@@ -14,6 +14,35 @@ def get_management_yield_comparison_report():
         <title>KFP Reporting - Сравнение урожайности</title>
         <script src="https://cdn.tailwindcss.com"></script>
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <style>
+            /* Prevent table from stretching the page */
+            body {
+                overflow-x: hidden;
+            }
+            
+            .max-w-7xl {
+                max-width: 80rem;
+            }
+            
+            /* Force table to stay within container */
+            table {
+                table-layout: fixed;
+                width: 100%;
+            }
+            
+            /* Ensure text truncation works */
+            .truncate {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+            
+            /* Ensure charts don't overflow */
+            canvas {
+                max-width: 100% !important;
+                height: auto !important;
+            }
+        </style>
     </head>
     <body class="bg-gray-50">
         <!-- Header -->
