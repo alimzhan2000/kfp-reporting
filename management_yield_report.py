@@ -282,7 +282,7 @@ def get_management_yield_comparison_report():
                     const data = await response.json();
                     console.log('Received data:', data);
 
-                    updateCharts(data);
+                    // updateCharts(data); // DISABLED - STATIC TEXT ONLY
                     updateVarietyTable(data);
                     updateFieldTable(data);
                     updateFilters(data);
@@ -298,100 +298,8 @@ def get_management_yield_comparison_report():
             }
 
             function updateCharts(data) {
-                // Yield by Year Chart
-                const yearCtx = document.getElementById('yield-by-year-chart').getContext('2d');
-                if (yieldByYearChart) yieldByYearChart.destroy();
-                
-                yieldByYearChart = new Chart(yearCtx, {
-                    type: 'line',
-                    data: {
-                        labels: data.years || [],
-                        datasets: [{
-                            label: 'Урожайность (ц/га)',
-                            data: data.yield_by_year || [],
-                            borderColor: 'rgb(34, 197, 94)',
-                            backgroundColor: 'rgba(34, 197, 94, 0.1)',
-                            tension: 0.4,
-                            fill: true,
-                            pointBackgroundColor: 'rgb(34, 197, 94)',
-                            pointBorderColor: '#fff',
-                            pointBorderWidth: 2,
-                            pointRadius: 6
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                title: {
-                                    display: true,
-                                    text: 'Урожайность (ц/га)'
-                                }
-                            }
-                        },
-                        plugins: {
-                            legend: {
-                                display: true,
-                                position: 'top'
-                            }
-                        }
-                    }
-                });
-
-                // Yield by Product Chart
-                const productCtx = document.getElementById('yield-by-product-chart').getContext('2d');
-                if (yieldByProductChart) yieldByProductChart.destroy();
-                
-                yieldByProductChart = new Chart(productCtx, {
-                    type: 'bar',
-                    data: {
-                        labels: data.products || [],
-                        datasets: [{
-                            label: 'Урожайность (ц/га)',
-                            data: data.yield_by_product || [],
-                            backgroundColor: [
-                                'rgba(59, 130, 246, 0.8)',
-                                'rgba(34, 197, 94, 0.8)',
-                                'rgba(251, 191, 36, 0.8)',
-                                'rgba(239, 68, 68, 0.8)',
-                                'rgba(147, 51, 234, 0.8)',
-                                'rgba(236, 72, 153, 0.8)',
-                                'rgba(6, 182, 212, 0.8)'
-                            ],
-                            borderColor: [
-                                'rgba(59, 130, 246, 1)',
-                                'rgba(34, 197, 94, 1)',
-                                'rgba(251, 191, 36, 1)',
-                                'rgba(239, 68, 68, 1)',
-                                'rgba(147, 51, 234, 1)',
-                                'rgba(236, 72, 153, 1)',
-                                'rgba(6, 182, 212, 1)'
-                            ],
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                title: {
-                                    display: true,
-                                    text: 'Урожайность (ц/га)'
-                                }
-                            }
-                        },
-                        plugins: {
-                            legend: {
-                                display: true,
-                                position: 'top'
-                            }
-                        }
-                    }
-                });
+                // DISABLED - STATIC TEXT ONLY
+                return;
             }
 
             function updateVarietyTable(data) {
