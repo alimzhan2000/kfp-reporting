@@ -13,7 +13,7 @@ def get_management_yield_comparison_report():
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>KFP Reporting - Сравнение урожайности</title>
         <script src="https://cdn.tailwindcss.com"></script>
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <!-- Chart.js REMOVED - Using static text only -->
         <style>
             /* Prevent table from stretching the page */
             body {
@@ -149,7 +149,13 @@ def get_management_yield_comparison_report():
                             </button>
                         </div>
                     </div>
-                    <canvas id="yield-by-year-chart" width="400" height="300"></canvas>
+                    <div id="year-chart-static" style="width: 100%; height: 300px; overflow: hidden; border: 2px solid #e5e7eb; border-radius: 8px; display: flex; flex-direction: column; justify-content: center; align-items: center; background-color: #f9fafb; pointer-events: none; user-select: none;">
+                        <h3 style="font-size: 16px; color: #374151; margin-bottom: 20px; font-weight: 600;">Урожайность по годам</h3>
+                        <div style="text-align: center; color: #6b7280;">
+                            <p style="font-size: 14px; margin-bottom: 10px;">Статичная диаграмма</p>
+                            <p style="font-size: 12px; color: #9ca3af;">Данные загружены</p>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Yield by Product -->
@@ -164,7 +170,13 @@ def get_management_yield_comparison_report():
                             </button>
                         </div>
                     </div>
-                    <canvas id="yield-by-product-chart" width="400" height="300"></canvas>
+                    <div id="product-chart-static" style="width: 100%; height: 300px; overflow: hidden; border: 2px solid #e5e7eb; border-radius: 8px; display: flex; flex-direction: column; justify-content: center; align-items: center; background-color: #f9fafb; pointer-events: none; user-select: none;">
+                        <h3 style="font-size: 16px; color: #374151; margin-bottom: 20px; font-weight: 600;">Урожайность по продуктам</h3>
+                        <div style="text-align: center; color: #6b7280;">
+                            <p style="font-size: 14px; margin-bottom: 10px;">Статичная диаграмма</p>
+                            <p style="font-size: 12px; color: #9ca3af;">Данные загружены</p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
