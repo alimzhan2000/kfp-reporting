@@ -11,6 +11,10 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.db import transaction
 import os
+
+# Импортируем простой тест
+from simple_test import SimpleFileTestView
+from simple_test_view import simple_test_page
 from .models import DataUpload
 from .serializers import DataUploadSerializer
 from .services import DataProcessingService
