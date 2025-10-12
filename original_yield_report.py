@@ -15,65 +15,87 @@ def get_original_yield_comparison_report():
         <script src="https://cdn.tailwindcss.com"></script>
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <style>
-            /* Prevent page stretching */
+            /* Prevent page stretching - highest priority */
+            * {
+                box-sizing: border-box;
+            }
+            
             body {
-                overflow-x: hidden;
-                max-width: 100vw;
+                overflow-x: hidden !important;
+                max-width: 100vw !important;
+                margin: 0 !important;
+                padding: 0 !important;
             }
             
             .max-w-7xl {
-                max-width: 80rem;
+                max-width: 80rem !important;
             }
             
-            /* Force charts to stay within bounds */
+            /* Force charts to stay within bounds - critical */
             .bg-white.shadow.rounded-lg.p-6 {
-                overflow: hidden;
-                position: relative;
-                max-width: 100%;
-                width: 100%;
-            }
-            
-            /* Specific chart container styles */
-            #yield-by-year-chart, #yield-by-product-chart {
+                overflow: hidden !important;
+                position: relative !important;
                 max-width: 100% !important;
-                max-height: 400px !important;
                 width: 100% !important;
-                height: 400px !important;
+                box-sizing: border-box !important;
             }
             
-            /* Ensure charts don't overflow */
+            /* Chart container constraints - most important */
+            #charts-container {
+                max-width: 100% !important;
+                overflow: hidden !important;
+                width: 100% !important;
+                box-sizing: border-box !important;
+            }
+            
+            /* Chart wrapper constraints */
+            .chart-wrapper {
+                max-width: 100% !important;
+                overflow: hidden !important;
+                position: relative !important;
+                width: 100% !important;
+                box-sizing: border-box !important;
+            }
+            
+            /* Canvas element constraints - critical for preventing stretch */
             canvas {
                 max-width: 100% !important;
                 max-height: 400px !important;
                 width: 100% !important;
                 height: 400px !important;
+                display: block !important;
+                box-sizing: border-box !important;
             }
             
-            /* Prevent chart containers from expanding */
-            #charts-container {
-                max-width: 100%;
-                overflow: hidden;
-                width: 100%;
+            /* Specific chart constraints */
+            #yield-by-year-chart, #yield-by-product-chart {
+                max-width: 100% !important;
+                max-height: 400px !important;
+                width: 100% !important;
+                height: 400px !important;
+                display: block !important;
+                box-sizing: border-box !important;
             }
             
-            /* Ensure responsive behavior */
+            /* Grid constraints */
             .grid.grid-cols-1.gap-8.lg\\:grid-cols-2 {
-                max-width: 100%;
-                width: 100%;
+                max-width: 100% !important;
+                width: 100% !important;
+                overflow: hidden !important;
+                box-sizing: border-box !important;
             }
             
-            /* Additional constraints for chart wrappers */
-            .chart-wrapper {
-                max-width: 100%;
-                overflow: hidden;
-                position: relative;
-            }
-            
-            /* Prevent tooltip overflow */
+            /* Tooltip constraints */
             .chartjs-tooltip {
                 max-width: 300px !important;
-                word-wrap: break-word;
-                overflow-wrap: break-word;
+                word-wrap: break-word !important;
+                overflow-wrap: break-word !important;
+                box-sizing: border-box !important;
+            }
+            
+            /* Prevent any element from causing horizontal scroll */
+            * {
+                max-width: 100vw !important;
             }
         </style>
     </head>
@@ -397,16 +419,34 @@ def get_original_yield_comparison_report():
                     }
                 });
                 
-                // Force chart dimensions after creation
+                // Force chart dimensions immediately after creation
+                const yearCanvas = document.getElementById('yield-by-year-chart');
+                const productCanvas = document.getElementById('yield-by-product-chart');
+                
+                if (yearCanvas) {
+                    yearCanvas.style.maxWidth = '100%';
+                    yearCanvas.style.maxHeight = '400px';
+                    yearCanvas.style.width = '100%';
+                    yearCanvas.style.height = '400px';
+                    yearCanvas.style.display = 'block';
+                }
+                
+                if (productCanvas) {
+                    productCanvas.style.maxWidth = '100%';
+                    productCanvas.style.maxHeight = '400px';
+                    productCanvas.style.width = '100%';
+                    productCanvas.style.height = '400px';
+                    productCanvas.style.display = 'block';
+                }
+                
+                // Also force dimensions with timeout as backup
                 setTimeout(() => {
-                    const yearCanvas = document.getElementById('yield-by-year-chart');
-                    const productCanvas = document.getElementById('yield-by-product-chart');
-                    
                     if (yearCanvas) {
                         yearCanvas.style.maxWidth = '100%';
                         yearCanvas.style.maxHeight = '400px';
                         yearCanvas.style.width = '100%';
                         yearCanvas.style.height = '400px';
+                        yearCanvas.style.display = 'block';
                     }
                     
                     if (productCanvas) {
@@ -414,8 +454,9 @@ def get_original_yield_comparison_report():
                         productCanvas.style.maxHeight = '400px';
                         productCanvas.style.width = '100%';
                         productCanvas.style.height = '400px';
+                        productCanvas.style.display = 'block';
                     }
-                }, 100);
+                }, 50);
             }
 
             function updateTable(data) {
@@ -510,6 +551,7 @@ def get_original_yield_comparison_report():
                     yearCanvas.style.maxHeight = '400px';
                     yearCanvas.style.width = '100%';
                     yearCanvas.style.height = '400px';
+                    yearCanvas.style.display = 'block';
                 }
                 
                 if (productCanvas) {
@@ -517,15 +559,43 @@ def get_original_yield_comparison_report():
                     productCanvas.style.maxHeight = '400px';
                     productCanvas.style.width = '100%';
                     productCanvas.style.height = '400px';
+                    productCanvas.style.display = 'block';
+                }
+            }
+
+            // Force dimensions immediately when page loads
+            function initializeChartConstraints() {
+                const yearCanvas = document.getElementById('yield-by-year-chart');
+                const productCanvas = document.getElementById('yield-by-product-chart');
+                
+                if (yearCanvas) {
+                    yearCanvas.style.maxWidth = '100%';
+                    yearCanvas.style.maxHeight = '400px';
+                    yearCanvas.style.width = '100%';
+                    yearCanvas.style.height = '400px';
+                    yearCanvas.style.display = 'block';
+                }
+                
+                if (productCanvas) {
+                    productCanvas.style.maxWidth = '100%';
+                    productCanvas.style.maxHeight = '400px';
+                    productCanvas.style.width = '100%';
+                    productCanvas.style.height = '400px';
+                    productCanvas.style.display = 'block';
                 }
             }
 
             // Load data on page load
             document.addEventListener('DOMContentLoaded', function() {
+                // Set constraints immediately before loading data
+                initializeChartConstraints();
+                
+                // Load report data
                 loadReport();
                 
-                // Force dimensions on load
-                setTimeout(forceChartDimensions, 200);
+                // Force dimensions after load
+                setTimeout(forceChartDimensions, 100);
+                setTimeout(forceChartDimensions, 500);
             });
             
             // Force dimensions on window resize
