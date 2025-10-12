@@ -428,6 +428,7 @@ def get_management_yield_comparison_report():
                         onHover: function(event, elements) {
                             // Allow tooltips but prevent stretching
                             event.target.style.cursor = 'pointer';
+                            console.log('Chart hover detected, elements:', elements);
                         },
                         onClick: function(event, elements) {
                             // Allow clicks for tooltips
@@ -527,6 +528,7 @@ def get_management_yield_comparison_report():
                         onHover: function(event, elements) {
                             // Allow tooltips but prevent stretching
                             event.target.style.cursor = 'pointer';
+                            console.log('Chart hover detected, elements:', elements);
                         },
                         onClick: function(event, elements) {
                             // Allow clicks for tooltips
@@ -669,7 +671,7 @@ def get_management_yield_comparison_report():
                 const yearChart = document.getElementById('yield-by-year-chart');
                 const productChart = document.getElementById('yield-by-product-chart');
                 
-                if (yearChart) {
+                if (yearChart && yearChart.style.width !== '100%') {
                     yearChart.style.width = '100%';
                     yearChart.style.height = '400px';
                     yearChart.style.maxWidth = '100%';
@@ -678,7 +680,7 @@ def get_management_yield_comparison_report():
                     yearChart.style.minHeight = '400px';
                 }
                 
-                if (productChart) {
+                if (productChart && productChart.style.width !== '100%') {
                     productChart.style.width = '100%';
                     productChart.style.height = '400px';
                     productChart.style.maxWidth = '100%';
@@ -690,7 +692,8 @@ def get_management_yield_comparison_report():
             
             // Monitor and force dimensions continuously
             function startDimensionMonitoring() {
-                setInterval(forceStaticChartDimensions, 100);
+                // Reduce frequency to avoid interfering with tooltips
+                setInterval(forceStaticChartDimensions, 500);
                 
                 // Force dimensions on any resize
                 window.addEventListener('resize', forceStaticChartDimensions);
@@ -698,8 +701,7 @@ def get_management_yield_comparison_report():
                 // Force dimensions on any scroll
                 window.addEventListener('scroll', forceStaticChartDimensions);
                 
-                // Force dimensions on any mouse move
-                document.addEventListener('mousemove', forceStaticChartDimensions);
+                // Don't monitor mousemove to avoid interfering with tooltips
             }
 
             // Load data on page load
