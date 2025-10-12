@@ -353,217 +353,196 @@ def get_original_yield_comparison_report():
             }
 
             function updateCharts(data) {
-                // STATIC DIMENSIONS - NO CALCULATIONS
-                const STATIC_WIDTH = 400;  // Fixed width
-                const STATIC_HEIGHT = 300; // Fixed height
-
-                // Yield by Year Chart
-                const yearCtx = document.getElementById('yield-by-year-chart').getContext('2d');
-                if (yieldByYearChart) yieldByYearChart.destroy();
+                // DESTROY ALL EXISTING CHARTS
+                if (yieldByYearChart) {
+                    yieldByYearChart.destroy();
+                    yieldByYearChart = null;
+                }
+                if (yieldByProductChart) {
+                    yieldByProductChart.destroy();
+                    yieldByProductChart = null;
+                }
                 
-                // Set STATIC canvas dimensions
-                const yearCanvas = document.getElementById('yield-by-year-chart');
-                yearCanvas.width = STATIC_WIDTH;
-                yearCanvas.height = STATIC_HEIGHT;
-                yearCanvas.style.width = STATIC_WIDTH + 'px';
-                yearCanvas.style.height = STATIC_HEIGHT + 'px';
-                yearCanvas.style.maxWidth = STATIC_WIDTH + 'px';
-                yearCanvas.style.maxHeight = STATIC_HEIGHT + 'px';
-                yearCanvas.style.display = 'block';
-                yearCanvas.style.position = 'absolute';
-                yearCanvas.style.top = '50px';
-                yearCanvas.style.left = '0';
-                yearCanvas.style.right = '0';
+                // REPLACE WITH STATIC SVG CHARTS - NO CHART.JS
+                const yearContainer = document.getElementById('yield-by-year-chart').parentElement;
+                const productContainer = document.getElementById('yield-by-product-chart').parentElement;
                 
-                yieldByYearChart = new Chart(yearCtx, {
-                    type: 'line',
-                    data: {
-                        labels: data.years || [],
-                        datasets: [{
-                            label: 'Урожайность (ц/га)',
-                            data: data.yield_by_year || [],
-                            borderColor: 'rgb(34, 197, 94)',
-                            backgroundColor: 'rgba(34, 197, 94, 0.1)',
-                            tension: 0.4,
-                            fill: true,
-                            pointBackgroundColor: 'rgb(34, 197, 94)',
-                            pointBorderColor: '#fff',
-                            pointBorderWidth: 2,
-                            pointRadius: 4 // Smaller points for static chart
-                        }]
-                    },
-                    options: {
-                        responsive: false, // STATIC - NO RESPONSIVE
-                        maintainAspectRatio: false, // STATIC - NO ASPECT RATIO
-                        animation: false, // NO ANIMATIONS TO PREVENT STRETCHING
-                        interaction: {
-                            intersect: false,
-                            mode: 'nearest',
-                            axis: 'xy'
-                        },
-                        onHover: function(event, elements) {
-                            // Prevent any hover interactions
-                            event.stopPropagation();
-                            return false;
-                        },
-                        onClick: function(event, elements) {
-                            // Prevent any click interactions
-                            event.stopPropagation();
-                            return false;
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                title: {
-                                    display: true,
-                                    text: 'Урожайность (ц/га)',
-                                    font: { size: 10 } // Smaller font
-                                },
-                                ticks: { font: { size: 9 } } // Smaller ticks
-                            },
-                            x: {
-                                ticks: { font: { size: 9 } } // Smaller ticks
-                            }
-                        },
-                        plugins: {
-                            legend: {
-                                display: true,
-                                position: 'top',
-                                labels: { font: { size: 10 } } // Smaller legend
-                            },
-                            tooltip: {
-                                enabled: false // COMPLETELY DISABLE TOOLTIPS
-                            }
+                // Clear existing canvas
+                yearContainer.innerHTML = '<div id="year-chart-static"></div>';
+                productContainer.innerHTML = '<div id="product-chart-static"></div>';
+                
+                // Create static SVG charts
+                createStaticYearChart(data);
+                createStaticProductChart(data);
+            }
+            
+            function createStaticYearChart(data) {
+                const container = document.getElementById('year-chart-static');
+                const width = 400;
+                const height = 300;
+                
+                const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                svg.setAttribute('width', width);
+                svg.setAttribute('height', height);
+                svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+                svg.style.width = width + 'px';
+                svg.style.height = height + 'px';
+                svg.style.maxWidth = width + 'px';
+                svg.style.maxHeight = height + 'px';
+                svg.style.display = 'block';
+                
+                // Add static chart content
+                const years = data.years || [];
+                const yields = data.yield_by_year || [];
+                
+                if (years.length > 0 && yields.length > 0) {
+                    // Draw axes
+                    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                    line.setAttribute('x1', '50');
+                    line.setAttribute('y1', height - 50);
+                    line.setAttribute('x2', width - 20);
+                    line.setAttribute('y2', height - 50);
+                    line.setAttribute('stroke', '#666');
+                    line.setAttribute('stroke-width', '2');
+                    svg.appendChild(line);
+                    
+                    const lineY = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                    lineY.setAttribute('x1', '50');
+                    lineY.setAttribute('y1', '30');
+                    lineY.setAttribute('x2', '50');
+                    lineY.setAttribute('y2', height - 50);
+                    lineY.setAttribute('stroke', '#666');
+                    lineY.setAttribute('stroke-width', '2');
+                    svg.appendChild(lineY);
+                    
+                    // Draw data line
+                    const maxY = Math.max(...yields);
+                    const minY = Math.min(...yields);
+                    const range = maxY - minY || 1;
+                    
+                    let pathData = '';
+                    years.forEach((year, index) => {
+                        const x = 50 + (index * (width - 70) / (years.length - 1));
+                        const y = height - 50 - ((yields[index] - minY) / range) * (height - 80);
+                        if (index === 0) {
+                            pathData += `M ${x} ${y}`;
+                        } else {
+                            pathData += ` L ${x} ${y}`;
                         }
-                    }
-                });
-
-                // Yield by Product Chart
-                const productCtx = document.getElementById('yield-by-product-chart').getContext('2d');
-                if (yieldByProductChart) yieldByProductChart.destroy();
-                
-                // Set STATIC canvas dimensions
-                const productCanvas = document.getElementById('yield-by-product-chart');
-                productCanvas.width = STATIC_WIDTH;
-                productCanvas.height = STATIC_HEIGHT;
-                productCanvas.style.width = STATIC_WIDTH + 'px';
-                productCanvas.style.height = STATIC_HEIGHT + 'px';
-                productCanvas.style.maxWidth = STATIC_WIDTH + 'px';
-                productCanvas.style.maxHeight = STATIC_HEIGHT + 'px';
-                productCanvas.style.display = 'block';
-                productCanvas.style.position = 'absolute';
-                productCanvas.style.top = '50px';
-                productCanvas.style.left = '0';
-                productCanvas.style.right = '0';
-                
-                yieldByProductChart = new Chart(productCtx, {
-                    type: 'bar',
-                    data: {
-                        labels: data.products || [],
-                        datasets: [{
-                            label: 'Урожайность (ц/га)',
-                            data: data.yield_by_product || [],
-                            backgroundColor: [
-                                'rgba(59, 130, 246, 0.8)',
-                                'rgba(34, 197, 94, 0.8)',
-                                'rgba(251, 191, 36, 0.8)',
-                                'rgba(239, 68, 68, 0.8)',
-                                'rgba(147, 51, 234, 0.8)',
-                                'rgba(236, 72, 153, 0.8)',
-                                'rgba(6, 182, 212, 0.8)'
-                            ],
-                            borderColor: [
-                                'rgba(59, 130, 246, 1)',
-                                'rgba(34, 197, 94, 1)',
-                                'rgba(251, 191, 36, 1)',
-                                'rgba(239, 68, 68, 1)',
-                                'rgba(147, 51, 234, 1)',
-                                'rgba(236, 72, 153, 1)',
-                                'rgba(6, 182, 212, 1)'
-                            ],
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        responsive: false, // STATIC - NO RESPONSIVE
-                        maintainAspectRatio: false, // STATIC - NO ASPECT RATIO
-                        animation: false, // NO ANIMATIONS TO PREVENT STRETCHING
-                        interaction: {
-                            intersect: false,
-                            mode: 'nearest',
-                            axis: 'xy'
-                        },
-                        onHover: function(event, elements) {
-                            // Prevent any hover interactions
-                            event.stopPropagation();
-                            return false;
-                        },
-                        onClick: function(event, elements) {
-                            // Prevent any click interactions
-                            event.stopPropagation();
-                            return false;
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                title: {
-                                    display: true,
-                                    text: 'Урожайность (ц/га)',
-                                    font: { size: 10 } // Smaller font
-                                },
-                                ticks: { font: { size: 9 } } // Smaller ticks
-                            },
-                            x: {
-                                ticks: { font: { size: 9 } } // Smaller ticks
-                            }
-                        },
-                        plugins: {
-                            legend: {
-                                display: true,
-                                position: 'top',
-                                labels: { font: { size: 10 } } // Smaller legend
-                            },
-                            tooltip: {
-                                enabled: false // COMPLETELY DISABLE TOOLTIPS
-                            }
-                        }
-                    }
-                });
-                
-                // COMPLETELY DISABLE ALL INTERACTIONS AFTER CHART CREATION
-                setTimeout(() => {
-                    // Disable all mouse events on canvas
-                    yearCanvas.style.pointerEvents = 'none';
-                    yearCanvas.style.touchAction = 'none';
-                    yearCanvas.style.userSelect = 'none';
-                    yearCanvas.style.webkitUserSelect = 'none';
-                    yearCanvas.style.mozUserSelect = 'none';
-                    yearCanvas.style.msUserSelect = 'none';
+                    });
                     
-                    // Force canvas to stay exactly the same size
-                    yearCanvas.width = STATIC_WIDTH;
-                    yearCanvas.height = STATIC_HEIGHT;
-                    yearCanvas.style.width = STATIC_WIDTH + 'px';
-                    yearCanvas.style.height = STATIC_HEIGHT + 'px';
-                    yearCanvas.style.maxWidth = STATIC_WIDTH + 'px';
-                    yearCanvas.style.maxHeight = STATIC_HEIGHT + 'px';
+                    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                    path.setAttribute('d', pathData);
+                    path.setAttribute('stroke', 'rgb(34, 197, 94)');
+                    path.setAttribute('stroke-width', '3');
+                    path.setAttribute('fill', 'none');
+                    svg.appendChild(path);
                     
-                    // Disable all mouse events on product canvas
-                    productCanvas.style.pointerEvents = 'none';
-                    productCanvas.style.touchAction = 'none';
-                    productCanvas.style.userSelect = 'none';
-                    productCanvas.style.webkitUserSelect = 'none';
-                    productCanvas.style.mozUserSelect = 'none';
-                    productCanvas.style.msUserSelect = 'none';
+                    // Add title
+                    const title = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                    title.setAttribute('x', width / 2);
+                    title.setAttribute('y', 20);
+                    title.setAttribute('text-anchor', 'middle');
+                    title.setAttribute('font-size', '12');
+                    title.setAttribute('fill', '#333');
+                    title.textContent = 'Урожайность по годам';
+                    svg.appendChild(title);
+                } else {
+                    // No data message
+                    const noData = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                    noData.setAttribute('x', width / 2);
+                    noData.setAttribute('y', height / 2);
+                    noData.setAttribute('text-anchor', 'middle');
+                    noData.setAttribute('font-size', '14');
+                    noData.setAttribute('fill', '#999');
+                    noData.textContent = 'Нет данных для отображения';
+                    svg.appendChild(noData);
+                }
+                
+                container.appendChild(svg);
+            }
+            
+            function createStaticProductChart(data) {
+                const container = document.getElementById('product-chart-static');
+                const width = 400;
+                const height = 300;
+                
+                const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                svg.setAttribute('width', width);
+                svg.setAttribute('height', height);
+                svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+                svg.style.width = width + 'px';
+                svg.style.height = height + 'px';
+                svg.style.maxWidth = width + 'px';
+                svg.style.maxHeight = height + 'px';
+                svg.style.display = 'block';
+                
+                // Add static chart content
+                const products = data.products || [];
+                const yields = data.yield_by_product || [];
+                
+                if (products.length > 0 && yields.length > 0) {
+                    // Draw axes
+                    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                    line.setAttribute('x1', '50');
+                    line.setAttribute('y1', height - 50);
+                    line.setAttribute('x2', width - 20);
+                    line.setAttribute('y2', height - 50);
+                    line.setAttribute('stroke', '#666');
+                    line.setAttribute('stroke-width', '2');
+                    svg.appendChild(line);
                     
-                    // Force product canvas to stay exactly the same size
-                    productCanvas.width = STATIC_WIDTH;
-                    productCanvas.height = STATIC_HEIGHT;
-                    productCanvas.style.width = STATIC_WIDTH + 'px';
-                    productCanvas.style.height = STATIC_HEIGHT + 'px';
-                    productCanvas.style.maxWidth = STATIC_WIDTH + 'px';
-                    productCanvas.style.maxHeight = STATIC_HEIGHT + 'px';
-                }, 100);
+                    const lineY = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                    lineY.setAttribute('x1', '50');
+                    lineY.setAttribute('y1', '30');
+                    lineY.setAttribute('x2', '50');
+                    lineY.setAttribute('y2', height - 50);
+                    lineY.setAttribute('stroke', '#666');
+                    lineY.setAttribute('stroke-width', '2');
+                    svg.appendChild(lineY);
+                    
+                    // Draw bars
+                    const maxY = Math.max(...yields);
+                    const colors = ['#3b82f6', '#22c55e', '#fbbf24', '#ef4444', '#9333ea', '#ec4899', '#06b6d4'];
+                    
+                    products.forEach((product, index) => {
+                        const barWidth = (width - 70) / products.length * 0.8;
+                        const barHeight = (yields[index] / maxY) * (height - 80);
+                        const x = 50 + (index * (width - 70) / products.length) + (width - 70) / products.length * 0.1;
+                        const y = height - 50 - barHeight;
+                        
+                        const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                        rect.setAttribute('x', x);
+                        rect.setAttribute('y', y);
+                        rect.setAttribute('width', barWidth);
+                        rect.setAttribute('height', barHeight);
+                        rect.setAttribute('fill', colors[index % colors.length]);
+                        rect.setAttribute('opacity', '0.8');
+                        svg.appendChild(rect);
+                    });
+                    
+                    // Add title
+                    const title = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                    title.setAttribute('x', width / 2);
+                    title.setAttribute('y', 20);
+                    title.setAttribute('text-anchor', 'middle');
+                    title.setAttribute('font-size', '12');
+                    title.setAttribute('fill', '#333');
+                    title.textContent = 'Урожайность по продуктам';
+                    svg.appendChild(title);
+                } else {
+                    // No data message
+                    const noData = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                    noData.setAttribute('x', width / 2);
+                    noData.setAttribute('y', height / 2);
+                    noData.setAttribute('text-anchor', 'middle');
+                    noData.setAttribute('font-size', '14');
+                    noData.setAttribute('fill', '#999');
+                    noData.textContent = 'Нет данных для отображения';
+                    svg.appendChild(noData);
+                }
+                
+                container.appendChild(svg);
             }
 
             function updateTable(data) {
@@ -648,12 +627,10 @@ def get_original_yield_comparison_report():
                 link.click();
             }
 
-            // Force STATIC chart dimensions function
+            // Force STATIC SVG chart dimensions - NO CHART.JS
             function forceChartDimensions() {
-                const yearCanvas = document.getElementById('yield-by-year-chart');
-                const productCanvas = document.getElementById('yield-by-product-chart');
-                const yearContainer = yearCanvas ? yearCanvas.parentElement : null;
-                const productContainer = productCanvas ? productCanvas.parentElement : null;
+                const yearContainer = document.getElementById('yield-by-year-chart')?.parentElement;
+                const productContainer = document.getElementById('yield-by-product-chart')?.parentElement;
                 
                 // Force STATIC container dimensions
                 if (yearContainer) {
@@ -672,33 +649,24 @@ def get_original_yield_comparison_report():
                     productContainer.style.position = 'relative';
                 }
                 
-                // Force STATIC canvas dimensions
-                if (yearCanvas) {
-                    yearCanvas.width = STATIC_WIDTH;
-                    yearCanvas.height = STATIC_HEIGHT;
-                    yearCanvas.style.width = STATIC_WIDTH + 'px';
-                    yearCanvas.style.height = STATIC_HEIGHT + 'px';
-                    yearCanvas.style.maxWidth = STATIC_WIDTH + 'px';
-                    yearCanvas.style.maxHeight = STATIC_HEIGHT + 'px';
-                    yearCanvas.style.display = 'block';
-                    yearCanvas.style.position = 'absolute';
-                    yearCanvas.style.top = '50px';
-                    yearCanvas.style.left = '0';
-                    yearCanvas.style.right = '0';
+                // Force STATIC SVG dimensions
+                const yearSvg = document.querySelector('#year-chart-static svg');
+                const productSvg = document.querySelector('#product-chart-static svg');
+                
+                if (yearSvg) {
+                    yearSvg.style.width = STATIC_WIDTH + 'px';
+                    yearSvg.style.height = STATIC_HEIGHT + 'px';
+                    yearSvg.style.maxWidth = STATIC_WIDTH + 'px';
+                    yearSvg.style.maxHeight = STATIC_HEIGHT + 'px';
+                    yearSvg.style.display = 'block';
                 }
                 
-                if (productCanvas) {
-                    productCanvas.width = STATIC_WIDTH;
-                    productCanvas.height = STATIC_HEIGHT;
-                    productCanvas.style.width = STATIC_WIDTH + 'px';
-                    productCanvas.style.height = STATIC_HEIGHT + 'px';
-                    productCanvas.style.maxWidth = STATIC_WIDTH + 'px';
-                    productCanvas.style.maxHeight = STATIC_HEIGHT + 'px';
-                    productCanvas.style.display = 'block';
-                    productCanvas.style.position = 'absolute';
-                    productCanvas.style.top = '50px';
-                    productCanvas.style.left = '0';
-                    productCanvas.style.right = '0';
+                if (productSvg) {
+                    productSvg.style.width = STATIC_WIDTH + 'px';
+                    productSvg.style.height = STATIC_HEIGHT + 'px';
+                    productSvg.style.maxWidth = STATIC_WIDTH + 'px';
+                    productSvg.style.maxHeight = STATIC_HEIGHT + 'px';
+                    productSvg.style.display = 'block';
                 }
             }
 
@@ -706,7 +674,7 @@ def get_original_yield_comparison_report():
             const STATIC_WIDTH = 400;
             const STATIC_HEIGHT = 300;
 
-            // Force STATIC dimensions immediately when page loads
+            // Initialize static chart containers - NO CHART.JS
             function initializeChartConstraints() {
                 const yearCanvas = document.getElementById('yield-by-year-chart');
                 const productCanvas = document.getElementById('yield-by-product-chart');
@@ -730,33 +698,13 @@ def get_original_yield_comparison_report():
                     productContainer.style.position = 'relative';
                 }
                 
-                // Set STATIC canvas constraints
-                if (yearCanvas) {
-                    yearCanvas.width = STATIC_WIDTH;
-                    yearCanvas.height = STATIC_HEIGHT;
-                    yearCanvas.style.width = STATIC_WIDTH + 'px';
-                    yearCanvas.style.height = STATIC_HEIGHT + 'px';
-                    yearCanvas.style.maxWidth = STATIC_WIDTH + 'px';
-                    yearCanvas.style.maxHeight = STATIC_HEIGHT + 'px';
-                    yearCanvas.style.display = 'block';
-                    yearCanvas.style.position = 'absolute';
-                    yearCanvas.style.top = '50px';
-                    yearCanvas.style.left = '0';
-                    yearCanvas.style.right = '0';
+                // Prepare containers for static SVG charts
+                if (yearContainer) {
+                    yearContainer.innerHTML = '<div id="year-chart-static"></div>';
                 }
                 
-                if (productCanvas) {
-                    productCanvas.width = STATIC_WIDTH;
-                    productCanvas.height = STATIC_HEIGHT;
-                    productCanvas.style.width = STATIC_WIDTH + 'px';
-                    productCanvas.style.height = STATIC_HEIGHT + 'px';
-                    productCanvas.style.maxWidth = STATIC_WIDTH + 'px';
-                    productCanvas.style.maxHeight = STATIC_HEIGHT + 'px';
-                    productCanvas.style.display = 'block';
-                    productCanvas.style.position = 'absolute';
-                    productCanvas.style.top = '50px';
-                    productCanvas.style.left = '0';
-                    productCanvas.style.right = '0';
+                if (productContainer) {
+                    productContainer.innerHTML = '<div id="product-chart-static"></div>';
                 }
             }
 
