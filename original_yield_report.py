@@ -107,14 +107,45 @@ def get_original_yield_comparison_report():
                 gap: 2rem !important;
             }
             
-            /* STATIC TOOLTIP - NO OVERFLOW */
+            /* STATIC TOOLTIP - NO OVERFLOW - COMPLETELY FIXED */
             .chartjs-tooltip {
-                max-width: 250px !important;
+                max-width: 200px !important;
                 word-wrap: break-word !important;
                 overflow-wrap: break-word !important;
                 box-sizing: border-box !important;
                 position: fixed !important;
                 z-index: 1000 !important;
+                left: 50% !important;
+                top: 50% !important;
+                transform: translate(-50%, -50%) !important;
+                pointer-events: none !important;
+            }
+            
+            /* PREVENT ALL CHART.JS INTERACTIONS */
+            canvas {
+                pointer-events: none !important;
+                touch-action: none !important;
+                user-select: none !important;
+                -webkit-user-select: none !important;
+                -moz-user-select: none !important;
+                -ms-user-select: none !important;
+            }
+            
+            /* LOCK ALL CHART CONTAINERS */
+            .chart-wrapper {
+                pointer-events: none !important;
+                touch-action: none !important;
+                user-select: none !important;
+            }
+            
+            /* PREVENT HOVER EFFECTS */
+            canvas:hover, .chart-wrapper:hover {
+                transform: none !important;
+                scale: 1 !important;
+                width: 100% !important;
+                height: 350px !important;
+                max-width: 100% !important;
+                max-height: 350px !important;
             }
             
             /* PREVENT ALL HORIZONTAL SCROLL */
@@ -365,6 +396,21 @@ def get_original_yield_comparison_report():
                         responsive: false, // STATIC - NO RESPONSIVE
                         maintainAspectRatio: false, // STATIC - NO ASPECT RATIO
                         animation: false, // NO ANIMATIONS TO PREVENT STRETCHING
+                        interaction: {
+                            intersect: false,
+                            mode: 'nearest',
+                            axis: 'xy'
+                        },
+                        onHover: function(event, elements) {
+                            // Prevent any hover interactions
+                            event.stopPropagation();
+                            return false;
+                        },
+                        onClick: function(event, elements) {
+                            // Prevent any click interactions
+                            event.stopPropagation();
+                            return false;
+                        },
                         scales: {
                             y: {
                                 beginAtZero: true,
@@ -386,23 +432,7 @@ def get_original_yield_comparison_report():
                                 labels: { font: { size: 10 } } // Smaller legend
                             },
                             tooltip: {
-                                enabled: true,
-                                mode: 'nearest',
-                                intersect: true,
-                                callbacks: {
-                                    title: function(context) {
-                                        let label = context[0].label || '';
-                                        if (label.length > 20) {
-                                            return label.substring(0, 17) + '...';
-                                        }
-                                        return label;
-                                    }
-                                },
-                                bodyFont: { size: 10 },
-                                titleFont: { size: 10 },
-                                padding: 6,
-                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                                maxWidth: 200 // Smaller tooltip
+                                enabled: false // COMPLETELY DISABLE TOOLTIPS
                             }
                         }
                     }
@@ -458,6 +488,21 @@ def get_original_yield_comparison_report():
                         responsive: false, // STATIC - NO RESPONSIVE
                         maintainAspectRatio: false, // STATIC - NO ASPECT RATIO
                         animation: false, // NO ANIMATIONS TO PREVENT STRETCHING
+                        interaction: {
+                            intersect: false,
+                            mode: 'nearest',
+                            axis: 'xy'
+                        },
+                        onHover: function(event, elements) {
+                            // Prevent any hover interactions
+                            event.stopPropagation();
+                            return false;
+                        },
+                        onClick: function(event, elements) {
+                            // Prevent any click interactions
+                            event.stopPropagation();
+                            return false;
+                        },
                         scales: {
                             y: {
                                 beginAtZero: true,
@@ -479,24 +524,46 @@ def get_original_yield_comparison_report():
                                 labels: { font: { size: 10 } } // Smaller legend
                             },
                             tooltip: {
-                                enabled: true,
-                                callbacks: {
-                                    title: function(context) {
-                                        let label = context[0].label || '';
-                                        if (label.length > 20) {
-                                            return label.substring(0, 17) + '...';
-                                        }
-                                        return label;
-                                    }
-                                },
-                                bodyFont: { size: 10 },
-                                padding: 6,
-                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                                maxWidth: 200 // Smaller tooltip
+                                enabled: false // COMPLETELY DISABLE TOOLTIPS
                             }
                         }
                     }
                 });
+                
+                // COMPLETELY DISABLE ALL INTERACTIONS AFTER CHART CREATION
+                setTimeout(() => {
+                    // Disable all mouse events on canvas
+                    yearCanvas.style.pointerEvents = 'none';
+                    yearCanvas.style.touchAction = 'none';
+                    yearCanvas.style.userSelect = 'none';
+                    yearCanvas.style.webkitUserSelect = 'none';
+                    yearCanvas.style.mozUserSelect = 'none';
+                    yearCanvas.style.msUserSelect = 'none';
+                    
+                    // Force canvas to stay exactly the same size
+                    yearCanvas.width = STATIC_WIDTH;
+                    yearCanvas.height = STATIC_HEIGHT;
+                    yearCanvas.style.width = STATIC_WIDTH + 'px';
+                    yearCanvas.style.height = STATIC_HEIGHT + 'px';
+                    yearCanvas.style.maxWidth = STATIC_WIDTH + 'px';
+                    yearCanvas.style.maxHeight = STATIC_HEIGHT + 'px';
+                    
+                    // Disable all mouse events on product canvas
+                    productCanvas.style.pointerEvents = 'none';
+                    productCanvas.style.touchAction = 'none';
+                    productCanvas.style.userSelect = 'none';
+                    productCanvas.style.webkitUserSelect = 'none';
+                    productCanvas.style.mozUserSelect = 'none';
+                    productCanvas.style.msUserSelect = 'none';
+                    
+                    // Force product canvas to stay exactly the same size
+                    productCanvas.width = STATIC_WIDTH;
+                    productCanvas.height = STATIC_HEIGHT;
+                    productCanvas.style.width = STATIC_WIDTH + 'px';
+                    productCanvas.style.height = STATIC_HEIGHT + 'px';
+                    productCanvas.style.maxWidth = STATIC_WIDTH + 'px';
+                    productCanvas.style.maxHeight = STATIC_HEIGHT + 'px';
+                }, 100);
             }
 
             function updateTable(data) {
