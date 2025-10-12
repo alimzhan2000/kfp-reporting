@@ -13,11 +13,53 @@ def get_management_yield_comparison_report():
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>KFP Reporting - Сравнение урожайности</title>
         <script src="https://cdn.tailwindcss.com"></script>
-        <!-- Chart.js REMOVED - Using static text only -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <style>
             /* Prevent table from stretching the page */
             body {
                 overflow-x: hidden;
+            }
+            
+            /* Chart container constraints */
+            .chart-container {
+                position: relative;
+                width: 400px !important;
+                height: 300px !important;
+                max-width: 400px !important;
+                max-height: 300px !important;
+                overflow: hidden !important;
+                margin: 0 auto;
+            }
+            
+            /* Canvas constraints */
+            canvas {
+                width: 400px !important;
+                height: 300px !important;
+                max-width: 400px !important;
+                max-height: 300px !important;
+                display: block !important;
+                position: relative !important;
+                transform: none !important;
+                scale: 1 !important;
+            }
+            
+            /* Prevent any stretching on hover or focus */
+            canvas:hover, canvas:focus, canvas:active {
+                transform: none !important;
+                scale: 1 !important;
+                width: 400px !important;
+                height: 300px !important;
+                max-width: 400px !important;
+                max-height: 300px !important;
+            }
+            
+            /* Disable all interactions that could cause stretching */
+            .chart-container * {
+                pointer-events: none !important;
+                user-select: none !important;
+                -webkit-user-select: none !important;
+                -moz-user-select: none !important;
+                -ms-user-select: none !important;
             }
             
             .max-w-7xl {
@@ -149,13 +191,9 @@ def get_management_yield_comparison_report():
                             </button>
                         </div>
                     </div>
-                    <div id="year-chart-static" style="width: 100%; height: 300px; overflow: hidden; border: 2px solid #e5e7eb; border-radius: 8px; display: flex; flex-direction: column; justify-content: center; align-items: center; background-color: #f9fafb; pointer-events: none; user-select: none;">
-                        <h3 style="font-size: 16px; color: #374151; margin-bottom: 20px; font-weight: 600;">Урожайность по годам</h3>
-                        <div style="text-align: center; color: #6b7280;">
-                            <p style="font-size: 14px; margin-bottom: 10px;">Статичная диаграмма</p>
-                            <p style="font-size: 12px; color: #9ca3af;">Данные загружены</p>
-                        </div>
-                    </div>
+                <div style="position: relative; width: 100%; height: 400px; max-width: 100%; overflow: hidden;">
+                    <canvas id="yield-by-year-chart" width="400" height="300" style="width: 400px !important; height: 300px !important; max-width: 400px !important; max-height: 300px !important; display: block !important;"></canvas>
+                </div>
                 </div>
 
                 <!-- Yield by Product -->
@@ -170,13 +208,9 @@ def get_management_yield_comparison_report():
                             </button>
                         </div>
                     </div>
-                    <div id="product-chart-static" style="width: 100%; height: 300px; overflow: hidden; border: 2px solid #e5e7eb; border-radius: 8px; display: flex; flex-direction: column; justify-content: center; align-items: center; background-color: #f9fafb; pointer-events: none; user-select: none;">
-                        <h3 style="font-size: 16px; color: #374151; margin-bottom: 20px; font-weight: 600;">Урожайность по продуктам</h3>
-                        <div style="text-align: center; color: #6b7280;">
-                            <p style="font-size: 14px; margin-bottom: 10px;">Статичная диаграмма</p>
-                            <p style="font-size: 12px; color: #9ca3af;">Данные загружены</p>
-                        </div>
-                    </div>
+                <div style="position: relative; width: 100%; height: 400px; max-width: 100%; overflow: hidden;">
+                    <canvas id="yield-by-product-chart" width="400" height="300" style="width: 400px !important; height: 300px !important; max-width: 400px !important; max-height: 300px !important; display: block !important;"></canvas>
+                </div>
                 </div>
             </div>
 
@@ -298,121 +332,136 @@ def get_management_yield_comparison_report():
             }
 
             function updateCharts(data) {
-                // Create static SVG charts - no stretching, no interactions
-                createStaticYearChart(data);
-                createStaticProductChart(data);
-            }
-            
-            function createStaticYearChart(data) {
-                const container = document.getElementById('year-chart-static');
-                if (!container) return;
+                // Yield by Year Chart with strict size limits
+                const yearCtx = document.getElementById('yield-by-year-chart').getContext('2d');
+                if (yieldByYearChart) yieldByYearChart.destroy();
                 
-                const width = 400;
-                const height = 300;
-                const years = data.years || [];
-                const yields = data.yield_by_year || [];
-                
-                let svgContent = '';
-                
-                if (years.length > 0 && yields.length > 0) {
-                    // Calculate chart dimensions
-                    const padding = 40;
-                    const chartWidth = width - 2 * padding;
-                    const chartHeight = height - 2 * padding;
-                    
-                    const maxY = Math.max(...yields);
-                    const minY = Math.min(...yields);
-                    const range = maxY - minY || 1;
-                    
-                    // Draw axes
-                    svgContent += `<line x1="${padding}" y1="${height - padding}" x2="${width - padding}" y2="${height - padding}" stroke="#666" stroke-width="2"/>`;
-                    svgContent += `<line x1="${padding}" y1="${padding}" x2="${padding}" y2="${height - padding}" stroke="#666" stroke-width="2"/>`;
-                    
-                    // Draw data line
-                    let pathData = '';
-                    years.forEach((year, index) => {
-                        const x = padding + (index * chartWidth / (years.length - 1));
-                        const y = height - padding - ((yields[index] - minY) / range) * chartHeight;
-                        if (index === 0) {
-                            pathData += `M ${x} ${y}`;
-                        } else {
-                            pathData += ` L ${x} ${y}`;
+                yieldByYearChart = new Chart(yearCtx, {
+                    type: 'line',
+                    data: {
+                        labels: data.years || [],
+                        datasets: [{
+                            label: 'Урожайность (ц/га)',
+                            data: data.yield_by_year || [],
+                            borderColor: 'rgb(34, 197, 94)',
+                            backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                            tension: 0.4,
+                            fill: true,
+                            pointBackgroundColor: 'rgb(34, 197, 94)',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            pointRadius: 6
+                        }]
+                    },
+                    options: {
+                        responsive: false,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'top'
+                            },
+                            tooltip: {
+                                enabled: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Урожайность (ц/га)'
+                                }
+                            }
+                        },
+                        animation: {
+                            duration: 0
+                        },
+                        interaction: {
+                            intersect: false,
+                            mode: 'index'
+                        },
+                        onHover: function(event, elements) {
+                            // Prevent any hover effects that could cause stretching
+                            return;
+                        },
+                        onClick: function(event, elements) {
+                            // Prevent any click effects
+                            return false;
                         }
-                    });
-                    
-                    svgContent += `<path d="${pathData}" stroke="rgb(34, 197, 94)" stroke-width="3" fill="none"/>`;
-                    
-                    // Add data points
-                    years.forEach((year, index) => {
-                        const x = padding + (index * chartWidth / (years.length - 1));
-                        const y = height - padding - ((yields[index] - minY) / range) * chartHeight;
-                        svgContent += `<circle cx="${x}" cy="${y}" r="4" fill="rgb(34, 197, 94)"/>`;
-                    });
-                    
-                    // Add title
-                    svgContent += `<text x="${width/2}" y="20" text-anchor="middle" font-size="14" fill="#333">Урожайность по годам</text>`;
-                    
-                } else {
-                    // No data message
-                    svgContent += `<text x="${width/2}" y="${height/2}" text-anchor="middle" font-size="14" fill="#999">Нет данных для отображения</text>`;
-                }
+                    }
+                });
+
+                // Yield by Product Chart with strict size limits
+                const productCtx = document.getElementById('yield-by-product-chart').getContext('2d');
+                if (yieldByProductChart) yieldByProductChart.destroy();
                 
-                container.innerHTML = `
-                    <svg width="${width}" height="${height}" style="width: ${width}px; height: ${height}px; max-width: ${width}px; max-height: ${height}px; display: block; pointer-events: none; user-select: none;">
-                        ${svgContent}
-                    </svg>
-                `;
-            }
-            
-            function createStaticProductChart(data) {
-                const container = document.getElementById('product-chart-static');
-                if (!container) return;
-                
-                const width = 400;
-                const height = 300;
-                const products = data.products || [];
-                const yields = data.yield_by_product || [];
-                
-                let svgContent = '';
-                
-                if (products.length > 0 && yields.length > 0) {
-                    // Calculate chart dimensions
-                    const padding = 40;
-                    const chartWidth = width - 2 * padding;
-                    const chartHeight = height - 2 * padding;
-                    
-                    const maxY = Math.max(...yields);
-                    const colors = ['#3b82f6', '#22c55e', '#fbbf24', '#ef4444', '#9333ea', '#ec4899', '#06b6d4'];
-                    
-                    // Draw axes
-                    svgContent += `<line x1="${padding}" y1="${height - padding}" x2="${width - padding}" y2="${height - padding}" stroke="#666" stroke-width="2"/>`;
-                    svgContent += `<line x1="${padding}" y1="${padding}" x2="${padding}" y2="${height - padding}" stroke="#666" stroke-width="2"/>`;
-                    
-                    // Draw bars
-                    const barWidth = chartWidth / products.length * 0.8;
-                    const barSpacing = chartWidth / products.length;
-                    
-                    products.forEach((product, index) => {
-                        const barHeight = (yields[index] / maxY) * chartHeight;
-                        const x = padding + (index * barSpacing) + (barSpacing - barWidth) / 2;
-                        const y = height - padding - barHeight;
-                        
-                        svgContent += `<rect x="${x}" y="${y}" width="${barWidth}" height="${barHeight}" fill="${colors[index % colors.length]}" opacity="0.8"/>`;
-                    });
-                    
-                    // Add title
-                    svgContent += `<text x="${width/2}" y="20" text-anchor="middle" font-size="14" fill="#333">Урожайность по продуктам</text>`;
-                    
-                } else {
-                    // No data message
-                    svgContent += `<text x="${width/2}" y="${height/2}" text-anchor="middle" font-size="14" fill="#999">Нет данных для отображения</text>`;
-                }
-                
-                container.innerHTML = `
-                    <svg width="${width}" height="${height}" style="width: ${width}px; height: ${height}px; max-width: ${width}px; max-height: ${height}px; display: block; pointer-events: none; user-select: none;">
-                        ${svgContent}
-                    </svg>
-                `;
+                yieldByProductChart = new Chart(productCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: data.products || [],
+                        datasets: [{
+                            label: 'Урожайность (ц/га)',
+                            data: data.yield_by_product || [],
+                            backgroundColor: [
+                                'rgba(59, 130, 246, 0.8)',
+                                'rgba(34, 197, 94, 0.8)',
+                                'rgba(251, 191, 36, 0.8)',
+                                'rgba(239, 68, 68, 0.8)',
+                                'rgba(147, 51, 234, 0.8)',
+                                'rgba(236, 72, 153, 0.8)',
+                                'rgba(6, 182, 212, 0.8)'
+                            ],
+                            borderColor: [
+                                'rgba(59, 130, 246, 1)',
+                                'rgba(34, 197, 94, 1)',
+                                'rgba(251, 191, 36, 1)',
+                                'rgba(239, 68, 68, 1)',
+                                'rgba(147, 51, 234, 1)',
+                                'rgba(236, 72, 153, 1)',
+                                'rgba(6, 182, 212, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: false,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'top'
+                            },
+                            tooltip: {
+                                enabled: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Урожайность (ц/га)'
+                                }
+                            }
+                        },
+                        animation: {
+                            duration: 0
+                        },
+                        interaction: {
+                            intersect: false,
+                            mode: 'index'
+                        },
+                        onHover: function(event, elements) {
+                            // Prevent any hover effects that could cause stretching
+                            return;
+                        },
+                        onClick: function(event, elements) {
+                            // Prevent any click effects
+                            return false;
+                        }
+                    }
+                });
             }
 
             function updateVarietyTable(data) {
@@ -542,10 +591,6 @@ def get_management_yield_comparison_report():
 
             // Load data on page load
             document.addEventListener('DOMContentLoaded', function() {
-                // Initialize static charts with empty data
-                createStaticYearChart({});
-                createStaticProductChart({});
-                
                 // Load report data
                 loadReport();
             });
