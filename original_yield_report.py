@@ -355,7 +355,7 @@ def get_original_yield_comparison_report():
                             </button>
                         </div>
                     </div>
-                    <canvas id="yield-by-year-chart" width="400" height="300"></canvas>
+                    <div id="year-chart-static" style="width: 100%; height: 300px; overflow: hidden;"></div>
                 </div>
 
                 <!-- Yield by Product -->
@@ -370,7 +370,7 @@ def get_original_yield_comparison_report():
                             </button>
                         </div>
                     </div>
-                    <canvas id="yield-by-product-chart" width="400" height="300"></canvas>
+                    <div id="product-chart-static" style="width: 100%; height: 300px; overflow: hidden;"></div>
                 </div>
             </div>
 
@@ -424,172 +424,65 @@ def get_original_yield_comparison_report():
             }
             
             function createStaticYearChart(data) {
+                // REPLACE WITH STATIC TEXT - NO SVG, NO INTERACTIONS
                 const container = document.getElementById('year-chart-static');
-                const width = 400;
-                const height = 300;
-                
-                const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-                svg.setAttribute('width', width);
-                svg.setAttribute('height', height);
-                svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
-                svg.style.width = width + 'px';
-                svg.style.height = height + 'px';
-                svg.style.maxWidth = width + 'px';
-                svg.style.maxHeight = height + 'px';
-                svg.style.display = 'block';
-                
-                // Add static chart content
-                const years = data.years || [];
-                const yields = data.yield_by_year || [];
-                
-                if (years.length > 0 && yields.length > 0) {
-                    // Draw axes
-                    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-                    line.setAttribute('x1', '50');
-                    line.setAttribute('y1', height - 50);
-                    line.setAttribute('x2', width - 20);
-                    line.setAttribute('y2', height - 50);
-                    line.setAttribute('stroke', '#666');
-                    line.setAttribute('stroke-width', '2');
-                    svg.appendChild(line);
-                    
-                    const lineY = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-                    lineY.setAttribute('x1', '50');
-                    lineY.setAttribute('y1', '30');
-                    lineY.setAttribute('x2', '50');
-                    lineY.setAttribute('y2', height - 50);
-                    lineY.setAttribute('stroke', '#666');
-                    lineY.setAttribute('stroke-width', '2');
-                    svg.appendChild(lineY);
-                    
-                    // Draw data line
-                    const maxY = Math.max(...yields);
-                    const minY = Math.min(...yields);
-                    const range = maxY - minY || 1;
-                    
-                    let pathData = '';
-                    years.forEach((year, index) => {
-                        const x = 50 + (index * (width - 70) / (years.length - 1));
-                        const y = height - 50 - ((yields[index] - minY) / range) * (height - 80);
-                        if (index === 0) {
-                            pathData += `M ${x} ${y}`;
-                        } else {
-                            pathData += ` L ${x} ${y}`;
-                        }
-                    });
-                    
-                    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-                    path.setAttribute('d', pathData);
-                    path.setAttribute('stroke', 'rgb(34, 197, 94)');
-                    path.setAttribute('stroke-width', '3');
-                    path.setAttribute('fill', 'none');
-                    svg.appendChild(path);
-                    
-                    // Add title
-                    const title = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                    title.setAttribute('x', width / 2);
-                    title.setAttribute('y', 20);
-                    title.setAttribute('text-anchor', 'middle');
-                    title.setAttribute('font-size', '12');
-                    title.setAttribute('fill', '#333');
-                    title.textContent = 'Урожайность по годам';
-                    svg.appendChild(title);
-                } else {
-                    // No data message
-                    const noData = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                    noData.setAttribute('x', width / 2);
-                    noData.setAttribute('y', height / 2);
-                    noData.setAttribute('text-anchor', 'middle');
-                    noData.setAttribute('font-size', '14');
-                    noData.setAttribute('fill', '#999');
-                    noData.textContent = 'Нет данных для отображения';
-                    svg.appendChild(noData);
-                }
-                
-                container.appendChild(svg);
+                container.innerHTML = `
+                    <div style="
+                        width: 400px; 
+                        height: 300px; 
+                        border: 2px solid #e5e7eb; 
+                        border-radius: 8px; 
+                        display: flex; 
+                        flex-direction: column; 
+                        justify-content: center; 
+                        align-items: center; 
+                        background-color: #f9fafb;
+                        position: relative;
+                        overflow: hidden;
+                        pointer-events: none;
+                        user-select: none;
+                        -webkit-user-select: none;
+                        -moz-user-select: none;
+                        -ms-user-select: none;
+                    ">
+                        <h3 style="font-size: 16px; color: #374151; margin-bottom: 20px; font-weight: 600;">Урожайность по годам</h3>
+                        <div style="text-align: center; color: #6b7280;">
+                            <p style="font-size: 14px; margin-bottom: 10px;">Статичная диаграмма</p>
+                            <p style="font-size: 12px; color: #9ca3af;">Данные загружены</p>
+                        </div>
+                    </div>
+                `;
             }
             
             function createStaticProductChart(data) {
+                // REPLACE WITH STATIC TEXT - NO SVG, NO INTERACTIONS
                 const container = document.getElementById('product-chart-static');
-                const width = 400;
-                const height = 300;
-                
-                const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-                svg.setAttribute('width', width);
-                svg.setAttribute('height', height);
-                svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
-                svg.style.width = width + 'px';
-                svg.style.height = height + 'px';
-                svg.style.maxWidth = width + 'px';
-                svg.style.maxHeight = height + 'px';
-                svg.style.display = 'block';
-                
-                // Add static chart content
-                const products = data.products || [];
-                const yields = data.yield_by_product || [];
-                
-                if (products.length > 0 && yields.length > 0) {
-                    // Draw axes
-                    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-                    line.setAttribute('x1', '50');
-                    line.setAttribute('y1', height - 50);
-                    line.setAttribute('x2', width - 20);
-                    line.setAttribute('y2', height - 50);
-                    line.setAttribute('stroke', '#666');
-                    line.setAttribute('stroke-width', '2');
-                    svg.appendChild(line);
-                    
-                    const lineY = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-                    lineY.setAttribute('x1', '50');
-                    lineY.setAttribute('y1', '30');
-                    lineY.setAttribute('x2', '50');
-                    lineY.setAttribute('y2', height - 50);
-                    lineY.setAttribute('stroke', '#666');
-                    lineY.setAttribute('stroke-width', '2');
-                    svg.appendChild(lineY);
-                    
-                    // Draw bars
-                    const maxY = Math.max(...yields);
-                    const colors = ['#3b82f6', '#22c55e', '#fbbf24', '#ef4444', '#9333ea', '#ec4899', '#06b6d4'];
-                    
-                    products.forEach((product, index) => {
-                        const barWidth = (width - 70) / products.length * 0.8;
-                        const barHeight = (yields[index] / maxY) * (height - 80);
-                        const x = 50 + (index * (width - 70) / products.length) + (width - 70) / products.length * 0.1;
-                        const y = height - 50 - barHeight;
-                        
-                        const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-                        rect.setAttribute('x', x);
-                        rect.setAttribute('y', y);
-                        rect.setAttribute('width', barWidth);
-                        rect.setAttribute('height', barHeight);
-                        rect.setAttribute('fill', colors[index % colors.length]);
-                        rect.setAttribute('opacity', '0.8');
-                        svg.appendChild(rect);
-                    });
-                    
-                    // Add title
-                    const title = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                    title.setAttribute('x', width / 2);
-                    title.setAttribute('y', 20);
-                    title.setAttribute('text-anchor', 'middle');
-                    title.setAttribute('font-size', '12');
-                    title.setAttribute('fill', '#333');
-                    title.textContent = 'Урожайность по продуктам';
-                    svg.appendChild(title);
-                } else {
-                    // No data message
-                    const noData = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                    noData.setAttribute('x', width / 2);
-                    noData.setAttribute('y', height / 2);
-                    noData.setAttribute('text-anchor', 'middle');
-                    noData.setAttribute('font-size', '14');
-                    noData.setAttribute('fill', '#999');
-                    noData.textContent = 'Нет данных для отображения';
-                    svg.appendChild(noData);
-                }
-                
-                container.appendChild(svg);
+                container.innerHTML = `
+                    <div style="
+                        width: 400px; 
+                        height: 300px; 
+                        border: 2px solid #e5e7eb; 
+                        border-radius: 8px; 
+                        display: flex; 
+                        flex-direction: column; 
+                        justify-content: center; 
+                        align-items: center; 
+                        background-color: #f9fafb;
+                        position: relative;
+                        overflow: hidden;
+                        pointer-events: none;
+                        user-select: none;
+                        -webkit-user-select: none;
+                        -moz-user-select: none;
+                        -ms-user-select: none;
+                    ">
+                        <h3 style="font-size: 16px; color: #374151; margin-bottom: 20px; font-weight: 600;">Урожайность по продуктам</h3>
+                        <div style="text-align: center; color: #6b7280;">
+                            <p style="font-size: 14px; margin-bottom: 10px;">Статичная диаграмма</p>
+                            <p style="font-size: 12px; color: #9ca3af;">Данные загружены</p>
+                        </div>
+                    </div>
+                `;
             }
 
             function updateTable(data) {
@@ -674,10 +567,10 @@ def get_original_yield_comparison_report():
                 link.click();
             }
 
-            // Force STATIC SVG chart dimensions - NO CHART.JS
+            // Force STATIC TEXT chart dimensions - NO CHART.JS, NO SVG
             function forceChartDimensions() {
-                const yearContainer = document.getElementById('yield-by-year-chart')?.parentElement;
-                const productContainer = document.getElementById('yield-by-product-chart')?.parentElement;
+                const yearContainer = document.getElementById('year-chart-static')?.parentElement;
+                const productContainer = document.getElementById('product-chart-static')?.parentElement;
                 
                 // Force STATIC container dimensions
                 if (yearContainer) {
@@ -696,24 +589,26 @@ def get_original_yield_comparison_report():
                     productContainer.style.position = 'relative';
                 }
                 
-                // Force STATIC SVG dimensions
-                const yearSvg = document.querySelector('#year-chart-static svg');
-                const productSvg = document.querySelector('#product-chart-static svg');
+                // Force STATIC TEXT dimensions
+                const yearDiv = document.getElementById('year-chart-static');
+                const productDiv = document.getElementById('product-chart-static');
                 
-                if (yearSvg) {
-                    yearSvg.style.width = STATIC_WIDTH + 'px';
-                    yearSvg.style.height = STATIC_HEIGHT + 'px';
-                    yearSvg.style.maxWidth = STATIC_WIDTH + 'px';
-                    yearSvg.style.maxHeight = STATIC_HEIGHT + 'px';
-                    yearSvg.style.display = 'block';
+                if (yearDiv) {
+                    yearDiv.style.width = '100%';
+                    yearDiv.style.height = STATIC_HEIGHT + 'px';
+                    yearDiv.style.maxWidth = '100%';
+                    yearDiv.style.maxHeight = STATIC_HEIGHT + 'px';
+                    yearDiv.style.display = 'block';
+                    yearDiv.style.overflow = 'hidden';
                 }
                 
-                if (productSvg) {
-                    productSvg.style.width = STATIC_WIDTH + 'px';
-                    productSvg.style.height = STATIC_HEIGHT + 'px';
-                    productSvg.style.maxWidth = STATIC_WIDTH + 'px';
-                    productSvg.style.maxHeight = STATIC_HEIGHT + 'px';
-                    productSvg.style.display = 'block';
+                if (productDiv) {
+                    productDiv.style.width = '100%';
+                    productDiv.style.height = STATIC_HEIGHT + 'px';
+                    productDiv.style.maxWidth = '100%';
+                    productDiv.style.maxHeight = STATIC_HEIGHT + 'px';
+                    productDiv.style.display = 'block';
+                    productDiv.style.overflow = 'hidden';
                 }
             }
 
@@ -721,12 +616,10 @@ def get_original_yield_comparison_report():
             const STATIC_WIDTH = 400;
             const STATIC_HEIGHT = 300;
 
-            // Initialize static chart containers - NO CHART.JS
+            // Initialize static chart containers - NO CHART.JS, NO SVG
             function initializeChartConstraints() {
-                const yearCanvas = document.getElementById('yield-by-year-chart');
-                const productCanvas = document.getElementById('yield-by-product-chart');
-                const yearContainer = yearCanvas ? yearCanvas.parentElement : null;
-                const productContainer = productCanvas ? productCanvas.parentElement : null;
+                const yearContainer = document.getElementById('year-chart-static')?.parentElement;
+                const productContainer = document.getElementById('product-chart-static')?.parentElement;
                 
                 // Set STATIC container constraints
                 if (yearContainer) {
@@ -745,14 +638,9 @@ def get_original_yield_comparison_report():
                     productContainer.style.position = 'relative';
                 }
                 
-                // Prepare containers for static SVG charts
-                if (yearContainer) {
-                    yearContainer.innerHTML = '<div id="year-chart-static"></div>';
-                }
-                
-                if (productContainer) {
-                    productContainer.innerHTML = '<div id="product-chart-static"></div>';
-                }
+                // Create static text charts immediately
+                createStaticYearChart({});
+                createStaticProductChart({});
             }
 
             // Load data on page load
