@@ -12,9 +12,17 @@ urlpatterns = [
     path('health/', views.simple_health, name='simple_health'),
     path('minimal/', views.minimal_health, name='minimal_health'),
     path('admin/', admin.site.urls),
+    
+    # Frontend pages
+    path('upload/', views.upload_page, name='upload_page'),
+    path('reports/', views.reports_page, name='reports_page'),
+    path('reports/yield-comparison/', views.yield_comparison_report, name='yield_comparison_report'),
+    path('data/', views.home, name='data_page'),  # Redirect to dashboard
+    
+    # API endpoints
     path('api/auth/', include('accounts.urls')),
     path('api/reports/', include('reports.urls')),
-    path('api/upload/', include('data_upload.urls')),  # Восстановлено
+    path('api/upload/', include('data_upload.urls')),
 ]
 
 if settings.DEBUG:

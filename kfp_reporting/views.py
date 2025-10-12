@@ -32,7 +32,7 @@ def home(request):
     """
     Главная страница - показывает KFP Reporting dashboard
     """
-    # Встроенный HTML dashboard
+    # Встроенный HTML dashboard с навигацией
     html_content = """
     <!DOCTYPE html>
     <html lang="ru">
@@ -52,8 +52,10 @@ def home(request):
                         <h1 class="text-gray-900 text-xl font-bold">KFP Reporting</h1>
                     </div>
                     <div class="flex items-center space-x-4">
+                        <a href="/" class="text-blue-600 hover:text-blue-800 px-3 py-2 rounded font-medium">Дашборд</a>
+                        <a href="/upload/" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded">Загрузка</a>
+                        <a href="/reports/" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded">Отчеты</a>
                         <a href="/admin/" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded">Admin</a>
-                        <a href="/api/reports/data/" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded">API</a>
                     </div>
                 </div>
             </div>
@@ -72,7 +74,7 @@ def home(request):
             <!-- Stats Cards -->
             <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
                 <!-- Всего записей -->
-                <div class="relative bg-white pt-5 px-4 pb-12 sm:pt-6 sm:px-6 shadow rounded-lg overflow-hidden cursor-pointer hover:shadow-md transition-shadow" onclick="window.location.href='/api/reports/data/'">
+                <div class="relative bg-white pt-5 px-4 pb-12 sm:pt-6 sm:px-6 shadow rounded-lg overflow-hidden cursor-pointer hover:shadow-md transition-shadow" onclick="window.location.href='/data/'">
                     <dt>
                         <div class="absolute bg-blue-500 rounded-md p-3">
                             <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -89,7 +91,7 @@ def home(request):
                 </div>
 
                 <!-- Количество полей -->
-                <div class="relative bg-white pt-5 px-4 pb-12 sm:pt-6 sm:px-6 shadow rounded-lg overflow-hidden cursor-pointer hover:shadow-md transition-shadow" onclick="window.location.href='/api/reports/field-efficiency/'">
+                <div class="relative bg-white pt-5 px-4 pb-12 sm:pt-6 sm:px-6 shadow rounded-lg overflow-hidden cursor-pointer hover:shadow-md transition-shadow" onclick="window.location.href='/reports/field-efficiency/'">
                     <dt>
                         <div class="absolute bg-green-500 rounded-md p-3">
                             <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -107,7 +109,7 @@ def home(request):
                 </div>
 
                 <!-- Конечные продукты -->
-                <div class="relative bg-white pt-5 px-4 pb-12 sm:pt-6 sm:px-6 shadow rounded-lg overflow-hidden cursor-pointer hover:shadow-md transition-shadow" onclick="window.location.href='/api/reports/variety-performance/'">
+                <div class="relative bg-white pt-5 px-4 pb-12 sm:pt-6 sm:px-6 shadow rounded-lg overflow-hidden cursor-pointer hover:shadow-md transition-shadow" onclick="window.location.href='/reports/variety-performance/'">
                     <dt>
                         <div class="absolute bg-yellow-500 rounded-md p-3">
                             <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -124,7 +126,7 @@ def home(request):
                 </div>
 
                 <!-- Сорта -->
-                <div class="relative bg-white pt-5 px-4 pb-12 sm:pt-6 sm:px-6 shadow rounded-lg overflow-hidden cursor-pointer hover:shadow-md transition-shadow" onclick="window.location.href='/api/reports/variety-performance/'">
+                <div class="relative bg-white pt-5 px-4 pb-12 sm:pt-6 sm:px-6 shadow rounded-lg overflow-hidden cursor-pointer hover:shadow-md transition-shadow" onclick="window.location.href='/reports/variety-performance/'">
                     <dt>
                         <div class="absolute bg-purple-500 rounded-md p-3">
                             <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -146,7 +148,7 @@ def home(request):
                 <h3 class="text-lg font-medium text-gray-900 mb-4">Быстрые действия</h3>
                 <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                     <!-- Загрузить файл -->
-                    <div class="relative group bg-white p-6 focus-within:ring-2 focus-within:ring-inset focus-within:ring-blue-500 rounded-lg border border-gray-200 hover:border-gray-300 cursor-pointer transition-colors" onclick="window.location.href='/api/upload/'">
+                    <div class="relative group bg-white p-6 focus-within:ring-2 focus-within:ring-inset focus-within:ring-blue-500 rounded-lg border border-gray-200 hover:border-gray-300 cursor-pointer transition-colors" onclick="window.location.href='/upload/'">
                         <div>
                             <span class="bg-blue-500 rounded-lg inline-flex p-3 ring-4 ring-white">
                                 <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -166,7 +168,7 @@ def home(request):
                     </div>
 
                     <!-- Сравнительный отчет -->
-                    <div class="relative group bg-white p-6 focus-within:ring-2 focus-within:ring-inset focus-within:ring-green-500 rounded-lg border border-gray-200 hover:border-gray-300 cursor-pointer transition-colors" onclick="window.location.href='/api/reports/yield-comparison/'">
+                    <div class="relative group bg-white p-6 focus-within:ring-2 focus-within:ring-inset focus-within:ring-green-500 rounded-lg border border-gray-200 hover:border-gray-300 cursor-pointer transition-colors" onclick="window.location.href='/reports/yield-comparison/'">
                         <div>
                             <span class="bg-green-500 rounded-lg inline-flex p-3 ring-4 ring-white">
                                 <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -186,7 +188,7 @@ def home(request):
                     </div>
 
                     <!-- Эффективность полей -->
-                    <div class="relative group bg-white p-6 focus-within:ring-2 focus-within:ring-inset focus-within:ring-blue-500 rounded-lg border border-gray-200 hover:border-gray-300 cursor-pointer transition-colors" onclick="window.location.href='/api/reports/field-efficiency/'">
+                    <div class="relative group bg-white p-6 focus-within:ring-2 focus-within:ring-inset focus-within:ring-blue-500 rounded-lg border border-gray-200 hover:border-gray-300 cursor-pointer transition-colors" onclick="window.location.href='/reports/field-efficiency/'">
                         <div>
                             <span class="bg-blue-500 rounded-lg inline-flex p-3 ring-4 ring-white">
                                 <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -207,7 +209,7 @@ def home(request):
                     </div>
 
                     <!-- Производительность сортов -->
-                    <div class="relative group bg-white p-6 focus-within:ring-2 focus-within:ring-inset focus-within:ring-purple-500 rounded-lg border border-gray-200 hover:border-gray-300 cursor-pointer transition-colors" onclick="window.location.href='/api/reports/variety-performance/'">
+                    <div class="relative group bg-white p-6 focus-within:ring-2 focus-within:ring-inset focus-within:ring-purple-500 rounded-lg border border-gray-200 hover:border-gray-300 cursor-pointer transition-colors" onclick="window.location.href='/reports/variety-performance/'">
                         <div>
                             <span class="bg-purple-500 rounded-lg inline-flex p-3 ring-4 ring-white">
                                 <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -249,6 +251,512 @@ def home(request):
 
             // Load data on page load
             loadDashboardData();
+        </script>
+    </body>
+    </html>
+    """
+    return HttpResponse(html_content, content_type="text/html")
+
+@csrf_exempt
+def upload_page(request):
+    """Страница загрузки файлов"""
+    html_content = """
+    <!DOCTYPE html>
+    <html lang="ru">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>KFP Reporting - Загрузка файлов</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+    </head>
+    <body class="bg-gray-50">
+        <!-- Header -->
+        <nav class="bg-white shadow">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="flex justify-between items-center py-4">
+                    <div class="flex items-center">
+                        <div class="text-2xl mr-3">🌾</div>
+                        <h1 class="text-gray-900 text-xl font-bold">KFP Reporting</h1>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <a href="/" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded">Дашборд</a>
+                        <a href="/upload/" class="text-blue-600 hover:text-blue-800 px-3 py-2 rounded font-medium">Загрузка</a>
+                        <a href="/reports/" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded">Отчеты</a>
+                        <a href="/admin/" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded">Admin</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="max-w-4xl mx-auto px-4 py-8">
+            <div class="mb-8">
+                <h1 class="text-2xl font-bold text-gray-900">Загрузка файлов</h1>
+                <p class="mt-1 text-sm text-gray-500">
+                    Загрузите CSV или Excel файлы с сельскохозяйственными данными
+                </p>
+            </div>
+
+            <!-- Upload Area -->
+            <div class="bg-white shadow rounded-lg p-8">
+                <div id="upload-area" class="border-2 border-dashed border-gray-300 rounded-lg p-12 text-center hover:border-blue-400 transition-colors cursor-pointer">
+                    <div class="mx-auto w-12 h-12 text-gray-400 mb-4">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">Перетащите файлы сюда</h3>
+                    <p class="text-sm text-gray-500 mb-4">или нажмите для выбора файлов</p>
+                    <input type="file" id="file-input" class="hidden" accept=".csv,.xlsx,.xls" multiple>
+                    <button onclick="document.getElementById('file-input').click()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
+                        Выбрать файлы
+                    </button>
+                </div>
+                
+                <!-- Upload Progress -->
+                <div id="upload-progress" class="mt-6 hidden">
+                    <div class="bg-blue-50 border border-blue-200 rounded-md p-4">
+                        <div class="flex items-center">
+                            <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-3"></div>
+                            <span class="text-blue-800">Загружается...</span>
+                        </div>
+                        <div class="mt-2 bg-gray-200 rounded-full h-2">
+                            <div id="progress-bar" class="bg-blue-600 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Upload Result -->
+                <div id="upload-result" class="mt-6 hidden">
+                    <div class="bg-green-50 border border-green-200 rounded-md p-4">
+                        <div class="flex items-center">
+                            <svg class="h-5 w-5 text-green-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span class="text-green-800 font-medium">Файл успешно загружен!</span>
+                        </div>
+                        <p id="result-message" class="text-green-700 text-sm mt-1"></p>
+                    </div>
+                </div>
+
+                <!-- Error Result -->
+                <div id="upload-error" class="mt-6 hidden">
+                    <div class="bg-red-50 border border-red-200 rounded-md p-4">
+                        <div class="flex items-center">
+                            <svg class="h-5 w-5 text-red-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span class="text-red-800 font-medium">Ошибка загрузки</span>
+                        </div>
+                        <p id="error-message" class="text-red-700 text-sm mt-1"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Instructions -->
+            <div class="mt-8 bg-white shadow rounded-lg p-6">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Инструкции по загрузке</h3>
+                <div class="space-y-3 text-sm text-gray-600">
+                    <p>• Поддерживаемые форматы: CSV, XLSX, XLS</p>
+                    <p>• Файл должен содержать колонки: Поле, Год, Площадь посева, Урожайность, Культура, Сорт, Конечный продукт</p>
+                    <p>• Максимальный размер файла: 10 MB</p>
+                    <p>• После загрузки данные будут автоматически обработаны и добавлены в систему</p>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            const uploadArea = document.getElementById('upload-area');
+            const fileInput = document.getElementById('file-input');
+            const progressDiv = document.getElementById('upload-progress');
+            const resultDiv = document.getElementById('upload-result');
+            const errorDiv = document.getElementById('upload-error');
+            const progressBar = document.getElementById('progress-bar');
+
+            // Drag and drop handlers
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.classList.add('border-blue-400', 'bg-blue-50');
+            });
+
+            uploadArea.addEventListener('dragleave', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('border-blue-400', 'bg-blue-50');
+            });
+
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('border-blue-400', 'bg-blue-50');
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    handleFileUpload(files[0]);
+                }
+            });
+
+            // File input handler
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    handleFileUpload(e.target.files[0]);
+                }
+            });
+
+            // Upload function
+            async function handleFileUpload(file) {
+                const formData = new FormData();
+                formData.append('file', file);
+
+                // Show progress
+                progressDiv.classList.remove('hidden');
+                resultDiv.classList.add('hidden');
+                errorDiv.classList.add('hidden');
+
+                try {
+                    const response = await fetch('/api/upload/', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    if (response.ok) {
+                        const result = await response.json();
+                        progressDiv.classList.add('hidden');
+                        resultDiv.classList.remove('hidden');
+                        document.getElementById('result-message').textContent = 
+                            `Обработано ${result.processed_rows || 0} записей`;
+                    } else {
+                        throw new Error('Ошибка загрузки файла');
+                    }
+                } catch (error) {
+                    progressDiv.classList.add('hidden');
+                    errorDiv.classList.remove('hidden');
+                    document.getElementById('error-message').textContent = error.message;
+                }
+            }
+
+            // Simulate progress
+            function simulateProgress() {
+                let width = 0;
+                const interval = setInterval(() => {
+                    width += 10;
+                    progressBar.style.width = width + '%';
+                    if (width >= 100) {
+                        clearInterval(interval);
+                    }
+                }, 200);
+            }
+        </script>
+    </body>
+    </html>
+    """
+    return HttpResponse(html_content, content_type="text/html")
+
+@csrf_exempt
+def reports_page(request):
+    """Страница отчетов"""
+    html_content = """
+    <!DOCTYPE html>
+    <html lang="ru">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>KFP Reporting - Отчеты</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+    </head>
+    <body class="bg-gray-50">
+        <!-- Header -->
+        <nav class="bg-white shadow">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="flex justify-between items-center py-4">
+                    <div class="flex items-center">
+                        <div class="text-2xl mr-3">🌾</div>
+                        <h1 class="text-gray-900 text-xl font-bold">KFP Reporting</h1>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <a href="/" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded">Дашборд</a>
+                        <a href="/upload/" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded">Загрузка</a>
+                        <a href="/reports/" class="text-blue-600 hover:text-blue-800 px-3 py-2 rounded font-medium">Отчеты</a>
+                        <a href="/admin/" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded">Admin</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="max-w-7xl mx-auto px-4 py-8">
+            <div class="mb-8">
+                <h1 class="text-2xl font-bold text-gray-900">Отчеты</h1>
+                <p class="mt-1 text-sm text-gray-500">
+                    Анализ сельскохозяйственных данных и производительности
+                </p>
+            </div>
+
+            <!-- Report Cards -->
+            <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                <!-- Yield Comparison -->
+                <div class="bg-white shadow rounded-lg p-6 cursor-pointer hover:shadow-md transition-shadow" onclick="window.location.href='/reports/yield-comparison/'">
+                    <div class="flex items-center mb-4">
+                        <div class="bg-green-100 p-3 rounded-lg mr-4">
+                            <svg class="h-6 w-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-medium text-gray-900">Сравнение урожайности</h3>
+                    </div>
+                    <p class="text-gray-600 text-sm">Сравнение урожайности по годам, культурам и сортам</p>
+                </div>
+
+                <!-- Field Efficiency -->
+                <div class="bg-white shadow rounded-lg p-6 cursor-pointer hover:shadow-md transition-shadow" onclick="window.location.href='/reports/field-efficiency/'">
+                    <div class="flex items-center mb-4">
+                        <div class="bg-blue-100 p-3 rounded-lg mr-4">
+                            <svg class="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-medium text-gray-900">Эффективность полей</h3>
+                    </div>
+                    <p class="text-gray-600 text-sm">Анализ производительности и эффективности полей</p>
+                </div>
+
+                <!-- Variety Performance -->
+                <div class="bg-white shadow rounded-lg p-6 cursor-pointer hover:shadow-md transition-shadow" onclick="window.location.href='/reports/variety-performance/'">
+                    <div class="flex items-center mb-4">
+                        <div class="bg-purple-100 p-3 rounded-lg mr-4">
+                            <svg class="h-6 w-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-medium text-gray-900">Производительность сортов</h3>
+                    </div>
+                    <p class="text-gray-600 text-sm">Сравнение производительности различных сортов</p>
+                </div>
+            </div>
+        </div>
+    </body>
+    </html>
+    """
+    return HttpResponse(html_content, content_type="text/html")
+
+@csrf_exempt
+def yield_comparison_report(request):
+    """Отчет сравнения урожайности"""
+    html_content = """
+    <!DOCTYPE html>
+    <html lang="ru">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>KFP Reporting - Сравнение урожайности</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    </head>
+    <body class="bg-gray-50">
+        <!-- Header -->
+        <nav class="bg-white shadow">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="flex justify-between items-center py-4">
+                    <div class="flex items-center">
+                        <div class="text-2xl mr-3">🌾</div>
+                        <h1 class="text-gray-900 text-xl font-bold">KFP Reporting</h1>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <a href="/" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded">Дашборд</a>
+                        <a href="/upload/" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded">Загрузка</a>
+                        <a href="/reports/" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded">Отчеты</a>
+                        <a href="/admin/" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded">Admin</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="max-w-7xl mx-auto px-4 py-8">
+            <div class="mb-8">
+                <h1 class="text-2xl font-bold text-gray-900">Сравнение урожайности</h1>
+                <p class="mt-1 text-sm text-gray-500">
+                    Анализ урожайности по различным параметрам
+                </p>
+            </div>
+
+            <!-- Filters -->
+            <div class="bg-white shadow rounded-lg p-6 mb-8">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Фильтры</h3>
+                <div class="grid grid-cols-1 gap-4 md:grid-cols-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Год</label>
+                        <select id="year-filter" class="w-full border border-gray-300 rounded-md px-3 py-2">
+                            <option value="">Все годы</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Культура</label>
+                        <select id="crop-filter" class="w-full border border-gray-300 rounded-md px-3 py-2">
+                            <option value="">Все культуры</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Поле</label>
+                        <select id="field-filter" class="w-full border border-gray-300 rounded-md px-3 py-2">
+                            <option value="">Все поля</option>
+                        </select>
+                    </div>
+                    <div class="flex items-end">
+                        <button onclick="loadReport()" class="w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
+                            Обновить отчет
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts -->
+            <div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
+                <!-- Yield by Year -->
+                <div class="bg-white shadow rounded-lg p-6">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Урожайность по годам</h3>
+                    <canvas id="yield-by-year-chart" width="400" height="300"></canvas>
+                </div>
+
+                <!-- Yield by Crop -->
+                <div class="bg-white shadow rounded-lg p-6">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Урожайность по культурам</h3>
+                    <canvas id="yield-by-crop-chart" width="400" height="300"></canvas>
+                </div>
+            </div>
+
+            <!-- Summary Table -->
+            <div class="mt-8 bg-white shadow rounded-lg p-6">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Сводная таблица</h3>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Год</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Культура</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Средняя урожайность</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Максимальная урожайность</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Количество записей</th>
+                            </tr>
+                        </thead>
+                        <tbody id="summary-table-body" class="bg-white divide-y divide-gray-200">
+                            <!-- Data will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            let yieldByYearChart, yieldByCropChart;
+
+            async function loadReport() {
+                try {
+                    const year = document.getElementById('year-filter').value;
+                    const crop = document.getElementById('crop-filter').value;
+                    const field = document.getElementById('field-filter').value;
+
+                    const params = new URLSearchParams();
+                    if (year) params.append('year', year);
+                    if (crop) params.append('crop', crop);
+                    if (field) params.append('field', field);
+
+                    const response = await fetch(`/api/reports/yield-comparison/?${params}`);
+                    const data = await response.json();
+
+                    updateCharts(data);
+                    updateTable(data);
+                } catch (error) {
+                    console.error('Error loading report:', error);
+                }
+            }
+
+            function updateCharts(data) {
+                // Yield by Year Chart
+                const yearCtx = document.getElementById('yield-by-year-chart').getContext('2d');
+                if (yieldByYearChart) yieldByYearChart.destroy();
+                
+                yieldByYearChart = new Chart(yearCtx, {
+                    type: 'line',
+                    data: {
+                        labels: data.years || [],
+                        datasets: [{
+                            label: 'Урожайность (ц/га)',
+                            data: data.yield_by_year || [],
+                            borderColor: 'rgb(34, 197, 94)',
+                            backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Урожайность (ц/га)'
+                                }
+                            }
+                        }
+                    }
+                });
+
+                // Yield by Crop Chart
+                const cropCtx = document.getElementById('yield-by-crop-chart').getContext('2d');
+                if (yieldByCropChart) yieldByCropChart.destroy();
+                
+                yieldByCropChart = new Chart(cropCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: data.crops || [],
+                        datasets: [{
+                            label: 'Урожайность (ц/га)',
+                            data: data.yield_by_crop || [],
+                            backgroundColor: [
+                                'rgba(59, 130, 246, 0.8)',
+                                'rgba(34, 197, 94, 0.8)',
+                                'rgba(251, 191, 36, 0.8)',
+                                'rgba(239, 68, 68, 0.8)',
+                                'rgba(147, 51, 234, 0.8)'
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Урожайность (ц/га)'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            function updateTable(data) {
+                const tbody = document.getElementById('summary-table-body');
+                tbody.innerHTML = '';
+
+                if (data.summary) {
+                    data.summary.forEach(row => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${row.year || '-'}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${row.crop || '-'}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${row.avg_yield?.toFixed(2) || '0.00'} ц/га</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${row.max_yield?.toFixed(2) || '0.00'} ц/га</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${row.count || 0}</td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                }
+            }
+
+            // Load initial data
+            loadReport();
         </script>
     </body>
     </html>
