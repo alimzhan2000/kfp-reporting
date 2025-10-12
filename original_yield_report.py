@@ -13,7 +13,15 @@ def get_original_yield_comparison_report():
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>KFP Reporting - Сравнение урожайности</title>
         <script src="https://cdn.tailwindcss.com"></script>
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <!-- Chart.js REMOVED - Using static SVG only -->
+        <script>
+            // BLOCK ALL CHART LIBRARIES
+            window.Chart = null;
+            window.ChartJS = null;
+            window.Recharts = null;
+            window.D3 = null;
+            window.Plotly = null;
+        </script>
         <style>
             /* STATIC DIMENSIONS - NO STRETCHING ALLOWED */
             * {
@@ -401,7 +409,7 @@ def get_original_yield_comparison_report():
         </div>
 
         <script>
-            let yieldByYearChart, yieldByProductChart;
+            // Chart.js variables removed - using static SVG only
 
             async function loadReport() {
                 // DO NOTHING - COMPLETELY DISABLE REPORT LOADING
@@ -838,6 +846,22 @@ def get_original_yield_comparison_report():
                         element.ontouchmove = null;
                         element.ontouchend = null;
                     });
+                    
+                    // REMOVE ALL TOOLTIP ELEMENTS
+                    const tooltips = document.querySelectorAll('.tooltip, .chartjs-tooltip, [class*="tooltip"], [id*="tooltip"]');
+                    tooltips.forEach(tooltip => {
+                        tooltip.remove();
+                    });
+                    
+                    // BLOCK ALL CHART LIBRARIES FROM LOADING
+                    if (window.Chart) {
+                        window.Chart = null;
+                        delete window.Chart;
+                    }
+                    if (window.ChartJS) {
+                        window.ChartJS = null;
+                        delete window.ChartJS;
+                    }
                 }, 100);
             });
             
