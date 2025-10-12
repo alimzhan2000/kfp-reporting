@@ -69,6 +69,19 @@ def get_variety_performance_report():
                 max-width: 100% !important;
                 height: auto !important;
             }
+            
+            /* Prevent chart containers from expanding */
+            .bg-white.shadow.rounded-lg.p-6 {
+                overflow: hidden;
+                position: relative;
+            }
+            
+            /* Force chart canvas to stay within bounds */
+            #variety-performance-chart,
+            #variety-by-product-chart {
+                max-width: 100% !important;
+                max-height: 400px !important;
+            }
         </style>
     </head>
     <body class="bg-gray-50">
@@ -318,6 +331,33 @@ def get_variety_performance_report():
                             legend: {
                                 display: true,
                                 position: 'top'
+                            },
+                            tooltip: {
+                                enabled: true,
+                                mode: 'nearest',
+                                intersect: true,
+                                position: 'average',
+                                callbacks: {
+                                    title: function(context) {
+                                        let label = context[0].label || '';
+                                        // Truncate long labels in tooltip
+                                        if (label.length > 40) {
+                                            return label.substring(0, 37) + '...';
+                                        }
+                                        return label;
+                                    }
+                                },
+                                bodyFont: {
+                                    size: 12
+                                },
+                                titleFont: {
+                                    size: 12
+                                },
+                                boxPadding: 4,
+                                padding: 8,
+                                displayColors: true,
+                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                maxWidth: 300
                             }
                         }
                     }
@@ -360,7 +400,55 @@ def get_variety_performance_report():
                         plugins: {
                             legend: {
                                 display: true,
-                                position: 'bottom'
+                                position: 'bottom',
+                                labels: {
+                                    boxWidth: 12,
+                                    padding: 8,
+                                    font: {
+                                        size: 11
+                                    },
+                                    generateLabels: function(chart) {
+                                        const data = chart.data;
+                                        if (data.labels.length && data.datasets.length) {
+                                            return data.labels.map((label, i) => {
+                                                // Truncate long labels in legend
+                                                let truncatedLabel = label;
+                                                if (label.length > 25) {
+                                                    truncatedLabel = label.substring(0, 22) + '...';
+                                                }
+                                                return {
+                                                    text: truncatedLabel,
+                                                    fillStyle: data.datasets[0].backgroundColor[i],
+                                                    hidden: false,
+                                                    index: i
+                                                };
+                                            });
+                                        }
+                                        return [];
+                                    }
+                                }
+                            },
+                            tooltip: {
+                                enabled: true,
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.label || '';
+                                        // Truncate long labels in tooltip
+                                        if (label.length > 30) {
+                                            label = label.substring(0, 27) + '...';
+                                        }
+                                        if (context.parsed !== null) {
+                                            label += ': ' + context.parsed;
+                                        }
+                                        return label;
+                                    }
+                                },
+                                bodyFont: {
+                                    size: 12
+                                },
+                                padding: 8,
+                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                maxWidth: 250
                             }
                         }
                     }

@@ -68,6 +68,19 @@ def get_field_efficiency_report():
                 max-width: 100% !important;
                 height: auto !important;
             }
+            
+            /* Prevent chart containers from expanding */
+            .bg-white.shadow.rounded-lg.p-6 {
+                overflow: hidden;
+                position: relative;
+            }
+            
+            /* Force chart canvas to stay within bounds */
+            #field-efficiency-chart,
+            #area-yield-chart {
+                max-width: 100% !important;
+                max-height: 400px !important;
+            }
         </style>
     </head>
     <body class="bg-gray-50">
@@ -301,6 +314,30 @@ def get_field_efficiency_report():
                             legend: {
                                 display: true,
                                 position: 'top'
+                            },
+                            tooltip: {
+                                enabled: true,
+                                mode: 'nearest',
+                                intersect: true,
+                                callbacks: {
+                                    title: function(context) {
+                                        let label = context[0].label || '';
+                                        // Truncate long labels in tooltip
+                                        if (label.length > 40) {
+                                            return label.substring(0, 37) + '...';
+                                        }
+                                        return label;
+                                    }
+                                },
+                                bodyFont: {
+                                    size: 12
+                                },
+                                titleFont: {
+                                    size: 12
+                                },
+                                padding: 8,
+                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                maxWidth: 300
                             }
                         }
                     }
@@ -342,6 +379,20 @@ def get_field_efficiency_report():
                             legend: {
                                 display: true,
                                 position: 'top'
+                            },
+                            tooltip: {
+                                enabled: true,
+                                callbacks: {
+                                    label: function(context) {
+                                        return 'Площадь: ' + context.parsed.x.toFixed(1) + ' га, Урожайность: ' + context.parsed.y.toFixed(1) + ' ц/га';
+                                    }
+                                },
+                                bodyFont: {
+                                    size: 12
+                                },
+                                padding: 8,
+                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                maxWidth: 300
                             }
                         }
                     }
