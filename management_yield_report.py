@@ -23,20 +23,20 @@ def get_management_yield_comparison_report():
             /* Chart container constraints */
             .chart-container {
                 position: relative;
-                width: 400px !important;
-                height: 300px !important;
-                max-width: 400px !important;
-                max-height: 300px !important;
+                width: 100% !important;
+                height: 400px !important;
+                max-width: 100% !important;
+                max-height: 400px !important;
                 overflow: hidden !important;
                 margin: 0 auto;
             }
             
             /* Canvas constraints */
             canvas {
-                width: 400px !important;
-                height: 300px !important;
-                max-width: 400px !important;
-                max-height: 300px !important;
+                width: 100% !important;
+                height: 400px !important;
+                max-width: 100% !important;
+                max-height: 400px !important;
                 display: block !important;
                 position: relative !important;
                 transform: none !important;
@@ -47,15 +47,19 @@ def get_management_yield_comparison_report():
             canvas:hover, canvas:focus, canvas:active {
                 transform: none !important;
                 scale: 1 !important;
-                width: 400px !important;
-                height: 300px !important;
-                max-width: 400px !important;
-                max-height: 300px !important;
+                width: 100% !important;
+                height: 400px !important;
+                max-width: 100% !important;
+                max-height: 400px !important;
             }
             
-            /* Disable all interactions that could cause stretching */
-            .chart-container * {
-                pointer-events: none !important;
+            /* Allow tooltip interactions but prevent stretching */
+            .chart-container {
+                pointer-events: auto !important;
+            }
+            
+            canvas {
+                pointer-events: auto !important;
                 user-select: none !important;
                 -webkit-user-select: none !important;
                 -moz-user-select: none !important;
@@ -192,7 +196,7 @@ def get_management_yield_comparison_report():
                         </div>
                     </div>
                 <div style="position: relative; width: 100%; height: 400px; max-width: 100%; overflow: hidden;">
-                    <canvas id="yield-by-year-chart" width="400" height="300" style="width: 400px !important; height: 300px !important; max-width: 400px !important; max-height: 300px !important; display: block !important;"></canvas>
+                    <canvas id="yield-by-year-chart" width="800" height="400" style="width: 100% !important; height: 400px !important; max-width: 100% !important; max-height: 400px !important; display: block !important;"></canvas>
                 </div>
                 </div>
 
@@ -209,7 +213,7 @@ def get_management_yield_comparison_report():
                         </div>
                     </div>
                 <div style="position: relative; width: 100%; height: 400px; max-width: 100%; overflow: hidden;">
-                    <canvas id="yield-by-product-chart" width="400" height="300" style="width: 400px !important; height: 300px !important; max-width: 400px !important; max-height: 300px !important; display: block !important;"></canvas>
+                    <canvas id="yield-by-product-chart" width="800" height="400" style="width: 100% !important; height: 400px !important; max-width: 100% !important; max-height: 400px !important; display: block !important;"></canvas>
                 </div>
                 </div>
             </div>
@@ -362,7 +366,14 @@ def get_management_yield_comparison_report():
                                 position: 'top'
                             },
                             tooltip: {
-                                enabled: false
+                                enabled: true,
+                                mode: 'index',
+                                intersect: false,
+                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                titleColor: 'white',
+                                bodyColor: 'white',
+                                borderColor: 'rgba(255, 255, 255, 0.2)',
+                                borderWidth: 1
                             }
                         },
                         scales: {
@@ -382,12 +393,12 @@ def get_management_yield_comparison_report():
                             mode: 'index'
                         },
                         onHover: function(event, elements) {
-                            // Prevent any hover effects that could cause stretching
-                            return;
+                            // Allow tooltips but prevent stretching
+                            event.target.style.cursor = 'pointer';
                         },
                         onClick: function(event, elements) {
-                            // Prevent any click effects
-                            return false;
+                            // Allow clicks for tooltips
+                            return true;
                         }
                     }
                 });
@@ -433,7 +444,14 @@ def get_management_yield_comparison_report():
                                 position: 'top'
                             },
                             tooltip: {
-                                enabled: false
+                                enabled: true,
+                                mode: 'index',
+                                intersect: false,
+                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                titleColor: 'white',
+                                bodyColor: 'white',
+                                borderColor: 'rgba(255, 255, 255, 0.2)',
+                                borderWidth: 1
                             }
                         },
                         scales: {
@@ -453,12 +471,12 @@ def get_management_yield_comparison_report():
                             mode: 'index'
                         },
                         onHover: function(event, elements) {
-                            // Prevent any hover effects that could cause stretching
-                            return;
+                            // Allow tooltips but prevent stretching
+                            event.target.style.cursor = 'pointer';
                         },
                         onClick: function(event, elements) {
-                            // Prevent any click effects
-                            return false;
+                            // Allow clicks for tooltips
+                            return true;
                         }
                     }
                 });
