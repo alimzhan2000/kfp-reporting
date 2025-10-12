@@ -18,6 +18,7 @@ def get_original_yield_comparison_report():
             /* Prevent page stretching */
             body {
                 overflow-x: hidden;
+                max-width: 100vw;
             }
             
             .max-w-7xl {
@@ -28,23 +29,51 @@ def get_original_yield_comparison_report():
             .bg-white.shadow.rounded-lg.p-6 {
                 overflow: hidden;
                 position: relative;
+                max-width: 100%;
+                width: 100%;
+            }
+            
+            /* Specific chart container styles */
+            #yield-by-year-chart, #yield-by-product-chart {
+                max-width: 100% !important;
+                max-height: 400px !important;
+                width: 100% !important;
+                height: 400px !important;
             }
             
             /* Ensure charts don't overflow */
             canvas {
                 max-width: 100% !important;
                 max-height: 400px !important;
+                width: 100% !important;
+                height: 400px !important;
             }
             
             /* Prevent chart containers from expanding */
             #charts-container {
                 max-width: 100%;
                 overflow: hidden;
+                width: 100%;
             }
             
             /* Ensure responsive behavior */
             .grid.grid-cols-1.gap-8.lg\\:grid-cols-2 {
                 max-width: 100%;
+                width: 100%;
+            }
+            
+            /* Additional constraints for chart wrappers */
+            .chart-wrapper {
+                max-width: 100%;
+                overflow: hidden;
+                position: relative;
+            }
+            
+            /* Prevent tooltip overflow */
+            .chartjs-tooltip {
+                max-width: 300px !important;
+                word-wrap: break-word;
+                overflow-wrap: break-word;
             }
         </style>
     </head>
@@ -123,7 +152,7 @@ def get_original_yield_comparison_report():
             <!-- Charts -->
             <div id="charts-container" class="grid grid-cols-1 gap-8 lg:grid-cols-2">
                 <!-- Yield by Year -->
-                <div class="bg-white shadow rounded-lg p-6">
+                <div class="bg-white shadow rounded-lg p-6 chart-wrapper">
                     <div class="flex items-center justify-between mb-4">
                         <h3 class="text-lg font-medium text-gray-900">Урожайность по годам</h3>
                         <div class="flex space-x-2">
@@ -138,7 +167,7 @@ def get_original_yield_comparison_report():
                 </div>
 
                 <!-- Yield by Product -->
-                <div class="bg-white shadow rounded-lg p-6">
+                <div class="bg-white shadow rounded-lg p-6 chart-wrapper">
                     <div class="flex items-center justify-between mb-4">
                         <h3 class="text-lg font-medium text-gray-900">Урожайность по продуктам</h3>
                         <div class="flex space-x-2">
@@ -367,6 +396,26 @@ def get_original_yield_comparison_report():
                         }
                     }
                 });
+                
+                // Force chart dimensions after creation
+                setTimeout(() => {
+                    const yearCanvas = document.getElementById('yield-by-year-chart');
+                    const productCanvas = document.getElementById('yield-by-product-chart');
+                    
+                    if (yearCanvas) {
+                        yearCanvas.style.maxWidth = '100%';
+                        yearCanvas.style.maxHeight = '400px';
+                        yearCanvas.style.width = '100%';
+                        yearCanvas.style.height = '400px';
+                    }
+                    
+                    if (productCanvas) {
+                        productCanvas.style.maxWidth = '100%';
+                        productCanvas.style.maxHeight = '400px';
+                        productCanvas.style.width = '100%';
+                        productCanvas.style.height = '400px';
+                    }
+                }, 100);
             }
 
             function updateTable(data) {
@@ -451,9 +500,37 @@ def get_original_yield_comparison_report():
                 link.click();
             }
 
+            // Force chart dimensions function
+            function forceChartDimensions() {
+                const yearCanvas = document.getElementById('yield-by-year-chart');
+                const productCanvas = document.getElementById('yield-by-product-chart');
+                
+                if (yearCanvas) {
+                    yearCanvas.style.maxWidth = '100%';
+                    yearCanvas.style.maxHeight = '400px';
+                    yearCanvas.style.width = '100%';
+                    yearCanvas.style.height = '400px';
+                }
+                
+                if (productCanvas) {
+                    productCanvas.style.maxWidth = '100%';
+                    productCanvas.style.maxHeight = '400px';
+                    productCanvas.style.width = '100%';
+                    productCanvas.style.height = '400px';
+                }
+            }
+
             // Load data on page load
             document.addEventListener('DOMContentLoaded', function() {
                 loadReport();
+                
+                // Force dimensions on load
+                setTimeout(forceChartDimensions, 200);
+            });
+            
+            // Force dimensions on window resize
+            window.addEventListener('resize', function() {
+                setTimeout(forceChartDimensions, 100);
             });
         </script>
     </body>
