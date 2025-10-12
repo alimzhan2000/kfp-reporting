@@ -16,6 +16,7 @@ import os
 from simple_test import SimpleFileTestView
 from simple_test_view import simple_test_page
 from ultra_simple_test import UltraSimpleTestView
+from no_pandas_test import NoPandasTestView
 from .models import DataUpload
 from .serializers import DataUploadSerializer
 from .services import DataProcessingService

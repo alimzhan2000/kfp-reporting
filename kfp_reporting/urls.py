@@ -18,6 +18,7 @@ urlpatterns = [
     path('upload-test/', views.test_upload_page, name='test_upload_page'),
     path('simple-test/', views.simple_test_page, name='simple_test_page'),
     path('ultra-test/', views.ultra_simple_test_page, name='ultra_simple_test_page'),
+    path('no-pandas-test/', views.no_pandas_test_page, name='no_pandas_test_page'),
     path('reports/', views.reports_page, name='reports_page'),
     path('reports/yield-comparison/', views.yield_comparison_report, name='yield_comparison_report'),
     path('data/', views.home, name='data_page'),  # Redirect to dashboard

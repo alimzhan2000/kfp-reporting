@@ -3,6 +3,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from simple_test_view import simple_test_page
 from ultra_simple_view import ultra_simple_test_page
+from no_pandas_view import no_pandas_test_page
 
 @csrf_exempt
 def health_check(request):
