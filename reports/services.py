@@ -205,12 +205,13 @@ class ReportService:
         # Группировка по конечному продукту и сортам
         variety_data = queryset.values('final_product', 'variety').annotate(
             avg_yield=Avg('yield_per_hectare'),
+            max_yield=Max('yield_per_hectare'),
             total_area=Sum('planting_area'),
             total_yield=Sum('planting_area') * Avg('yield_per_hectare'),
-            field_count=Count('field_name', distinct=True),
+            fields=Count('field_name', distinct=True),
             year_count=Count('year', distinct=True),
-            record_count=Count('id')
-        ).order_by('final_product', '-avg_yield')
+            count=Count('id')
+        ).order_by('-avg_yield')
         
         # Группировка по конечному продукту для сравнения
         product_summary = queryset.values('final_product').annotate(

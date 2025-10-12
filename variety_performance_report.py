@@ -460,21 +460,39 @@ def get_variety_performance_report():
                 tbody.innerHTML = '';
 
                 if (data.variety_data && data.variety_data.length > 0) {
-                    data.variety_data.forEach((row, index) => {
+                    // Сортируем данные по урожайности (по убыванию)
+                    const sortedData = [...data.variety_data].sort((a, b) => {
+                        const yieldA = parseFloat(a.avg_yield) || 0;
+                        const yieldB = parseFloat(b.avg_yield) || 0;
+                        return yieldB - yieldA;
+                    });
+
+                    sortedData.forEach((row, index) => {
                         const tr = document.createElement('tr');
                         tr.className = 'hover:bg-gray-50';
                         
-                        // Определяем рейтинг
+                        // Определяем рейтинг на основе реальных значений урожайности
                         let rating = '';
                         let ratingClass = '';
-                        if (index < 3) {
-                            rating = `${index + 1} место`;
-                            ratingClass = index === 0 ? 'text-yellow-600 bg-yellow-100' : 
-                                         index === 1 ? 'text-gray-600 bg-gray-100' : 
-                                         'text-orange-600 bg-orange-100';
+                        const avgYield = parseFloat(row.avg_yield) || 0;
+                        
+                        if (avgYield > 0) {
+                            if (index === 0) {
+                                rating = '1 место';
+                                ratingClass = 'text-yellow-600 bg-yellow-100';
+                            } else if (index === 1) {
+                                rating = '2 место';
+                                ratingClass = 'text-gray-600 bg-gray-100';
+                            } else if (index === 2) {
+                                rating = '3 место';
+                                ratingClass = 'text-orange-600 bg-orange-100';
+                            } else {
+                                rating = 'Хороший';
+                                ratingClass = 'text-green-600 bg-green-100';
+                            }
                         } else {
-                            rating = 'Средний';
-                            ratingClass = 'text-blue-600 bg-blue-100';
+                            rating = 'Нет данных';
+                            ratingClass = 'text-gray-500 bg-gray-100';
                         }
                         
                         tr.innerHTML = `
