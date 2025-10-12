@@ -20,37 +20,50 @@ def get_management_yield_comparison_report():
                 overflow-x: hidden;
             }
             
-            /* Chart container constraints */
+            /* Chart container constraints - FORCE STATIC SIZES */
             .chart-container {
-                position: relative;
+                position: relative !important;
                 width: 100% !important;
                 height: 400px !important;
                 max-width: 100% !important;
                 max-height: 400px !important;
+                min-width: 100% !important;
+                min-height: 400px !important;
                 overflow: hidden !important;
                 margin: 0 auto;
+                box-sizing: border-box !important;
             }
             
-            /* Canvas constraints */
+            /* Canvas constraints - ABSOLUTE STATIC SIZES */
             canvas {
                 width: 100% !important;
                 height: 400px !important;
                 max-width: 100% !important;
                 max-height: 400px !important;
+                min-width: 100% !important;
+                min-height: 400px !important;
                 display: block !important;
                 position: relative !important;
                 transform: none !important;
                 scale: 1 !important;
+                box-sizing: border-box !important;
+                flex-shrink: 0 !important;
+                flex-grow: 0 !important;
             }
             
-            /* Prevent any stretching on hover or focus */
-            canvas:hover, canvas:focus, canvas:active {
+            /* ABSOLUTE PREVENTION of any size changes */
+            canvas:hover, canvas:focus, canvas:active, canvas:visited {
                 transform: none !important;
                 scale: 1 !important;
                 width: 100% !important;
                 height: 400px !important;
                 max-width: 100% !important;
                 max-height: 400px !important;
+                min-width: 100% !important;
+                min-height: 400px !important;
+                box-sizing: border-box !important;
+                flex-shrink: 0 !important;
+                flex-grow: 0 !important;
             }
             
             /* Allow tooltip interactions but prevent stretching */
@@ -360,6 +373,8 @@ def get_management_yield_comparison_report():
                     options: {
                         responsive: false,
                         maintainAspectRatio: false,
+                        devicePixelRatio: 1,
+                        resizeDelay: 0,
                         plugins: {
                             legend: {
                                 display: true,
@@ -402,6 +417,9 @@ def get_management_yield_comparison_report():
                         }
                     }
                 });
+                
+                // Force dimensions after chart creation
+                setTimeout(forceStaticChartDimensions, 50);
 
                 // Yield by Product Chart with strict size limits
                 const productCtx = document.getElementById('yield-by-product-chart').getContext('2d');
@@ -438,6 +456,8 @@ def get_management_yield_comparison_report():
                     options: {
                         responsive: false,
                         maintainAspectRatio: false,
+                        devicePixelRatio: 1,
+                        resizeDelay: 0,
                         plugins: {
                             legend: {
                                 display: true,
@@ -480,6 +500,9 @@ def get_management_yield_comparison_report():
                         }
                     }
                 });
+                
+                // Force dimensions after chart creation
+                setTimeout(forceStaticChartDimensions, 50);
             }
 
             function updateVarietyTable(data) {
@@ -607,8 +630,49 @@ def get_management_yield_comparison_report():
                 link.click();
             }
 
+            // Force chart dimensions to be static
+            function forceStaticChartDimensions() {
+                const yearChart = document.getElementById('yield-by-year-chart');
+                const productChart = document.getElementById('yield-by-product-chart');
+                
+                if (yearChart) {
+                    yearChart.style.width = '100%';
+                    yearChart.style.height = '400px';
+                    yearChart.style.maxWidth = '100%';
+                    yearChart.style.maxHeight = '400px';
+                    yearChart.style.minWidth = '100%';
+                    yearChart.style.minHeight = '400px';
+                }
+                
+                if (productChart) {
+                    productChart.style.width = '100%';
+                    productChart.style.height = '400px';
+                    productChart.style.maxWidth = '100%';
+                    productChart.style.maxHeight = '400px';
+                    productChart.style.minWidth = '100%';
+                    productChart.style.minHeight = '400px';
+                }
+            }
+            
+            // Monitor and force dimensions continuously
+            function startDimensionMonitoring() {
+                setInterval(forceStaticChartDimensions, 100);
+                
+                // Force dimensions on any resize
+                window.addEventListener('resize', forceStaticChartDimensions);
+                
+                // Force dimensions on any scroll
+                window.addEventListener('scroll', forceStaticChartDimensions);
+                
+                // Force dimensions on any mouse move
+                document.addEventListener('mousemove', forceStaticChartDimensions);
+            }
+
             // Load data on page load
             document.addEventListener('DOMContentLoaded', function() {
+                // Start dimension monitoring
+                startDimensionMonitoring();
+                
                 // Load report data
                 loadReport();
             });
