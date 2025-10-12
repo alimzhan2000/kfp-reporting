@@ -27,7 +27,6 @@ class AgriculturalDataListView(ListAPIView):
 
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
 def yield_comparison_report(request):
     """
     Сравнительный отчет по урожайности
@@ -116,7 +115,6 @@ def report_templates(request):
 
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
 def dashboard_stats(request):
     """
     Статистика для дашборда
