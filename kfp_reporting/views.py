@@ -12,6 +12,8 @@ from original_yield_report import get_original_yield_comparison_report
 from management_yield_report import get_management_yield_comparison_report
 from field_efficiency_report import get_field_efficiency_report
 from variety_performance_report import get_variety_performance_report
+from login_page import get_login_page
+from dashboard_with_auth import get_dashboard_with_auth
 
 @csrf_exempt
 def health_check(request):
@@ -41,9 +43,16 @@ def minimal_health(request):
 @csrf_exempt
 def home(request):
     """
-    Главная страница - показывает KFP Reporting dashboard с оригинальным дизайном
+    Главная страница - показывает KFP Reporting dashboard с авторизацией
     """
-    return HttpResponse(get_original_dashboard(), content_type="text/html")
+    return HttpResponse(get_dashboard_with_auth(), content_type="text/html")
+
+@csrf_exempt
+def login_page(request):
+    """
+    Страница авторизации
+    """
+    return HttpResponse(get_login_page(), content_type="text/html")
 
 @csrf_exempt
 def upload_page(request):
