@@ -332,6 +332,8 @@ def get_management_yield_comparison_report():
                     
                     const data = await response.json();
                     console.log('Received data:', data);
+                    console.log('Products:', data.products);
+                    console.log('Yield by product:', data.yield_by_product);
 
                     updateCharts(data); // ENABLED - STATIC SVG CHARTS
                     updateVarietyTable(data);
@@ -384,11 +386,27 @@ def get_management_yield_comparison_report():
                                 enabled: true,
                                 mode: 'index',
                                 intersect: false,
-                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                backgroundColor: 'rgba(0, 0, 0, 0.9)',
                                 titleColor: 'white',
                                 bodyColor: 'white',
-                                borderColor: 'rgba(255, 255, 255, 0.2)',
-                                borderWidth: 1
+                                borderColor: 'rgba(255, 255, 255, 0.3)',
+                                borderWidth: 1,
+                                cornerRadius: 6,
+                                displayColors: true,
+                                callbacks: {
+                                    title: function(context) {
+                                        return context[0].label || '';
+                                    },
+                                    label: function(context) {
+                                        const label = context.dataset.label || '';
+                                        const value = context.parsed.y || context.parsed;
+                                        // For bar chart, show product name and yield
+                                        if (context.chart.config.type === 'bar') {
+                                            return `${context.label}: ${value.toFixed(1)} ц/га`;
+                                        }
+                                        return `${label}: ${value.toFixed(1)} ц/га`;
+                                    }
+                                }
                             }
                         },
                         scales: {
@@ -467,11 +485,27 @@ def get_management_yield_comparison_report():
                                 enabled: true,
                                 mode: 'index',
                                 intersect: false,
-                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                backgroundColor: 'rgba(0, 0, 0, 0.9)',
                                 titleColor: 'white',
                                 bodyColor: 'white',
-                                borderColor: 'rgba(255, 255, 255, 0.2)',
-                                borderWidth: 1
+                                borderColor: 'rgba(255, 255, 255, 0.3)',
+                                borderWidth: 1,
+                                cornerRadius: 6,
+                                displayColors: true,
+                                callbacks: {
+                                    title: function(context) {
+                                        return context[0].label || '';
+                                    },
+                                    label: function(context) {
+                                        const label = context.dataset.label || '';
+                                        const value = context.parsed.y || context.parsed;
+                                        // For bar chart, show product name and yield
+                                        if (context.chart.config.type === 'bar') {
+                                            return `${context.label}: ${value.toFixed(1)} ц/га`;
+                                        }
+                                        return `${label}: ${value.toFixed(1)} ц/га`;
+                                    }
+                                }
                             }
                         },
                         scales: {
