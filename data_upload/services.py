@@ -31,16 +31,27 @@ class DataProcessingService:
         Обработка загруженного файла
         """
         try:
+            print(f"🔧 Processing file: {file_path}")
             upload_instance.status = 'processing'
             upload_instance.save()
             
             # Определяем тип файла и читаем данные
             if file_path.endswith('.csv'):
+                print("📄 Reading CSV file...")
                 df = cls._read_csv_with_quotes(file_path)
             elif file_path.endswith(('.xlsx', '.xls')):
-                df = cls._read_excel_with_header_detection(file_path)
+                print("📊 Reading Excel file...")
+                try:
+                    df = cls._read_excel_with_header_detection(file_path)
+                except Exception as e:
+                    print(f"⚠️ Header detection failed, trying simple read: {e}")
+                    # Fallback: попробуем простое чтение с разными строками заголовков
+                    df = cls._read_excel_simple_fallback(file_path)
             else:
                 raise ValueError('Неподдерживаемый формат файла')
+            
+            print(f"✅ File read successfully. Shape: {df.shape}")
+            print(f"📋 Columns: {list(df.columns)}")
             
             # Проверяем наличие необходимых колонок
             missing_columns = [col for col in cls.REQUIRED_COLUMNS if col not in df.columns]
@@ -70,6 +81,10 @@ class DataProcessingService:
             return True, f'Обработано {len(df)} записей'
             
         except Exception as e:
+            print(f"❌ Error processing file: {str(e)}")
+            import traceback
+            traceback.print_exc()
+            
             upload_instance.status = 'failed'
             upload_instance.error_message = str(e)
             upload_instance.completed_at = timezone.now()
@@ -140,17 +155,25 @@ class DataProcessingService:
         """
         Читает Excel файл с автоматическим определением строки заголовков
         """
+        print(f"🔍 Detecting headers in Excel file: {file_path}")
+        
         # Сначала читаем файл без заголовков, чтобы найти строку с заголовками
         df_raw = pd.read_excel(file_path, header=None)
+        print(f"📊 Raw file shape: {df_raw.shape}")
         
         # Ищем строку, которая содержит все обязательные колонки
         header_row = None
+        print(f"🔎 Searching for required columns: {cls.REQUIRED_COLUMNS}")
+        
         for i in range(min(30, len(df_raw))):  # Увеличили до 30 строк
             row_values = [str(val) for val in df_raw.iloc[i].values if val is not None and str(val).strip()]
             # Проверяем, содержит ли строка все обязательные колонки
             if all(col in row_values for col in cls.REQUIRED_COLUMNS):
                 header_row = i
+                print(f"✅ Found headers in row {i}: {row_values}")
                 break
+            elif row_values:  # Логируем только непустые строки
+                print(f"❌ Row {i}: {row_values[:5]}... (missing required columns)")
         
         if header_row is None:
             # Если не нашли строку с заголовками, пробуем стандартное чтение
@@ -173,6 +196,39 @@ class DataProcessingService:
             return df
         except Exception as e:
             raise ValueError(f'Ошибка при чтении Excel файла с заголовками в строке {header_row}: {str(e)}')
+    
+    @classmethod
+    def _read_excel_simple_fallback(cls, file_path):
+        """
+        Простой fallback метод для чтения Excel файлов
+        """
+        print("🔄 Trying simple Excel reading fallback...")
+        
+        # Пробуем разные строки заголовков
+        for header_row in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]:
+            try:
+                print(f"📊 Trying header row {header_row}...")
+                df = pd.read_excel(file_path, header=header_row)
+                
+                # Проверяем, есть ли нужные колонки
+                if any(col in df.columns for col in cls.REQUIRED_COLUMNS):
+                    print(f"✅ Success with header row {header_row}")
+                    print(f"📋 Columns: {list(df.columns)}")
+                    return df
+                    
+            except Exception as e:
+                print(f"❌ Failed with header row {header_row}: {e}")
+                continue
+        
+        # Если ничего не сработало, пробуем стандартное чтение
+        print("🔄 Trying standard Excel reading...")
+        try:
+            df = pd.read_excel(file_path)
+            print(f"✅ Standard reading successful")
+            print(f"📋 Columns: {list(df.columns)}")
+            return df
+        except Exception as e:
+            raise ValueError(f'Не удалось прочитать Excel файл: {str(e)}')
     
     @classmethod
     def _normalize_data(cls, df):
