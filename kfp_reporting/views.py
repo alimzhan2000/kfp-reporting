@@ -421,9 +421,10 @@ def upload_page(request):
                         progressDiv.classList.add('hidden');
                         resultDiv.classList.remove('hidden');
                         document.getElementById('result-message').textContent = 
-                            `Обработано ${result.processed_rows || 0} записей`;
+                            `Обработано ${result.upload?.records_processed || 0} записей. Создано: ${result.upload?.records_created || 0}, Обновлено: ${result.upload?.records_updated || 0}`;
                     } else {
-                        throw new Error('Ошибка загрузки файла');
+                        const errorData = await response.json();
+                        throw new Error(errorData.error || 'Ошибка загрузки файла');
                     }
                 } catch (error) {
                     progressDiv.classList.add('hidden');

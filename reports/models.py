@@ -29,7 +29,7 @@ class AgriculturalData(models.Model):
     # Дополнительные поля для отслеживания
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='Дата обновления')
-    uploaded_by = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Загружено пользователем')
+    uploaded_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, verbose_name='Загружено пользователем')
     
     class Meta:
         verbose_name = 'Сельскохозяйственные данные'

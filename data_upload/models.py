@@ -23,7 +23,7 @@ class DataUpload(models.Model):
     records_created = models.IntegerField(default=0, verbose_name='Создано записей')
     records_updated = models.IntegerField(default=0, verbose_name='Обновлено записей')
     error_message = models.TextField(blank=True, verbose_name='Сообщение об ошибке')
-    uploaded_by = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Загружено пользователем')
+    uploaded_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, verbose_name='Загружено пользователем')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата загрузки')
     completed_at = models.DateTimeField(null=True, blank=True, verbose_name='Дата завершения')
     

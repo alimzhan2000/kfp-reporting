@@ -23,7 +23,7 @@ class FileUploadView(APIView):
     API для загрузки файлов
     """
     parser_classes = (MultiPartParser, FormParser)
-    permission_classes = [IsAuthenticated]
+    permission_classes = []  # Убираем требование аутентификации
     
     def post(self, request, format=None):
         """
@@ -54,12 +54,12 @@ class FileUploadView(APIView):
                 ContentFile(uploaded_file.read())
             )
             
-            # Создаем запись о загрузке
+            # Создаем запись о загрузке (без пользователя для простоты)
             upload_instance = DataUpload.objects.create(
                 file_name=uploaded_file.name,
                 file_path=file_path,
                 file_size=uploaded_file.size,
-                uploaded_by=request.user
+                uploaded_by=None  # Убираем привязку к пользователю
             )
             
             # Обрабатываем файл

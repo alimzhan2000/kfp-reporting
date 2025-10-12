@@ -57,7 +57,7 @@ class DataProcessingService:
             df = cls._normalize_data(df)
             
             # Сохраняем данные в базу
-            records_created, records_updated = cls._save_to_database(df, upload_instance.uploaded_by)
+            records_created, records_updated = cls._save_to_database(df, None)
             
             # Обновляем статистику
             upload_instance.records_processed = len(df)
@@ -200,7 +200,7 @@ class DataProcessingService:
                     'planting_area': float(row['Площадь посева']),
                     'yield_per_hectare': float(row['Урожайность, ц/га']),
                     'final_product': row['Конечный продукт'],
-                    'uploaded_by': uploaded_by,
+                    'uploaded_by': uploaded_by,  # Может быть None
                 }
                 
                 # Добавляем дополнительные поля, если они есть в данных
