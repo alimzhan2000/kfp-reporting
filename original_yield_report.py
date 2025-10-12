@@ -148,10 +148,100 @@ def get_original_yield_comparison_report():
                 max-height: 350px !important;
             }
             
-            /* PREVENT ALL HORIZONTAL SCROLL */
+            /* COMPLETELY LOCK ALL ELEMENTS - NO STRETCHING */
             html, body {
                 overflow-x: hidden !important;
+                overflow-y: hidden !important;
                 max-width: 100vw !important;
+                max-height: 100vh !important;
+                box-sizing: border-box !important;
+                position: fixed !important;
+                width: 100vw !important;
+                height: 100vh !important;
+            }
+            
+            /* COMPLETELY LOCK ALL CHART CONTAINERS */
+            .bg-white.shadow.rounded-lg.p-6 {
+                overflow: hidden !important;
+                position: absolute !important;
+                max-width: 100% !important;
+                width: 100% !important;
+                height: 450px !important;
+                box-sizing: border-box !important;
+                pointer-events: none !important;
+                touch-action: none !important;
+                user-select: none !important;
+                -webkit-user-select: none !important;
+                -moz-user-select: none !important;
+                -ms-user-select: none !important;
+            }
+            
+            /* COMPLETELY LOCK ALL SVG ELEMENTS */
+            svg {
+                width: 400px !important;
+                height: 300px !important;
+                max-width: 400px !important;
+                max-height: 300px !important;
+                min-width: 400px !important;
+                min-height: 300px !important;
+                position: absolute !important;
+                top: 50px !important;
+                left: 0 !important;
+                right: 0 !important;
+                pointer-events: none !important;
+                touch-action: none !important;
+                user-select: none !important;
+                -webkit-user-select: none !important;
+                -moz-user-select: none !important;
+                -ms-user-select: none !important;
+                transform: none !important;
+                scale: 1 !important;
+            }
+            
+            /* COMPLETELY LOCK ALL SVG PATHS AND ELEMENTS */
+            svg *, svg path, svg line, svg rect, svg text, svg circle {
+                pointer-events: none !important;
+                touch-action: none !important;
+                user-select: none !important;
+                -webkit-user-select: none !important;
+                -moz-user-select: none !important;
+                -ms-user-select: none !important;
+            }
+            
+            /* COMPLETELY DISABLE ALL HOVER EFFECTS */
+            *:hover {
+                transform: none !important;
+                scale: 1 !important;
+                width: inherit !important;
+                height: inherit !important;
+                max-width: inherit !important;
+                max-height: inherit !important;
+                min-width: inherit !important;
+                min-height: inherit !important;
+            }
+            
+            /* COMPLETELY DISABLE ALL FOCUS EFFECTS */
+            *:focus {
+                transform: none !important;
+                scale: 1 !important;
+                width: inherit !important;
+                height: inherit !important;
+                max-width: inherit !important;
+                max-height: inherit !important;
+                min-width: inherit !important;
+                min-height: inherit !important;
+            }
+            
+            /* COMPLETELY DISABLE ALL ACTIVE EFFECTS */
+            *:active {
+                transform: none !important;
+                scale: 1 !important;
+                width: inherit !important;
+                height: inherit !important;
+                max-width: inherit !important;
+                max-height: inherit !important;
+                min-width: inherit !important;
+                min-height: inherit !important;
             }
             
             /* STATIC RESPONSIVE BEHAVIOR */
@@ -710,6 +800,61 @@ def get_original_yield_comparison_report():
 
             // Load data on page load
             document.addEventListener('DOMContentLoaded', function() {
+                // COMPLETELY DISABLE ALL MOUSE EVENTS
+                document.addEventListener('mousemove', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return false;
+                });
+                
+                document.addEventListener('mouseenter', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return false;
+                });
+                
+                document.addEventListener('mouseleave', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return false;
+                });
+                
+                document.addEventListener('mouseover', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return false;
+                });
+                
+                document.addEventListener('mouseout', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return false;
+                });
+                
+                document.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return false;
+                });
+                
+                document.addEventListener('touchstart', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return false;
+                });
+                
+                document.addEventListener('touchmove', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return false;
+                });
+                
+                document.addEventListener('touchend', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return false;
+                });
+                
                 // Set constraints immediately before loading data
                 initializeChartConstraints();
                 
@@ -719,6 +864,32 @@ def get_original_yield_comparison_report():
                 // Force dimensions after load
                 setTimeout(forceChartDimensions, 100);
                 setTimeout(forceChartDimensions, 500);
+                
+                // COMPLETELY DISABLE ALL INTERACTIONS ON SVG ELEMENTS
+                setTimeout(() => {
+                    const svgElements = document.querySelectorAll('svg, svg *');
+                    svgElements.forEach(element => {
+                        element.style.pointerEvents = 'none';
+                        element.style.touchAction = 'none';
+                        element.style.userSelect = 'none';
+                        element.style.webkitUserSelect = 'none';
+                        element.style.mozUserSelect = 'none';
+                        element.style.msUserSelect = 'none';
+                        
+                        // Remove all event listeners
+                        element.onmouseover = null;
+                        element.onmouseout = null;
+                        element.onmouseenter = null;
+                        element.onmouseleave = null;
+                        element.onclick = null;
+                        element.onmousedown = null;
+                        element.onmouseup = null;
+                        element.onmousemove = null;
+                        element.ontouchstart = null;
+                        element.ontouchmove = null;
+                        element.ontouchend = null;
+                    });
+                }, 100);
             });
             
             // Force dimensions on window resize
