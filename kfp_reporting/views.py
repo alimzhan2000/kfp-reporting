@@ -9,6 +9,7 @@ from pandas_isolation_view import pandas_isolation_test_page
 from minimal_pandas_view import minimal_pandas_test_page
 from original_dashboard import get_original_dashboard
 from original_yield_report import get_original_yield_comparison_report
+from management_yield_report import get_management_yield_comparison_report
 
 @csrf_exempt
 def health_check(request):
@@ -325,8 +326,8 @@ def reports_page(request):
 
 @csrf_exempt
 def yield_comparison_report(request):
-    """Отчет сравнения урожайности с оригинальным дизайном"""
-    return HttpResponse(get_original_yield_comparison_report(), content_type="text/html")
+    """Отчет сравнения урожайности для менеджмента"""
+    return HttpResponse(get_management_yield_comparison_report(), content_type="text/html")
 
 @csrf_exempt
 def test_upload_page(request):

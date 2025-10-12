@@ -1,4 +1,4 @@
-from django.db.models import Avg, Sum, Count, F, ExpressionWrapper, DecimalField
+from django.db.models import Avg, Sum, Count, Max, F, ExpressionWrapper, DecimalField
 from .models import AgriculturalData
 
 
@@ -54,16 +54,53 @@ class ReportService:
         # Группировка по сортам в разрезе конечного продукта
         variety_data = queryset.values('variety', 'final_product').annotate(
             avg_yield=Avg('yield_per_hectare'),
+            max_yield=Max('yield_per_hectare'),
             total_area=Sum('planting_area'),
-            total_yield=Sum(total_yield_expr)
+            total_yield=Sum(total_yield_expr),
+            count=Count('id'),
+            fields=Count('field_name', distinct=True)
         ).order_by('final_product', '-avg_yield')
         
+        # Подготавливаем данные для фронтенда
+        years = [item['year'] for item in year_data]
+        yield_by_year = [float(item['avg_yield']) if item['avg_yield'] else 0 for item in year_data]
+        
+        products = [item['final_product'] for item in product_data]
+        yield_by_product = [float(item['avg_yield']) if item['avg_yield'] else 0 for item in product_data]
+        
+        # Сводная таблица для отчета
+        summary = []
+        for item in year_data:
+            for product_item in product_data:
+                # Находим записи для конкретного года и продукта
+                year_product_data = queryset.filter(
+                    year=item['year'],
+                    final_product=product_item['final_product']
+                )
+                if year_product_data.exists():
+                    avg_yield = year_product_data.aggregate(avg=Avg('yield_per_hectare'))['avg']
+                    max_yield = year_product_data.aggregate(max=Max('yield_per_hectare'))['max']
+                    count = year_product_data.count()
+                    
+                    summary.append({
+                        'year': item['year'],
+                        'final_product': product_item['final_product'],
+                        'avg_yield': float(avg_yield) if avg_yield else 0,
+                        'max_yield': float(max_yield) if max_yield else 0,
+                        'count': count
+                    })
+        
         return {
+            'years': years,
+            'yield_by_year': yield_by_year,
+            'products': products,
+            'yield_by_product': yield_by_product,
+            'summary': summary,
+            'total_records': queryset.count(),
             'field_comparison': list(field_data),
             'year_comparison': list(year_data),
             'product_comparison': list(product_data),
-            'variety_comparison': list(variety_data),
-            'total_records': queryset.count()
+            'variety_comparison': list(variety_data)
         }
     
     @staticmethod
