@@ -296,24 +296,24 @@ def get_original_yield_comparison_report():
                 <div class="grid grid-cols-1 gap-4 md:grid-cols-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Год</label>
-                        <select id="year-filter" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <select id="year-filter" class="w-full border border-gray-300 rounded-md px-3 py-2 bg-gray-100 cursor-not-allowed" disabled>
                             <option value="">Все годы</option>
                         </select>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Конечный продукт</label>
-                        <select id="product-filter" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <select id="product-filter" class="w-full border border-gray-300 rounded-md px-3 py-2 bg-gray-100 cursor-not-allowed" disabled>
                             <option value="">Все продукты</option>
                         </select>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Поле</label>
-                        <select id="field-filter" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <select id="field-filter" class="w-full border border-gray-300 rounded-md px-3 py-2 bg-gray-100 cursor-not-allowed" disabled>
                             <option value="">Все поля</option>
                         </select>
                     </div>
                     <div class="flex items-end">
-                        <button onclick="loadReport()" class="w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+                        <button onclick="return false;" class="w-full bg-gray-400 text-white px-4 py-2 rounded-md cursor-not-allowed" disabled>
                             <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
                             </svg>
@@ -404,66 +404,15 @@ def get_original_yield_comparison_report():
             let yieldByYearChart, yieldByProductChart;
 
             async function loadReport() {
-                const loadingState = document.getElementById('loading-state');
-                const chartsContainer = document.getElementById('charts-container');
-                
-                loadingState.classList.remove('hidden');
-                chartsContainer.classList.add('hidden');
-
-                try {
-                    const year = document.getElementById('year-filter').value;
-                    const product = document.getElementById('product-filter').value;
-                    const field = document.getElementById('field-filter').value;
-
-                    const params = new URLSearchParams();
-                    if (year) params.append('year_from', year);
-                    if (year) params.append('year_to', year);
-                    if (product) params.append('final_product', product);
-                    if (field) params.append('field_name', field);
-
-                    const response = await fetch(`/api/reports/yield-comparison/?${params}`);
-                    
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    
-                    const data = await response.json();
-
-                    updateCharts(data);
-                    updateTable(data);
-                    updateFilters(data);
-
-                } catch (error) {
-                    console.error('Error loading report:', error);
-                    alert('Ошибка загрузки данных: ' + error.message);
-                } finally {
-                    loadingState.classList.add('hidden');
-                    chartsContainer.classList.remove('hidden');
-                }
+                // DO NOTHING - COMPLETELY DISABLE REPORT LOADING
+                // Charts are now completely static and never change
+                return;
             }
 
             function updateCharts(data) {
-                // DESTROY ALL EXISTING CHARTS
-                if (yieldByYearChart) {
-                    yieldByYearChart.destroy();
-                    yieldByYearChart = null;
-                }
-                if (yieldByProductChart) {
-                    yieldByProductChart.destroy();
-                    yieldByProductChart = null;
-                }
-                
-                // REPLACE WITH STATIC SVG CHARTS - NO CHART.JS
-                const yearContainer = document.getElementById('yield-by-year-chart').parentElement;
-                const productContainer = document.getElementById('yield-by-product-chart').parentElement;
-                
-                // Clear existing canvas
-                yearContainer.innerHTML = '<div id="year-chart-static"></div>';
-                productContainer.innerHTML = '<div id="product-chart-static"></div>';
-                
-                // Create static SVG charts
-                createStaticYearChart(data);
-                createStaticProductChart(data);
+                // DO NOTHING - COMPLETELY DISABLE CHART UPDATES
+                // Charts are now completely static and never change
+                return;
             }
             
             function createStaticYearChart(data) {
@@ -858,8 +807,8 @@ def get_original_yield_comparison_report():
                 // Set constraints immediately before loading data
                 initializeChartConstraints();
                 
-                // Load report data
-                loadReport();
+                // DO NOT LOAD REPORT DATA - CHARTS ARE STATIC
+                // loadReport(); // DISABLED - NO CHART UPDATES
                 
                 // Force dimensions after load
                 setTimeout(forceChartDimensions, 100);
