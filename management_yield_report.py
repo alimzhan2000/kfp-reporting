@@ -380,7 +380,15 @@ def get_management_yield_comparison_report():
                         plugins: {
                             legend: {
                                 display: true,
-                                position: 'top'
+                                position: 'top',
+                                labels: {
+                                    font: {
+                                        size: 14,
+                                        family: 'Arial, sans-serif',
+                                        weight: 'bold'
+                                    },
+                                    color: '#333'
+                                }
                             },
                             tooltip: {
                                 enabled: true,
@@ -393,18 +401,37 @@ def get_management_yield_comparison_report():
                                 borderWidth: 1,
                                 cornerRadius: 6,
                                 displayColors: true,
+                                titleFont: {
+                                    size: 14,
+                                    family: 'Arial, sans-serif',
+                                    weight: 'bold'
+                                },
+                                bodyFont: {
+                                    size: 13,
+                                    family: 'Arial, sans-serif',
+                                    weight: 'normal'
+                                },
+                                padding: 12,
                                 callbacks: {
                                     title: function(context) {
+                                        console.log('Tooltip title:', context);
                                         return context[0].label || '';
                                     },
                                     label: function(context) {
+                                        console.log('Tooltip label context:', context);
                                         const label = context.dataset.label || '';
                                         const value = context.parsed.y || context.parsed;
+                                        console.log('Value:', value, 'Label:', label);
+                                        
                                         // For bar chart, show product name and yield
                                         if (context.chart.config.type === 'bar') {
-                                            return `${context.label}: ${value.toFixed(1)} ц/га`;
+                                            const result = `${context.label}: ${value.toFixed(1)} ц/га`;
+                                            console.log('Bar chart result:', result);
+                                            return result;
                                         }
-                                        return `${label}: ${value.toFixed(1)} ц/га`;
+                                        const result = `${label}: ${value.toFixed(1)} ц/га`;
+                                        console.log('Line chart result:', result);
+                                        return result;
                                     }
                                 }
                             }
@@ -414,7 +441,35 @@ def get_management_yield_comparison_report():
                                 beginAtZero: true,
                                 title: {
                                     display: true,
-                                    text: 'Урожайность (ц/га)'
+                                    text: 'Урожайность (ц/га)',
+                                    font: {
+                                        size: 14,
+                                        family: 'Arial, sans-serif',
+                                        weight: 'bold'
+                                    },
+                                    color: '#333'
+                                },
+                                ticks: {
+                                    font: {
+                                        size: 12,
+                                        family: 'Arial, sans-serif'
+                                    },
+                                    color: '#666'
+                                },
+                                grid: {
+                                    color: 'rgba(0,0,0,0.1)'
+                                }
+                            },
+                            x: {
+                                ticks: {
+                                    font: {
+                                        size: 12,
+                                        family: 'Arial, sans-serif'
+                                    },
+                                    color: '#666'
+                                },
+                                grid: {
+                                    color: 'rgba(0,0,0,0.1)'
                                 }
                             }
                         },
@@ -436,9 +491,6 @@ def get_management_yield_comparison_report():
                         }
                     }
                 });
-                
-                // Force dimensions after chart creation
-                setTimeout(forceStaticChartDimensions, 50);
 
                 // Yield by Product Chart with strict size limits
                 const productCtx = document.getElementById('yield-by-product-chart').getContext('2d');
@@ -480,7 +532,15 @@ def get_management_yield_comparison_report():
                         plugins: {
                             legend: {
                                 display: true,
-                                position: 'top'
+                                position: 'top',
+                                labels: {
+                                    font: {
+                                        size: 14,
+                                        family: 'Arial, sans-serif',
+                                        weight: 'bold'
+                                    },
+                                    color: '#333'
+                                }
                             },
                             tooltip: {
                                 enabled: true,
@@ -493,18 +553,37 @@ def get_management_yield_comparison_report():
                                 borderWidth: 1,
                                 cornerRadius: 6,
                                 displayColors: true,
+                                titleFont: {
+                                    size: 14,
+                                    family: 'Arial, sans-serif',
+                                    weight: 'bold'
+                                },
+                                bodyFont: {
+                                    size: 13,
+                                    family: 'Arial, sans-serif',
+                                    weight: 'normal'
+                                },
+                                padding: 12,
                                 callbacks: {
                                     title: function(context) {
+                                        console.log('Tooltip title:', context);
                                         return context[0].label || '';
                                     },
                                     label: function(context) {
+                                        console.log('Tooltip label context:', context);
                                         const label = context.dataset.label || '';
                                         const value = context.parsed.y || context.parsed;
+                                        console.log('Value:', value, 'Label:', label);
+                                        
                                         // For bar chart, show product name and yield
                                         if (context.chart.config.type === 'bar') {
-                                            return `${context.label}: ${value.toFixed(1)} ц/га`;
+                                            const result = `${context.label}: ${value.toFixed(1)} ц/га`;
+                                            console.log('Bar chart result:', result);
+                                            return result;
                                         }
-                                        return `${label}: ${value.toFixed(1)} ц/га`;
+                                        const result = `${label}: ${value.toFixed(1)} ц/га`;
+                                        console.log('Line chart result:', result);
+                                        return result;
                                     }
                                 }
                             }
@@ -514,7 +593,35 @@ def get_management_yield_comparison_report():
                                 beginAtZero: true,
                                 title: {
                                     display: true,
-                                    text: 'Урожайность (ц/га)'
+                                    text: 'Урожайность (ц/га)',
+                                    font: {
+                                        size: 14,
+                                        family: 'Arial, sans-serif',
+                                        weight: 'bold'
+                                    },
+                                    color: '#333'
+                                },
+                                ticks: {
+                                    font: {
+                                        size: 12,
+                                        family: 'Arial, sans-serif'
+                                    },
+                                    color: '#666'
+                                },
+                                grid: {
+                                    color: 'rgba(0,0,0,0.1)'
+                                }
+                            },
+                            x: {
+                                ticks: {
+                                    font: {
+                                        size: 12,
+                                        family: 'Arial, sans-serif'
+                                    },
+                                    color: '#666'
+                                },
+                                grid: {
+                                    color: 'rgba(0,0,0,0.1)'
                                 }
                             }
                         },
@@ -536,9 +643,6 @@ def get_management_yield_comparison_report():
                         }
                     }
                 });
-                
-                // Force dimensions after chart creation
-                setTimeout(forceStaticChartDimensions, 50);
             }
 
             function updateVarietyTable(data) {
@@ -692,16 +796,10 @@ def get_management_yield_comparison_report():
             
             // Monitor and force dimensions continuously
             function startDimensionMonitoring() {
-                // Reduce frequency to avoid interfering with tooltips
-                setInterval(forceStaticChartDimensions, 500);
-                
-                // Force dimensions on any resize
+                // Only force dimensions on resize, not continuously
                 window.addEventListener('resize', forceStaticChartDimensions);
                 
-                // Force dimensions on any scroll
-                window.addEventListener('scroll', forceStaticChartDimensions);
-                
-                // Don't monitor mousemove to avoid interfering with tooltips
+                // Don't monitor continuously to avoid interfering with tooltips
             }
 
             // Load data on page load
