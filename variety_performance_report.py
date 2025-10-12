@@ -150,19 +150,17 @@ def get_variety_performance_report():
                     <table id="variety-performance-table" class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Сорт</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Конечный продукт</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Средняя урожайность</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Максимальная урожайность</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Общая площадь</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Количество полей</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Записей</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Рейтинг</th>
+                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Сорт</th>
+                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Продукт</th>
+                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Средняя (ц/га)</th>
+                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Макс (ц/га)</th>
+                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Полей</th>
+                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Рейтинг</th>
                             </tr>
                         </thead>
                         <tbody id="variety-performance-table-body" class="bg-white divide-y divide-gray-200">
                             <tr>
-                                <td colspan="8" class="px-6 py-4 text-center text-gray-500">Загрузите данные для отображения таблицы</td>
+                                <td colspan="6" class="px-3 py-4 text-center text-gray-500">Загрузите данные для отображения таблицы</td>
                             </tr>
                         </tbody>
                     </table>
@@ -336,14 +334,12 @@ def get_variety_performance_report():
                         }
                         
                         tr.innerHTML = `
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${row.variety || '-'}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${row.final_product || '-'}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${row.avg_yield?.toFixed(2) || '0.00'} ц/га</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${row.max_yield?.toFixed(2) || '0.00'} ц/га</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${row.total_area?.toFixed(2) || '0.00'} га</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${row.fields || 0}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${row.count || 0}</td>
-                            <td class="px-6 py-4 whitespace-nowrap">
+                            <td class="px-3 py-3 text-sm font-medium text-gray-900 max-w-xs truncate" title="${row.variety || '-'}">${row.variety || '-'}</td>
+                            <td class="px-3 py-3 text-sm text-gray-900 max-w-xs truncate" title="${row.final_product || '-'}">${row.final_product || '-'}</td>
+                            <td class="px-3 py-3 whitespace-nowrap text-sm text-gray-900">${row.avg_yield?.toFixed(1) || '0.0'}</td>
+                            <td class="px-3 py-3 whitespace-nowrap text-sm text-gray-900">${row.max_yield?.toFixed(1) || '0.0'}</td>
+                            <td class="px-3 py-3 whitespace-nowrap text-sm text-gray-900 text-center">${row.fields || 0}</td>
+                            <td class="px-3 py-3 whitespace-nowrap">
                                 <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full ${ratingClass}">
                                     ${rating}
                                 </span>
@@ -352,7 +348,7 @@ def get_variety_performance_report():
                         tbody.appendChild(tr);
                     });
                 } else {
-                    tbody.innerHTML = '<tr><td colspan="8" class="px-6 py-4 text-center text-gray-500">Нет данных для отображения</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="6" class="px-3 py-4 text-center text-gray-500">Нет данных для отображения</td></tr>';
                 }
             }
 

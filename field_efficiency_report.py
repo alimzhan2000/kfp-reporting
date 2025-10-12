@@ -150,19 +150,17 @@ def get_field_efficiency_report():
                     <table id="field-performance-table" class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Поле</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Средняя урожайность</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Общая площадь</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Общий сбор</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Количество продуктов</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Годы данных</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Записей</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Эффективность</th>
+                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Поле</th>
+                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Средняя (ц/га)</th>
+                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Площадь (га)</th>
+                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Сбор (ц)</th>
+                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Продукты</th>
+                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Эффективность</th>
                             </tr>
                         </thead>
                         <tbody id="field-performance-table-body" class="bg-white divide-y divide-gray-200">
                             <tr>
-                                <td colspan="8" class="px-6 py-4 text-center text-gray-500">Загрузите данные для отображения таблицы</td>
+                                <td colspan="6" class="px-3 py-4 text-center text-gray-500">Загрузите данные для отображения таблицы</td>
                             </tr>
                         </tbody>
                     </table>
@@ -319,14 +317,12 @@ def get_field_efficiency_report():
                         }
                         
                         tr.innerHTML = `
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${row.field_name || '-'}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${row.avg_yield?.toFixed(2) || '0.00'} ц/га</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${row.total_area?.toFixed(2) || '0.00'} га</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${row.total_yield?.toFixed(2) || '0.00'} ц</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${row.product_count || 0}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${row.year_count || 0}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${row.record_count || 0}</td>
-                            <td class="px-6 py-4 whitespace-nowrap">
+                            <td class="px-3 py-3 text-sm font-medium text-gray-900 max-w-xs truncate" title="${row.field_name || '-'}">${row.field_name || '-'}</td>
+                            <td class="px-3 py-3 whitespace-nowrap text-sm text-gray-900">${row.avg_yield?.toFixed(1) || '0.0'}</td>
+                            <td class="px-3 py-3 whitespace-nowrap text-sm text-gray-900">${row.total_area?.toFixed(1) || '0.0'}</td>
+                            <td class="px-3 py-3 whitespace-nowrap text-sm text-gray-900">${row.total_yield?.toFixed(0) || '0'}</td>
+                            <td class="px-3 py-3 whitespace-nowrap text-sm text-gray-900 text-center">${row.product_count || 0}</td>
+                            <td class="px-3 py-3 whitespace-nowrap">
                                 <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full ${efficiencyClass}">
                                     ${efficiency}
                                 </span>
@@ -335,7 +331,7 @@ def get_field_efficiency_report():
                         tbody.appendChild(tr);
                     });
                 } else {
-                    tbody.innerHTML = '<tr><td colspan="8" class="px-6 py-4 text-center text-gray-500">Нет данных для отображения</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="6" class="px-3 py-4 text-center text-gray-500">Нет данных для отображения</td></tr>';
                 }
             }
 
