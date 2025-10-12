@@ -145,7 +145,7 @@ class DataProcessingService:
         
         # Ищем строку, которая содержит все обязательные колонки
         header_row = None
-        for i in range(min(20, len(df_raw))):  # Проверяем первые 20 строк
+        for i in range(min(30, len(df_raw))):  # Увеличили до 30 строк
             row_values = [str(val) for val in df_raw.iloc[i].values if val is not None and str(val).strip()]
             # Проверяем, содержит ли строка все обязательные колонки
             if all(col in row_values for col in cls.REQUIRED_COLUMNS):
@@ -154,16 +154,25 @@ class DataProcessingService:
         
         if header_row is None:
             # Если не нашли строку с заголовками, пробуем стандартное чтение
-            return pd.read_excel(file_path)
+            try:
+                return pd.read_excel(file_path)
+            except Exception as e:
+                # Если стандартное чтение не работает, возвращаем ошибку
+                raise ValueError(f'Не удалось найти заголовки в файле. Ошибка: {str(e)}')
         
         # Читаем файл с найденной строкой заголовков
-        df = pd.read_excel(file_path, header=header_row)
-        
-        # Очищаем данные от пустых строк
-        df = df.dropna(how='all')
-        
-        
-        return df
+        try:
+            df = pd.read_excel(file_path, header=header_row)
+            
+            # Очищаем данные от пустых строк
+            df = df.dropna(how='all')
+            
+            # Удаляем строки, где все значения NaN
+            df = df.dropna(how='all')
+            
+            return df
+        except Exception as e:
+            raise ValueError(f'Ошибка при чтении Excel файла с заголовками в строке {header_row}: {str(e)}')
     
     @classmethod
     def _normalize_data(cls, df):
@@ -181,7 +190,8 @@ class DataProcessingService:
         text_columns = ['Поле', 'Культура', 'Сорт', 'Конечный продукт']
         for col in text_columns:
             if col in df.columns:
-                df.loc[:, col] = df[col].astype(str).str.strip()
+                # Безопасно преобразуем в строку и очищаем
+                df.loc[:, col] = df[col].apply(lambda x: str(x).strip() if x is not None and str(x) != 'nan' else '')
         
         return df
     
@@ -206,13 +216,13 @@ class DataProcessingService:
                 # Добавляем дополнительные поля, если они есть в данных
                 # import pandas as pd  # Временно отключено
                 
-                if 'Бригада' in df.columns and row['Бригада'] and row['Бригада'].strip():
+                if 'Бригада' in df.columns and row['Бригада'] and str(row['Бригада']).strip():
                     defaults['brigade'] = str(row['Бригада'])
                 
-                if 'Поле (старое название)' in df.columns and row['Поле (старое название)'] and row['Поле (старое название)'].strip():
+                if 'Поле (старое название)' in df.columns and row['Поле (старое название)'] and str(row['Поле (старое название)']).strip():
                     defaults['field_old_name'] = str(row['Поле (старое название)'])
                 
-                if 'Валовый сбор, тн' in df.columns and row['Валовый сбор, тн'] and row['Валовый сбор, тн'].strip():
+                if 'Валовый сбор, тн' in df.columns and row['Валовый сбор, тн'] and str(row['Валовый сбор, тн']).strip():
                     # Обрабатываем валовый сбор (может быть в формате "0 0" или числовом)
                     gross_harvest = str(row['Валовый сбор, тн']).replace(' ', '').replace(',', '.')
                     if gross_harvest and gross_harvest != '00' and gross_harvest != '0':
@@ -221,26 +231,26 @@ class DataProcessingService:
                         except (ValueError, TypeError):
                             pass
                 
-                if 'Репродукция' in df.columns and row['Репродукция'] and row['Репродукция'].strip():
+                if 'Репродукция' in df.columns and row['Репродукция'] and str(row['Репродукция']).strip():
                     defaults['reproduction'] = str(row['Репродукция'])
                 
-                if 'Предшественник' in df.columns and row['Предшественник'] and row['Предшественник'].strip():
+                if 'Предшественник' in df.columns and row['Предшественник'] and str(row['Предшественник']).strip():
                     defaults['predecessor'] = str(row['Предшественник'])
                 
-                if 'Балл продуктивности' in df.columns and row['Балл продуктивности'] and row['Балл продуктивности'].strip():
+                if 'Балл продуктивности' in df.columns and row['Балл продуктивности'] and str(row['Балл продуктивности']).strip():
                     try:
                         defaults['productivity_score'] = int(row['Балл продуктивности'])
                     except (ValueError, TypeError):
                         pass
                 
-                if 'Агрофон' in df.columns and row['Агрофон'] and row['Агрофон'].strip():
+                if 'Агрофон' in df.columns and row['Агрофон'] and str(row['Агрофон']).strip():
                     defaults['agro_background'] = str(row['Агрофон'])
                 
-                if 'ПЗР' in df.columns and row['ПЗР'] and row['ПЗР'].strip():
+                if 'ПЗР' in df.columns and row['ПЗР'] and str(row['ПЗР']).strip():
                     defaults['pzr'] = str(row['ПЗР'])
                 
                 # Сохраняем культуру, если она присутствует, но не используем её как ключ
-                if 'Культура' in df.columns and row['Культура'] and row['Культура'].strip():
+                if 'Культура' in df.columns and row['Культура'] and str(row['Культура']).strip():
                     defaults['crop'] = str(row['Культура'])
                 else:
                     defaults['crop'] = ''
