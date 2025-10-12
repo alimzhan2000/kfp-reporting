@@ -21,6 +21,7 @@ urlpatterns = [
     path('no-pandas-test/', views.no_pandas_test_page, name='no_pandas_test_page'),
     path('basic-python-test/', views.basic_python_test_page, name='basic_python_test_page'),
     path('pandas-isolation-test/', views.pandas_isolation_test_page, name='pandas_isolation_test_page'),
+    path('minimal-pandas-test/', views.minimal_pandas_test_page, name='minimal_pandas_test_page'),
     path('reports/', views.reports_page, name='reports_page'),
     path('reports/yield-comparison/', views.yield_comparison_report, name='yield_comparison_report'),
     path('data/', views.home, name='data_page'),  # Redirect to dashboard

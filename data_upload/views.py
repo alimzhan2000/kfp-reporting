@@ -19,6 +19,7 @@ from ultra_simple_test import UltraSimpleTestView
 from no_pandas_test import NoPandasTestView
 from basic_python_test import BasicPythonTestView
 from pandas_isolation_test import PandasIsolationTestView
+from minimal_pandas_test import MinimalPandasTestView
 from .models import DataUpload
 from .serializers import DataUploadSerializer
 from .services import DataProcessingService
