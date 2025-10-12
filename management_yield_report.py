@@ -282,7 +282,7 @@ def get_management_yield_comparison_report():
                     const data = await response.json();
                     console.log('Received data:', data);
 
-                    // updateCharts(data); // DISABLED - STATIC TEXT ONLY
+                    updateCharts(data); // ENABLED - STATIC SVG CHARTS
                     updateVarietyTable(data);
                     updateFieldTable(data);
                     updateFilters(data);
@@ -298,8 +298,121 @@ def get_management_yield_comparison_report():
             }
 
             function updateCharts(data) {
-                // DISABLED - STATIC TEXT ONLY
-                return;
+                // Create static SVG charts - no stretching, no interactions
+                createStaticYearChart(data);
+                createStaticProductChart(data);
+            }
+            
+            function createStaticYearChart(data) {
+                const container = document.getElementById('year-chart-static');
+                if (!container) return;
+                
+                const width = 400;
+                const height = 300;
+                const years = data.years || [];
+                const yields = data.yield_by_year || [];
+                
+                let svgContent = '';
+                
+                if (years.length > 0 && yields.length > 0) {
+                    // Calculate chart dimensions
+                    const padding = 40;
+                    const chartWidth = width - 2 * padding;
+                    const chartHeight = height - 2 * padding;
+                    
+                    const maxY = Math.max(...yields);
+                    const minY = Math.min(...yields);
+                    const range = maxY - minY || 1;
+                    
+                    // Draw axes
+                    svgContent += `<line x1="${padding}" y1="${height - padding}" x2="${width - padding}" y2="${height - padding}" stroke="#666" stroke-width="2"/>`;
+                    svgContent += `<line x1="${padding}" y1="${padding}" x2="${padding}" y2="${height - padding}" stroke="#666" stroke-width="2"/>`;
+                    
+                    // Draw data line
+                    let pathData = '';
+                    years.forEach((year, index) => {
+                        const x = padding + (index * chartWidth / (years.length - 1));
+                        const y = height - padding - ((yields[index] - minY) / range) * chartHeight;
+                        if (index === 0) {
+                            pathData += `M ${x} ${y}`;
+                        } else {
+                            pathData += ` L ${x} ${y}`;
+                        }
+                    });
+                    
+                    svgContent += `<path d="${pathData}" stroke="rgb(34, 197, 94)" stroke-width="3" fill="none"/>`;
+                    
+                    // Add data points
+                    years.forEach((year, index) => {
+                        const x = padding + (index * chartWidth / (years.length - 1));
+                        const y = height - padding - ((yields[index] - minY) / range) * chartHeight;
+                        svgContent += `<circle cx="${x}" cy="${y}" r="4" fill="rgb(34, 197, 94)"/>`;
+                    });
+                    
+                    // Add title
+                    svgContent += `<text x="${width/2}" y="20" text-anchor="middle" font-size="14" fill="#333">Урожайность по годам</text>`;
+                    
+                } else {
+                    // No data message
+                    svgContent += `<text x="${width/2}" y="${height/2}" text-anchor="middle" font-size="14" fill="#999">Нет данных для отображения</text>`;
+                }
+                
+                container.innerHTML = `
+                    <svg width="${width}" height="${height}" style="width: ${width}px; height: ${height}px; max-width: ${width}px; max-height: ${height}px; display: block; pointer-events: none; user-select: none;">
+                        ${svgContent}
+                    </svg>
+                `;
+            }
+            
+            function createStaticProductChart(data) {
+                const container = document.getElementById('product-chart-static');
+                if (!container) return;
+                
+                const width = 400;
+                const height = 300;
+                const products = data.products || [];
+                const yields = data.yield_by_product || [];
+                
+                let svgContent = '';
+                
+                if (products.length > 0 && yields.length > 0) {
+                    // Calculate chart dimensions
+                    const padding = 40;
+                    const chartWidth = width - 2 * padding;
+                    const chartHeight = height - 2 * padding;
+                    
+                    const maxY = Math.max(...yields);
+                    const colors = ['#3b82f6', '#22c55e', '#fbbf24', '#ef4444', '#9333ea', '#ec4899', '#06b6d4'];
+                    
+                    // Draw axes
+                    svgContent += `<line x1="${padding}" y1="${height - padding}" x2="${width - padding}" y2="${height - padding}" stroke="#666" stroke-width="2"/>`;
+                    svgContent += `<line x1="${padding}" y1="${padding}" x2="${padding}" y2="${height - padding}" stroke="#666" stroke-width="2"/>`;
+                    
+                    // Draw bars
+                    const barWidth = chartWidth / products.length * 0.8;
+                    const barSpacing = chartWidth / products.length;
+                    
+                    products.forEach((product, index) => {
+                        const barHeight = (yields[index] / maxY) * chartHeight;
+                        const x = padding + (index * barSpacing) + (barSpacing - barWidth) / 2;
+                        const y = height - padding - barHeight;
+                        
+                        svgContent += `<rect x="${x}" y="${y}" width="${barWidth}" height="${barHeight}" fill="${colors[index % colors.length]}" opacity="0.8"/>`;
+                    });
+                    
+                    // Add title
+                    svgContent += `<text x="${width/2}" y="20" text-anchor="middle" font-size="14" fill="#333">Урожайность по продуктам</text>`;
+                    
+                } else {
+                    // No data message
+                    svgContent += `<text x="${width/2}" y="${height/2}" text-anchor="middle" font-size="14" fill="#999">Нет данных для отображения</text>`;
+                }
+                
+                container.innerHTML = `
+                    <svg width="${width}" height="${height}" style="width: ${width}px; height: ${height}px; max-width: ${width}px; max-height: ${height}px; display: block; pointer-events: none; user-select: none;">
+                        ${svgContent}
+                    </svg>
+                `;
             }
 
             function updateVarietyTable(data) {
@@ -429,6 +542,11 @@ def get_management_yield_comparison_report():
 
             // Load data on page load
             document.addEventListener('DOMContentLoaded', function() {
+                // Initialize static charts with empty data
+                createStaticYearChart({});
+                createStaticProductChart({});
+                
+                // Load report data
                 loadReport();
             });
         </script>
