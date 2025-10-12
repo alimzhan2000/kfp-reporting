@@ -8,6 +8,7 @@ urlpatterns = [
     path('ultra-test/', views.UltraSimpleTestView.as_view(), name='ultra_simple_test'),
     path('no-pandas-test/', views.NoPandasTestView.as_view(), name='no_pandas_test'),
     path('basic-python-test/', views.BasicPythonTestView.as_view(), name='basic_python_test'),
+    path('pandas-isolation-test/', views.PandasIsolationTestView.as_view(), name='pandas_isolation_test'),
     path('history/', views.upload_history, name='upload_history'),
     path('status/<int:upload_id>/', views.upload_status, name='upload_status'),
     path('delete/<int:upload_id>/', views.delete_upload_data, name='delete_upload_data'),
