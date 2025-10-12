@@ -281,9 +281,36 @@ def get_original_yield_comparison_report():
             }
 
             function updateCharts(data) {
+                // Get chart containers
+                const yearContainer = document.getElementById('yield-by-year-chart').parentElement;
+                const productContainer = document.getElementById('yield-by-product-chart').parentElement;
+                
+                // Set fixed dimensions for containers
+                yearContainer.style.width = '100%';
+                yearContainer.style.maxWidth = '100%';
+                yearContainer.style.height = '400px';
+                yearContainer.style.overflow = 'hidden';
+                yearContainer.style.position = 'relative';
+                
+                productContainer.style.width = '100%';
+                productContainer.style.maxWidth = '100%';
+                productContainer.style.height = '400px';
+                productContainer.style.overflow = 'hidden';
+                productContainer.style.position = 'relative';
+
                 // Yield by Year Chart
                 const yearCtx = document.getElementById('yield-by-year-chart').getContext('2d');
                 if (yieldByYearChart) yieldByYearChart.destroy();
+                
+                // Set canvas dimensions BEFORE creating chart
+                const yearCanvas = document.getElementById('yield-by-year-chart');
+                yearCanvas.width = yearContainer.clientWidth - 48; // Account for padding
+                yearCanvas.height = 350; // Fixed height
+                yearCanvas.style.width = '100%';
+                yearCanvas.style.height = '350px';
+                yearCanvas.style.maxWidth = '100%';
+                yearCanvas.style.maxHeight = '350px';
+                yearCanvas.style.display = 'block';
                 
                 yieldByYearChart = new Chart(yearCtx, {
                     type: 'line',
@@ -303,7 +330,7 @@ def get_original_yield_comparison_report():
                         }]
                     },
                     options: {
-                        responsive: true,
+                        responsive: false, // Disable responsive to prevent stretching
                         maintainAspectRatio: false,
                         scales: {
                             y: {
@@ -351,6 +378,16 @@ def get_original_yield_comparison_report():
                 const productCtx = document.getElementById('yield-by-product-chart').getContext('2d');
                 if (yieldByProductChart) yieldByProductChart.destroy();
                 
+                // Set canvas dimensions BEFORE creating chart
+                const productCanvas = document.getElementById('yield-by-product-chart');
+                productCanvas.width = productContainer.clientWidth - 48; // Account for padding
+                productCanvas.height = 350; // Fixed height
+                productCanvas.style.width = '100%';
+                productCanvas.style.height = '350px';
+                productCanvas.style.maxWidth = '100%';
+                productCanvas.style.maxHeight = '350px';
+                productCanvas.style.display = 'block';
+                
                 yieldByProductChart = new Chart(productCtx, {
                     type: 'bar',
                     data: {
@@ -380,7 +417,7 @@ def get_original_yield_comparison_report():
                         }]
                     },
                     options: {
-                        responsive: true,
+                        responsive: false, // Disable responsive to prevent stretching
                         maintainAspectRatio: false,
                         scales: {
                             y: {
@@ -418,45 +455,6 @@ def get_original_yield_comparison_report():
                         }
                     }
                 });
-                
-                // Force chart dimensions immediately after creation
-                const yearCanvas = document.getElementById('yield-by-year-chart');
-                const productCanvas = document.getElementById('yield-by-product-chart');
-                
-                if (yearCanvas) {
-                    yearCanvas.style.maxWidth = '100%';
-                    yearCanvas.style.maxHeight = '400px';
-                    yearCanvas.style.width = '100%';
-                    yearCanvas.style.height = '400px';
-                    yearCanvas.style.display = 'block';
-                }
-                
-                if (productCanvas) {
-                    productCanvas.style.maxWidth = '100%';
-                    productCanvas.style.maxHeight = '400px';
-                    productCanvas.style.width = '100%';
-                    productCanvas.style.height = '400px';
-                    productCanvas.style.display = 'block';
-                }
-                
-                // Also force dimensions with timeout as backup
-                setTimeout(() => {
-                    if (yearCanvas) {
-                        yearCanvas.style.maxWidth = '100%';
-                        yearCanvas.style.maxHeight = '400px';
-                        yearCanvas.style.width = '100%';
-                        yearCanvas.style.height = '400px';
-                        yearCanvas.style.display = 'block';
-                    }
-                    
-                    if (productCanvas) {
-                        productCanvas.style.maxWidth = '100%';
-                        productCanvas.style.maxHeight = '400px';
-                        productCanvas.style.width = '100%';
-                        productCanvas.style.height = '400px';
-                        productCanvas.style.display = 'block';
-                    }
-                }, 50);
             }
 
             function updateTable(data) {
@@ -545,20 +543,40 @@ def get_original_yield_comparison_report():
             function forceChartDimensions() {
                 const yearCanvas = document.getElementById('yield-by-year-chart');
                 const productCanvas = document.getElementById('yield-by-product-chart');
+                const yearContainer = yearCanvas ? yearCanvas.parentElement : null;
+                const productContainer = productCanvas ? productCanvas.parentElement : null;
                 
+                // Force container dimensions
+                if (yearContainer) {
+                    yearContainer.style.width = '100%';
+                    yearContainer.style.maxWidth = '100%';
+                    yearContainer.style.height = '400px';
+                    yearContainer.style.overflow = 'hidden';
+                    yearContainer.style.position = 'relative';
+                }
+                
+                if (productContainer) {
+                    productContainer.style.width = '100%';
+                    productContainer.style.maxWidth = '100%';
+                    productContainer.style.height = '400px';
+                    productContainer.style.overflow = 'hidden';
+                    productContainer.style.position = 'relative';
+                }
+                
+                // Force canvas dimensions
                 if (yearCanvas) {
                     yearCanvas.style.maxWidth = '100%';
-                    yearCanvas.style.maxHeight = '400px';
+                    yearCanvas.style.maxHeight = '350px';
                     yearCanvas.style.width = '100%';
-                    yearCanvas.style.height = '400px';
+                    yearCanvas.style.height = '350px';
                     yearCanvas.style.display = 'block';
                 }
                 
                 if (productCanvas) {
                     productCanvas.style.maxWidth = '100%';
-                    productCanvas.style.maxHeight = '400px';
+                    productCanvas.style.maxHeight = '350px';
                     productCanvas.style.width = '100%';
-                    productCanvas.style.height = '400px';
+                    productCanvas.style.height = '350px';
                     productCanvas.style.display = 'block';
                 }
             }
@@ -567,20 +585,40 @@ def get_original_yield_comparison_report():
             function initializeChartConstraints() {
                 const yearCanvas = document.getElementById('yield-by-year-chart');
                 const productCanvas = document.getElementById('yield-by-product-chart');
+                const yearContainer = yearCanvas ? yearCanvas.parentElement : null;
+                const productContainer = productCanvas ? productCanvas.parentElement : null;
                 
+                // Set container constraints
+                if (yearContainer) {
+                    yearContainer.style.width = '100%';
+                    yearContainer.style.maxWidth = '100%';
+                    yearContainer.style.height = '400px';
+                    yearContainer.style.overflow = 'hidden';
+                    yearContainer.style.position = 'relative';
+                }
+                
+                if (productContainer) {
+                    productContainer.style.width = '100%';
+                    productContainer.style.maxWidth = '100%';
+                    productContainer.style.height = '400px';
+                    productContainer.style.overflow = 'hidden';
+                    productContainer.style.position = 'relative';
+                }
+                
+                // Set canvas constraints
                 if (yearCanvas) {
                     yearCanvas.style.maxWidth = '100%';
-                    yearCanvas.style.maxHeight = '400px';
+                    yearCanvas.style.maxHeight = '350px';
                     yearCanvas.style.width = '100%';
-                    yearCanvas.style.height = '400px';
+                    yearCanvas.style.height = '350px';
                     yearCanvas.style.display = 'block';
                 }
                 
                 if (productCanvas) {
                     productCanvas.style.maxWidth = '100%';
-                    productCanvas.style.maxHeight = '400px';
+                    productCanvas.style.maxHeight = '350px';
                     productCanvas.style.width = '100%';
-                    productCanvas.style.height = '400px';
+                    productCanvas.style.height = '350px';
                     productCanvas.style.display = 'block';
                 }
             }
