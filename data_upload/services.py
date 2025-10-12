@@ -259,70 +259,129 @@ class DataProcessingService:
         records_created = 0
         records_updated = 0
         
+        def safe_str(value):
+            """Безопасное преобразование в строку"""
+            if value is None or pd.isna(value):
+                return ''
+            return str(value).strip()
+        
+        def safe_float(value):
+            """Безопасное преобразование в float"""
+            try:
+                if value is None or pd.isna(value):
+                    return None
+                return float(value)
+            except (ValueError, TypeError):
+                return None
+        
+        def safe_int(value):
+            """Безопасное преобразование в int"""
+            try:
+                if value is None or pd.isna(value):
+                    return None
+                return int(float(value))  # Сначала в float, потом в int
+            except (ValueError, TypeError):
+                return None
+        
         with transaction.atomic():
             for _, row in df.iterrows():
-                # Подготавливаем данные для сохранения
-                defaults = {
-                    'planting_area': float(row['Площадь посева']),
-                    'yield_per_hectare': float(row['Урожайность, ц/га']),
-                    'final_product': row['Конечный продукт'],
-                    'uploaded_by': uploaded_by,  # Может быть None
-                }
-                
-                # Добавляем дополнительные поля, если они есть в данных
-                # import pandas as pd  # Временно отключено
-                
-                if 'Бригада' in df.columns and row['Бригада'] and str(row['Бригада']).strip():
-                    defaults['brigade'] = str(row['Бригада'])
-                
-                if 'Поле (старое название)' in df.columns and row['Поле (старое название)'] and str(row['Поле (старое название)']).strip():
-                    defaults['field_old_name'] = str(row['Поле (старое название)'])
-                
-                if 'Валовый сбор, тн' in df.columns and row['Валовый сбор, тн'] and str(row['Валовый сбор, тн']).strip():
-                    # Обрабатываем валовый сбор (может быть в формате "0 0" или числовом)
-                    gross_harvest = str(row['Валовый сбор, тн']).replace(' ', '').replace(',', '.')
-                    if gross_harvest and gross_harvest != '00' and gross_harvest != '0':
-                        try:
-                            defaults['gross_harvest'] = float(gross_harvest)
-                        except (ValueError, TypeError):
-                            pass
-                
-                if 'Репродукция' in df.columns and row['Репродукция'] and str(row['Репродукция']).strip():
-                    defaults['reproduction'] = str(row['Репродукция'])
-                
-                if 'Предшественник' in df.columns and row['Предшественник'] and str(row['Предшественник']).strip():
-                    defaults['predecessor'] = str(row['Предшественник'])
-                
-                if 'Балл продуктивности' in df.columns and row['Балл продуктивности'] and str(row['Балл продуктивности']).strip():
-                    try:
-                        defaults['productivity_score'] = int(row['Балл продуктивности'])
-                    except (ValueError, TypeError):
-                        pass
-                
-                if 'Агрофон' in df.columns and row['Агрофон'] and str(row['Агрофон']).strip():
-                    defaults['agro_background'] = str(row['Агрофон'])
-                
-                if 'ПЗР' in df.columns and row['ПЗР'] and str(row['ПЗР']).strip():
-                    defaults['pzr'] = str(row['ПЗР'])
-                
-                # Сохраняем культуру, если она присутствует, но не используем её как ключ
-                if 'Культура' in df.columns and row['Культура'] and str(row['Культура']).strip():
-                    defaults['crop'] = str(row['Культура'])
-                else:
-                    defaults['crop'] = ''
+                try:
+                    print(f"🔧 Processing row: {row.get('Поле', 'Unknown')} - {row.get('Год', 'Unknown')}")
+                    
+                    # Подготавливаем данные для сохранения с безопасными преобразованиями
+                    defaults = {
+                        'planting_area': safe_float(row['Площадь посева']),
+                        'yield_per_hectare': safe_float(row['Урожайность, ц/га']),
+                        'final_product': safe_str(row['Конечный продукт']),
+                        'uploaded_by': uploaded_by,  # Может быть None
+                    }
+                    
+                    # Добавляем дополнительные поля, если они есть в данных
+                    if 'Бригада' in df.columns:
+                        brigade_val = safe_str(row['Бригада'])
+                        if brigade_val:
+                            defaults['brigade'] = brigade_val
+                    
+                    if 'Поле (старое название)' in df.columns:
+                        field_old_val = safe_str(row['Поле (старое название)'])
+                        if field_old_val:
+                            defaults['field_old_name'] = field_old_val
+                    
+                    if 'Валовый сбор, тн' in df.columns:
+                        gross_val = safe_str(row['Валовый сбор, тн'])
+                        if gross_val:
+                            # Обрабатываем валовый сбор (может быть в формате "0 0" или числовом)
+                            gross_harvest = gross_val.replace(' ', '').replace(',', '.')
+                            if gross_harvest and gross_harvest != '00' and gross_harvest != '0':
+                                float_val = safe_float(gross_harvest)
+                                if float_val is not None:
+                                    defaults['gross_harvest'] = float_val
+                    
+                    if 'Репродукция' in df.columns:
+                        repro_val = safe_str(row['Репродукция'])
+                        if repro_val:
+                            defaults['reproduction'] = repro_val
+                    
+                    if 'Предшественник' in df.columns:
+                        pred_val = safe_str(row['Предшественник'])
+                        if pred_val:
+                            defaults['predecessor'] = pred_val
+                    
+                    if 'Балл продуктивности' in df.columns:
+                        score_val = safe_int(row['Балл продуктивности'])
+                        if score_val is not None:
+                            defaults['productivity_score'] = score_val
+                    
+                    if 'Агрофон' in df.columns:
+                        agro_val = safe_str(row['Агрофон'])
+                        if agro_val:
+                            defaults['agro_background'] = agro_val
+                    
+                    if 'ПЗР' in df.columns:
+                        pzr_val = safe_str(row['ПЗР'])
+                        if pzr_val:
+                            defaults['pzr'] = pzr_val
+                    
+                    # Сохраняем культуру, если она присутствует, но не используем её как ключ
+                    if 'Культура' in df.columns:
+                        crop_val = safe_str(row['Культура'])
+                        defaults['crop'] = crop_val
+                    else:
+                        defaults['crop'] = ''
 
-                data, created = AgriculturalData.objects.update_or_create(
-                    field_name=row['Поле'],
-                    year=int(row['Год']),
-                    final_product=row['Конечный продукт'],
-                    variety=row['Сорт'],
-                    defaults=defaults
-                )
-                
-                if created:
-                    records_created += 1
-                else:
-                    records_updated += 1
+                    # Безопасные ключи для поиска/создания записи
+                    field_name = safe_str(row['Поле'])
+                    year = safe_int(row['Год'])
+                    final_product = safe_str(row['Конечный продукт'])
+                    variety = safe_str(row['Сорт'])
+                    
+                    if not field_name or not year or not final_product or not variety:
+                        print(f"⚠️ Skipping row with missing required fields: field={field_name}, year={year}, product={final_product}, variety={variety}")
+                        continue
+
+                    print(f"💾 Saving: {field_name}, {year}, {final_product}, {variety}")
+                    
+                    data, created = AgriculturalData.objects.update_or_create(
+                        field_name=field_name,
+                        year=year,
+                        final_product=final_product,
+                        variety=variety,
+                        defaults=defaults
+                    )
+                    
+                    if created:
+                        records_created += 1
+                        print(f"✅ Created record #{records_created}")
+                    else:
+                        records_updated += 1
+                        print(f"🔄 Updated record #{records_updated}")
+                        
+                except Exception as e:
+                    print(f"❌ Error processing row: {e}")
+                    import traceback
+                    traceback.print_exc()
+                    continue
         
+        print(f"📊 Summary: {records_created} created, {records_updated} updated")
         return records_created, records_updated
 
