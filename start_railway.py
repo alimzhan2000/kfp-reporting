@@ -41,12 +41,30 @@ def setup_admin():
     except Exception as e:
         print(f"⚠️  Could not create admin user: {e}")
 
+def run_migrations():
+    """Применяет миграции базы данных"""
+    try:
+        print("🔄 Running database migrations...")
+        cmd = [sys.executable, 'manage.py', 'migrate']
+        result = subprocess.run(cmd, check=True, capture_output=True, text=True)
+        print("✅ Migrations completed successfully!")
+        print(result.stdout)
+        return True
+    except subprocess.CalledProcessError as e:
+        print(f"❌ Migration failed: {e}")
+        print(f"Error output: {e.stderr}")
+        return False
+
 def main():
     # Получаем порт из переменной окружения
     port = os.environ.get('PORT', '8000')
     
     print(f"🚀 Starting Django on port: {port}")
     print(f"Environment PORT: {os.environ.get('PORT', 'NOT SET')}")
+    
+    # Применяем миграции перед запуском
+    if not run_migrations():
+        print("⚠️ Migrations failed, but continuing...")
     
     # Создаем админа перед запуском
     setup_admin()
