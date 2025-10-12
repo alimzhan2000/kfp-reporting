@@ -14,6 +14,39 @@ def get_original_yield_comparison_report():
         <title>KFP Reporting - Сравнение урожайности</title>
         <script src="https://cdn.tailwindcss.com"></script>
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <style>
+            /* Prevent page stretching */
+            body {
+                overflow-x: hidden;
+            }
+            
+            .max-w-7xl {
+                max-width: 80rem;
+            }
+            
+            /* Force charts to stay within bounds */
+            .bg-white.shadow.rounded-lg.p-6 {
+                overflow: hidden;
+                position: relative;
+            }
+            
+            /* Ensure charts don't overflow */
+            canvas {
+                max-width: 100% !important;
+                max-height: 400px !important;
+            }
+            
+            /* Prevent chart containers from expanding */
+            #charts-container {
+                max-width: 100%;
+                overflow: hidden;
+            }
+            
+            /* Ensure responsive behavior */
+            .grid.grid-cols-1.gap-8.lg\\:grid-cols-2 {
+                max-width: 100%;
+            }
+        </style>
     </head>
     <body class="bg-gray-50">
         <!-- Header -->
@@ -25,7 +58,7 @@ def get_original_yield_comparison_report():
                         <h1 class="text-gray-900 text-xl font-bold">Reporting KFP</h1>
                     </div>
                     <div class="flex items-center space-x-4">
-                        <a href="/" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded">Дашборд</a>
+                        <a href="/dashboard/" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded">Дашборд</a>
                         <a href="/upload/" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded">Загрузка</a>
                         <a href="/reports/" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded">Отчеты</a>
                         <a href="/reports/yield-comparison/" class="text-blue-600 hover:text-blue-800 px-3 py-2 rounded font-medium">Сравнение урожайности</a>
@@ -234,6 +267,30 @@ def get_original_yield_comparison_report():
                             legend: {
                                 display: true,
                                 position: 'top'
+                            },
+                            tooltip: {
+                                enabled: true,
+                                mode: 'nearest',
+                                intersect: true,
+                                callbacks: {
+                                    title: function(context) {
+                                        let label = context[0].label || '';
+                                        // Truncate long labels in tooltip
+                                        if (label.length > 40) {
+                                            return label.substring(0, 37) + '...';
+                                        }
+                                        return label;
+                                    }
+                                },
+                                bodyFont: {
+                                    size: 12
+                                },
+                                titleFont: {
+                                    size: 12
+                                },
+                                padding: 8,
+                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                maxWidth: 300
                             }
                         }
                     }
@@ -287,6 +344,25 @@ def get_original_yield_comparison_report():
                             legend: {
                                 display: true,
                                 position: 'top'
+                            },
+                            tooltip: {
+                                enabled: true,
+                                callbacks: {
+                                    title: function(context) {
+                                        let label = context[0].label || '';
+                                        // Truncate long labels in tooltip
+                                        if (label.length > 30) {
+                                            return label.substring(0, 27) + '...';
+                                        }
+                                        return label;
+                                    }
+                                },
+                                bodyFont: {
+                                    size: 12
+                                },
+                                padding: 8,
+                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                maxWidth: 250
                             }
                         }
                     }
