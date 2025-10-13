@@ -123,6 +123,16 @@ def get_dashboard_improved():
                 </div>
             </div>
 
+            <!-- API Test Button -->
+            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-8">
+                <h3 class="text-lg font-medium text-yellow-800 mb-2">Тест API</h3>
+                <p class="text-sm text-yellow-700 mb-3">Проверка подключения к API дашборда</p>
+                <button onclick="testAPI()" class="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700 transition-colors">
+                    Тестировать API
+                </button>
+                <div id="api-test-result" class="mt-2 text-sm"></div>
+            </div>
+
             <!-- Quick Actions -->
             <div class="mb-8">
                 <h3 class="text-lg font-medium text-gray-900 mb-4">Быстрые действия</h3>
@@ -354,6 +364,59 @@ def get_dashboard_improved():
 
             function viewLogs() {
                 window.open('/admin/', '_blank');
+            }
+
+            // Test API function
+            async function testAPI() {
+                const resultDiv = document.getElementById('api-test-result');
+                resultDiv.innerHTML = 'Тестирование API...';
+                
+                try {
+                    console.log('Testing API connection...');
+                    const response = await fetch('/api/reports/dashboard-stats/');
+                    console.log('API Response status:', response.status);
+                    console.log('API Response headers:', response.headers);
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        console.log('API Data received:', data);
+                        resultDiv.innerHTML = `
+                            <div class="text-green-600">
+                                ✅ API работает!<br>
+                                Записей: ${data.total_records}<br>
+                                Поля: ${data.unique_fields}<br>
+                                Продукты: ${data.unique_products}<br>
+                                Сорта: ${data.unique_varieties}
+                            </div>
+                        `;
+                        
+                        // Обновляем данные на дашборде
+                        document.getElementById('total-records').textContent = data.total_records || 0;
+                        document.getElementById('fields-count').textContent = data.unique_fields || 0;
+                        document.getElementById('products-count').textContent = data.unique_products || 0;
+                        document.getElementById('varieties-count').textContent = data.unique_varieties || 0;
+                        document.getElementById('last-year').textContent = data.latest_year || 'Нет данных';
+                        document.getElementById('avg-yield').textContent = `${data.avg_yield || 0} ц/га`;
+                        document.getElementById('total-area').textContent = `${data.total_area || 0} га`;
+                        
+                    } else {
+                        const errorText = await response.text();
+                        console.error('API Error:', response.status, errorText);
+                        resultDiv.innerHTML = `
+                            <div class="text-red-600">
+                                ❌ Ошибка API: ${response.status}<br>
+                                ${errorText}
+                            </div>
+                        `;
+                    }
+                } catch (error) {
+                    console.error('API Test Error:', error);
+                    resultDiv.innerHTML = `
+                        <div class="text-red-600">
+                            ❌ Ошибка подключения: ${error.message}
+                        </div>
+                    `;
+                }
             }
 
             // Initialize dashboard immediately - no redirect
