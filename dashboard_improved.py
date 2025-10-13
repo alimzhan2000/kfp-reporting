@@ -266,22 +266,80 @@ def get_dashboard_improved():
                 window.location.href = '/login/';
             }
 
-            // Load dashboard stats
-            async function loadStats() {
+            // Load dashboard statistics
+            async function loadDashboardStats() {
                 try {
                     const response = await fetch('/api/reports/dashboard-stats/');
+                    const data = await response.json();
+                    
                     if (response.ok) {
-                        const data = await response.json();
+                        // Update the statistics
                         document.getElementById('total-records').textContent = data.total_records || 0;
                         document.getElementById('fields-count').textContent = data.unique_fields || 0;
                         document.getElementById('products-count').textContent = data.unique_products || 0;
                         document.getElementById('varieties-count').textContent = data.unique_varieties || 0;
-                        document.getElementById('last-year').textContent = data.last_year || 'Нет данных';
+                        
+                        // Update additional info
+                        document.getElementById('latest-year').textContent = data.latest_year || 'Нет данных';
+                        document.getElementById('avg-yield').textContent = data.avg_yield ? data.avg_yield + ' ц/га' : '0 ц/га';
+                        document.getElementById('total-area').textContent = data.total_area ? data.total_area + ' га' : '0 га';
+                    } else {
+                        console.error('Error loading dashboard stats:', data);
+                        // Show error state
+                        document.getElementById('total-records').textContent = 'Ошибка';
+                        document.getElementById('fields-count').textContent = 'Ошибка';
+                        document.getElementById('products-count').textContent = 'Ошибка';
+                        document.getElementById('varieties-count').textContent = 'Ошибка';
+                    }
+                } catch (error) {
+                    console.error('Error loading dashboard stats:', error);
+                    // Show error state
+                    document.getElementById('total-records').textContent = 'Ошибка';
+                    document.getElementById('fields-count').textContent = 'Ошибка';
+                    document.getElementById('products-count').textContent = 'Ошибка';
+                    document.getElementById('varieties-count').textContent = 'Ошибка';
+                }
+            }
+
+            // Load dashboard stats
+            async function loadStats() {
+                try {
+                    console.log('Loading dashboard stats...');
+                    const response = await fetch('/api/reports/dashboard-stats/');
+                    console.log('Response status:', response.status);
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        console.log('Dashboard data:', data);
+                        
+                        document.getElementById('total-records').textContent = data.total_records || 0;
+                        document.getElementById('fields-count').textContent = data.unique_fields || 0;
+                        document.getElementById('products-count').textContent = data.unique_products || 0;
+                        document.getElementById('varieties-count').textContent = data.unique_varieties || 0;
+                        document.getElementById('last-year').textContent = data.latest_year || 'Нет данных';
                         document.getElementById('avg-yield').textContent = `${data.avg_yield || 0} ц/га`;
                         document.getElementById('total-area').textContent = `${data.total_area || 0} га`;
+                        
+                        console.log('Dashboard stats loaded successfully');
+                    } else {
+                        console.error('Error response:', response.status, response.statusText);
+                        const errorData = await response.json();
+                        console.error('Error data:', errorData);
+                        
+                        // Show error state
+                        document.getElementById('total-records').textContent = 'Ошибка';
+                        document.getElementById('fields-count').textContent = 'Ошибка';
+                        document.getElementById('products-count').textContent = 'Ошибка';
+                        document.getElementById('varieties-count').textContent = 'Ошибка';
                     }
                 } catch (error) {
                     console.error('Error loading stats:', error);
+                    
+                    // Show error state
+                    document.getElementById('total-records').textContent = 'Ошибка';
+                    document.getElementById('fields-count').textContent = 'Ошибка';
+                    document.getElementById('products-count').textContent = 'Ошибка';
+                    document.getElementById('varieties-count').textContent = 'Ошибка';
                 }
             }
 
