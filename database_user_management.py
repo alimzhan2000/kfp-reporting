@@ -57,41 +57,10 @@ def get_database_user_management_page():
                         </div>
                     </div>
                     <div class="flex space-x-3">
-                        <button onclick="initializeDemoUsers()" 
-                                class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors flex items-center space-x-2">
-                            <i data-lucide="database" class="h-4 w-4"></i>
-                            <span>Инициализировать демо</span>
-                        </button>
-                        <button onclick="forceInitializeDatabase()" 
-                                class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors flex items-center space-x-2">
-                            <i data-lucide="refresh-cw" class="h-4 w-4"></i>
-                            <span>Принудительная инициализация</span>
-                        </button>
-                        <button onclick="checkDatabaseStatus()" 
-                                class="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700 transition-colors flex items-center space-x-2">
-                            <i data-lucide="database" class="h-4 w-4"></i>
-                            <span>Проверить БД</span>
-                        </button>
         <button onclick="openCreateUserModal()" 
                 class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors flex items-center space-x-2">
             <i data-lucide="plus" class="h-4 w-4"></i>
             <span>Добавить пользователя</span>
-        </button>
-        <button onclick="testUserManagementAPI()" 
-                class="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition-colors">
-            🧪 Тест API
-        </button>
-        <button onclick="alert('API тест работает!')" 
-                class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors">
-            🔬 Простой API тест
-        </button>
-        <button onclick="simpleTest()" 
-                class="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors">
-            ✅ Тест JS
-        </button>
-        <button onclick="alert('Кнопка работает! JavaScript функционирует.')" 
-                class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors">
-            🔥 Простой тест
         </button>
                     </div>
                 </div>
@@ -481,7 +450,7 @@ def get_database_user_management_page():
                     tbody.innerHTML = `
                         <tr>
                             <td colspan="6" class="px-6 py-4 text-center text-gray-500">
-                                Пользователи не найдены. Нажмите "Инициализировать демо" для создания демо-пользователей.
+                                Пользователи не найдены. Нажмите "Добавить пользователя" для создания нового пользователя.
                             </td>
                         </tr>
                     `;
@@ -792,25 +761,12 @@ def get_database_user_management_page():
             // Initialize page
             console.log('🚀 Initializing user management page...');
             
-            // Simple initialization without auth check for testing
-            try {
-                console.log('Testing basic JavaScript functionality...');
-                document.addEventListener('DOMContentLoaded', function() {
-                    console.log('✅ DOM loaded successfully');
-                    
-                    // Try to load users without auth check
-                    console.log('Attempting to load users...');
-                    loadUsers();
-                });
-            } catch (error) {
-                console.error('❌ Initialization error:', error);
-            }
-            
-            // Original auth check (commented out for testing)
-            // const user = checkAuth();
-            // if (user) {
-            //     loadUsers();
-            // }
+            // Auto-load users on page load
+            document.addEventListener('DOMContentLoaded', function() {
+                console.log('✅ DOM loaded successfully');
+                console.log('Loading users automatically...');
+                loadUsers();
+            });
         </script>
     </body>
     </html>
