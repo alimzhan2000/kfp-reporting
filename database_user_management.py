@@ -333,7 +333,7 @@ def get_database_user_management_page():
             // Load users from database via API
             async function loadUsers() {
                 try {
-                    const response = await fetch('/api/auth/users/');
+                    const response = await fetch('/api/reports/simple-users-list/');
                     const data = await response.json();
                     
                     if (data.success) {
@@ -358,7 +358,7 @@ def get_database_user_management_page():
                     showMessage('Инициализация базы данных...', 'info');
                     
                     // Сначала проверяем состояние базы данных
-                    const statusResponse = await fetch('/api/auth/users/database-status/');
+                    const statusResponse = await fetch('/api/reports/simple-database-status/');
                     const statusData = await statusResponse.json();
                     
                     console.log('Database status before initialization:', statusData);
@@ -368,7 +368,7 @@ def get_database_user_management_page():
                         return;
                     }
                     
-                    const response = await fetch('/api/auth/users/force-initialize/', {
+                    const response = await fetch('/api/reports/simple-force-initialize/', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -399,7 +399,7 @@ def get_database_user_management_page():
                 try {
                     showMessage('Проверка состояния базы данных...', 'info');
                     
-                    const response = await fetch('/api/auth/users/database-status/');
+                    const response = await fetch('/api/reports/simple-database-status/');
                     const data = await response.json();
                     
                     console.log('Database status:', data);
@@ -423,7 +423,7 @@ def get_database_user_management_page():
                 
                 try {
                     // Сначала проверяем состояние базы данных
-                    const statusResponse = await fetch('/api/auth/users/database-status/');
+                    const statusResponse = await fetch('/api/reports/simple-database-status/');
                     const statusData = await statusResponse.json();
                     
                     if (!statusData.success) {
@@ -433,7 +433,7 @@ def get_database_user_management_page():
                     
                     console.log('Database status:', statusData);
                     
-                    const response = await fetch('/api/auth/users/initialize-demo/', {
+                    const response = await fetch('/api/reports/simple-force-initialize/', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
