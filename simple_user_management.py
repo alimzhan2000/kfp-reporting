@@ -44,6 +44,10 @@ def get_simple_user_management_page():
                                 class="bg-orange-600 text-white px-4 py-2 rounded-md hover:bg-orange-700">
                             📋 Загрузить пользователей
                         </button>
+                        <button onclick="initializeDatabase()" 
+                                class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700">
+                            🔧 Инициализировать БД
+                        </button>
                     </div>
                 </div>
 
@@ -235,6 +239,30 @@ def get_simple_user_management_page():
             function deleteUser(userId) {
                 if (confirm('Вы уверены, что хотите удалить этого пользователя?')) {
                     alert('Удаление пользователя ID: ' + userId);
+                }
+            }
+            
+            async function initializeDatabase() {
+                if (confirm('ВНИМАНИЕ! Инициализация базы данных:\n\n• Применит все миграции Django\n• Создаст демо-пользователей\n• Это может занять несколько секунд\n\nПродолжить?')) {
+                    try {
+                        const response = await fetch('/api/reports/simple-force-initialize/', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            }
+                        });
+                        
+                        const result = await response.json();
+                        
+                        if (result.success) {
+                            alert('База данных успешно инициализирована! Создано пользователей: ' + result.created_count);
+                            loadUsers(); // Reload users list
+                        } else {
+                            alert('Ошибка инициализации базы данных: ' + result.error);
+                        }
+                    } catch (error) {
+                        alert('Ошибка инициализации базы данных: ' + error.message);
+                    }
                 }
             }
             
