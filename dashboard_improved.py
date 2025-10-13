@@ -372,40 +372,61 @@ def get_dashboard_improved():
                 resultDiv.innerHTML = 'Тестирование API...';
                 
                 try {
-                    console.log('Testing API connection...');
-                    const response = await fetch('/api/reports/dashboard-stats/');
-                    console.log('API Response status:', response.status);
-                    console.log('API Response headers:', response.headers);
+                    // Сначала тестируем простой API
+                    console.log('Testing simple API...');
+                    const simpleResponse = await fetch('/api/reports/simple-test/');
+                    console.log('Simple API Response status:', simpleResponse.status);
                     
-                    if (response.ok) {
-                        const data = await response.json();
-                        console.log('API Data received:', data);
-                        resultDiv.innerHTML = `
-                            <div class="text-green-600">
-                                ✅ API работает!<br>
-                                Записей: ${data.total_records}<br>
-                                Поля: ${data.unique_fields}<br>
-                                Продукты: ${data.unique_products}<br>
-                                Сорта: ${data.unique_varieties}
-                            </div>
-                        `;
+                    if (simpleResponse.ok) {
+                        const simpleData = await simpleResponse.json();
+                        console.log('Simple API Data:', simpleData);
+                        resultDiv.innerHTML = 'Простой API работает! Тестируем основной API...';
                         
-                        // Обновляем данные на дашборде
-                        document.getElementById('total-records').textContent = data.total_records || 0;
-                        document.getElementById('fields-count').textContent = data.unique_fields || 0;
-                        document.getElementById('products-count').textContent = data.unique_products || 0;
-                        document.getElementById('varieties-count').textContent = data.unique_varieties || 0;
-                        document.getElementById('last-year').textContent = data.latest_year || 'Нет данных';
-                        document.getElementById('avg-yield').textContent = `${data.avg_yield || 0} ц/га`;
-                        document.getElementById('total-area').textContent = `${data.total_area || 0} га`;
+                        // Теперь тестируем основной API
+                        console.log('Testing dashboard stats API...');
+                        const response = await fetch('/api/reports/dashboard-stats/');
+                        console.log('Dashboard API Response status:', response.status);
+                        console.log('Dashboard API Response headers:', response.headers);
                         
+                        if (response.ok) {
+                            const data = await response.json();
+                            console.log('Dashboard API Data received:', data);
+                            resultDiv.innerHTML = `
+                                <div class="text-green-600">
+                                    ✅ Оба API работают!<br>
+                                    Записей: ${data.total_records}<br>
+                                    Поля: ${data.unique_fields}<br>
+                                    Продукты: ${data.unique_products}<br>
+                                    Сорта: ${data.unique_varieties}
+                                </div>
+                            `;
+                            
+                            // Обновляем данные на дашборде
+                            document.getElementById('total-records').textContent = data.total_records || 0;
+                            document.getElementById('fields-count').textContent = data.unique_fields || 0;
+                            document.getElementById('products-count').textContent = data.unique_products || 0;
+                            document.getElementById('varieties-count').textContent = data.unique_varieties || 0;
+                            document.getElementById('last-year').textContent = data.latest_year || 'Нет данных';
+                            document.getElementById('avg-yield').textContent = `${data.avg_yield || 0} ц/га`;
+                            document.getElementById('total-area').textContent = `${data.total_area || 0} га`;
+                            
+                        } else {
+                            const errorText = await response.text();
+                            console.error('Dashboard API Error:', response.status, errorText);
+                            resultDiv.innerHTML = `
+                                <div class="text-red-600">
+                                    ❌ Ошибка основного API: ${response.status}<br>
+                                    ${errorText}
+                                </div>
+                            `;
+                        }
                     } else {
-                        const errorText = await response.text();
-                        console.error('API Error:', response.status, errorText);
+                        const simpleErrorText = await simpleResponse.text();
+                        console.error('Simple API Error:', simpleResponse.status, simpleErrorText);
                         resultDiv.innerHTML = `
                             <div class="text-red-600">
-                                ❌ Ошибка API: ${response.status}<br>
-                                ${errorText}
+                                ❌ Ошибка простого API: ${simpleResponse.status}<br>
+                                ${simpleErrorText}
                             </div>
                         `;
                     }

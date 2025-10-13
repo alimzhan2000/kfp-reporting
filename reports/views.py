@@ -7,6 +7,7 @@ from django_filters.rest_framework import DjangoFilterBackend  # Восстан�
 from rest_framework import filters
 from rest_framework.generics import ListAPIView
 from django.db.models import Avg, Sum
+from django.utils import timezone
 from .models import AgriculturalData, ReportTemplate
 from .serializers import AgriculturalDataSerializer, ReportTemplateSerializer
 from .services import ReportService
@@ -118,6 +119,11 @@ def dashboard_stats(request):
     Статистика для дашборда
     """
     try:
+        # Добавляем логирование для отладки
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.info('Dashboard stats API called')
+        
         total_records = AgriculturalData.objects.count()
         unique_fields = AgriculturalData.objects.values('field_name').distinct().count()
         unique_products = AgriculturalData.objects.values('final_product').distinct().count()
@@ -132,7 +138,7 @@ def dashboard_stats(request):
         # Общая площадь
         total_area = AgriculturalData.objects.aggregate(total_area=Sum('planting_area'))['total_area'] or 0
         
-        return Response({
+        result = {
             'total_records': total_records,
             'unique_fields': unique_fields,
             'unique_products': unique_products,
@@ -140,10 +146,27 @@ def dashboard_stats(request):
             'latest_year': latest_year,
             'avg_yield': round(avg_yield, 2),
             'total_area': round(total_area, 2)
-        }, status=status.HTTP_200_OK)
+        }
+        
+        logger.info(f'Dashboard stats result: {result}')
+        return Response(result, status=status.HTTP_200_OK)
         
     except Exception as e:
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.error(f'Dashboard stats error: {str(e)}')
         return Response(
             {'error': f'Ошибка получения статистики: {str(e)}'},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
+
+@api_view(['GET'])
+def simple_test(request):
+    """
+    Простой тест API без аутентификации
+    """
+    return Response({
+        'message': 'API работает!',
+        'status': 'success',
+        'timestamp': timezone.now().isoformat()
+    }, status=status.HTTP_200_OK)
