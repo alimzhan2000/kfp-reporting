@@ -206,15 +206,23 @@ def get_upload_page_with_history():
             });
 
             // Click to select files
-            selectFilesBtn.addEventListener('click', () => {
+            selectFilesBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Select files button clicked');
                 fileInput.click();
             });
 
-            uploadArea.addEventListener('click', () => {
-                fileInput.click();
+            uploadArea.addEventListener('click', (e) => {
+                // Only trigger if clicking on the upload area itself, not buttons
+                if (e.target === uploadArea || e.target.closest('.upload-area')) {
+                    console.log('Upload area clicked');
+                    fileInput.click();
+                }
             });
 
             fileInput.addEventListener('change', (e) => {
+                console.log('File input changed:', e.target.files);
                 if (e.target.files.length > 0) {
                     handleFile(e.target.files[0]);
                 }
@@ -222,6 +230,8 @@ def get_upload_page_with_history():
 
             // File upload handler
             async function handleFile(file) {
+                console.log('Handling file:', file.name, 'Type:', file.type, 'Size:', file.size);
+                
                 // Validate file type
                 const allowedTypes = [
                     'text/csv',
@@ -229,7 +239,11 @@ def get_upload_page_with_history():
                     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
                 ];
                 
-                if (!allowedTypes.includes(file.type) && !file.name.match(/\\.(csv|xlsx|xls)$/i)) {
+                console.log('File type check:', file.type, 'Allowed:', allowedTypes);
+                console.log('Extension check:', file.name.match(/\.(csv|xlsx|xls)$/i));
+                
+                if (!allowedTypes.includes(file.type) && !file.name.match(/\.(csv|xlsx|xls)$/i)) {
+                    console.log('File validation failed');
                     showResult('error', 'Неподдерживаемый формат файла. Разрешены: CSV, XLSX, XLS');
                     return;
                 }
@@ -273,6 +287,7 @@ def get_upload_page_with_history():
 
             // Show upload result
             function showResult(type, message) {
+                console.log('Showing result:', type, message);
                 uploadResult.classList.remove('hidden');
                 uploadResult.className = `mt-4 p-4 rounded-md ${
                     type === 'success' 
