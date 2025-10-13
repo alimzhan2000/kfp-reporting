@@ -123,15 +123,6 @@ def get_dashboard_improved():
                 </div>
             </div>
 
-            <!-- API Test Button -->
-            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-8">
-                <h3 class="text-lg font-medium text-yellow-800 mb-2">Тест API</h3>
-                <p class="text-sm text-yellow-700 mb-3">Проверка подключения к API дашборда</p>
-                <button onclick="testAPI()" class="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700 transition-colors">
-                    Тестировать API
-                </button>
-                <div id="api-test-result" class="mt-2 text-sm"></div>
-            </div>
 
             <!-- Quick Actions -->
             <div class="mb-8">
@@ -211,15 +202,12 @@ def get_dashboard_improved():
             <div id="admin-section" class="hidden bg-white shadow rounded-lg p-6">
                 <h3 class="text-lg font-medium text-gray-900 mb-4">Управление пользователями</h3>
                 <p class="text-sm text-gray-500 mb-4">Управление доступом к системе и отчетам</p>
-                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <button onclick="addUser()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors">
                         Добавить пользователя
                     </button>
                     <button onclick="manageAccess()" class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors">
                         Управление доступом
-                    </button>
-                    <button onclick="viewLogs()" class="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition-colors">
-                        Логи системы
                     </button>
                 </div>
             </div>
@@ -362,83 +350,6 @@ def get_dashboard_improved():
                 window.location.href = '/user-management/';
             }
 
-            function viewLogs() {
-                window.open('/admin/', '_blank');
-            }
-
-            // Test API function
-            async function testAPI() {
-                const resultDiv = document.getElementById('api-test-result');
-                resultDiv.innerHTML = 'Тестирование API...';
-                
-                try {
-                    // Сначала тестируем простой API
-                    console.log('Testing simple API...');
-                    const simpleResponse = await fetch('/api/reports/simple-test-view/');
-                    console.log('Simple API Response status:', simpleResponse.status);
-                    
-                    if (simpleResponse.ok) {
-                        const simpleData = await simpleResponse.json();
-                        console.log('Simple API Data:', simpleData);
-                        resultDiv.innerHTML = 'Простой API работает! Тестируем простой dashboard API...';
-                        
-                        // Теперь тестируем простой dashboard API
-                        console.log('Testing simple dashboard stats API...');
-                        const response = await fetch('/api/reports/simple-dashboard-stats/');
-                        console.log('Simple Dashboard API Response status:', response.status);
-                        console.log('Simple Dashboard API Response headers:', response.headers);
-                        
-                        if (response.ok) {
-                            const data = await response.json();
-                            console.log('Simple Dashboard API Data received:', data);
-                            resultDiv.innerHTML = `
-                                <div class="text-green-600">
-                                    ✅ Простые API работают!<br>
-                                    Записей: ${data.total_records}<br>
-                                    Поля: ${data.unique_fields}<br>
-                                    Продукты: ${data.unique_products}<br>
-                                    Сорта: ${data.unique_varieties}
-                                </div>
-                            `;
-                            
-                            // Обновляем данные на дашборде
-                            document.getElementById('total-records').textContent = data.total_records || 0;
-                            document.getElementById('fields-count').textContent = data.unique_fields || 0;
-                            document.getElementById('products-count').textContent = data.unique_products || 0;
-                            document.getElementById('varieties-count').textContent = data.unique_varieties || 0;
-                            document.getElementById('last-year').textContent = data.latest_year || 'Нет данных';
-                            document.getElementById('avg-yield').textContent = `${data.avg_yield || 0} ц/га`;
-                            document.getElementById('total-area').textContent = `${data.total_area || 0} га`;
-                            
-                        } else {
-                            const errorText = await response.text();
-                            console.error('Simple Dashboard API Error:', response.status, errorText);
-                            resultDiv.innerHTML = `
-                                <div class="text-red-600">
-                                    ❌ Ошибка простого dashboard API: ${response.status}<br>
-                                    ${errorText}
-                                </div>
-                            `;
-                        }
-                    } else {
-                        const simpleErrorText = await simpleResponse.text();
-                        console.error('Simple API Error:', simpleResponse.status, simpleErrorText);
-                        resultDiv.innerHTML = `
-                            <div class="text-red-600">
-                                ❌ Ошибка простого API: ${simpleResponse.status}<br>
-                                ${simpleErrorText}
-                            </div>
-                        `;
-                    }
-                } catch (error) {
-                    console.error('API Test Error:', error);
-                    resultDiv.innerHTML = `
-                        <div class="text-red-600">
-                            ❌ Ошибка подключения: ${error.message}
-                        </div>
-                    `;
-                }
-            }
 
             // Initialize dashboard immediately - no redirect
             const user = checkAuth();
