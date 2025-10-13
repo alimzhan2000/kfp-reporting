@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from . import simple_views
 
 urlpatterns = [
     path('data/', views.AgriculturalDataListView.as_view(), name='agricultural_data_list'),
@@ -9,6 +10,8 @@ urlpatterns = [
     path('templates/', views.report_templates, name='report_templates'),
     path('dashboard-stats/', views.dashboard_stats, name='dashboard_stats'),
     path('simple-test/', views.simple_test, name='simple_test'),
+    path('simple-dashboard-stats/', simple_views.simple_dashboard_stats, name='simple_dashboard_stats'),
+    path('simple-test-view/', simple_views.simple_test_view, name='simple_test_view'),
 ]
 
 

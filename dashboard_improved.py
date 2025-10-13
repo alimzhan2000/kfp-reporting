@@ -315,7 +315,7 @@ def get_dashboard_improved():
             async function loadStats() {
                 try {
                     console.log('Loading dashboard stats...');
-                    const response = await fetch('/api/reports/dashboard-stats/');
+                    const response = await fetch('/api/reports/simple-dashboard-stats/');
                     console.log('Response status:', response.status);
                     
                     if (response.ok) {
@@ -333,7 +333,7 @@ def get_dashboard_improved():
                         console.log('Dashboard stats loaded successfully');
                     } else {
                         console.error('Error response:', response.status, response.statusText);
-                        const errorData = await response.json();
+                        const errorData = await response.text();
                         console.error('Error data:', errorData);
                         
                         // Show error state
@@ -374,26 +374,26 @@ def get_dashboard_improved():
                 try {
                     // Сначала тестируем простой API
                     console.log('Testing simple API...');
-                    const simpleResponse = await fetch('/api/reports/simple-test/');
+                    const simpleResponse = await fetch('/api/reports/simple-test-view/');
                     console.log('Simple API Response status:', simpleResponse.status);
                     
                     if (simpleResponse.ok) {
                         const simpleData = await simpleResponse.json();
                         console.log('Simple API Data:', simpleData);
-                        resultDiv.innerHTML = 'Простой API работает! Тестируем основной API...';
+                        resultDiv.innerHTML = 'Простой API работает! Тестируем простой dashboard API...';
                         
-                        // Теперь тестируем основной API
-                        console.log('Testing dashboard stats API...');
-                        const response = await fetch('/api/reports/dashboard-stats/');
-                        console.log('Dashboard API Response status:', response.status);
-                        console.log('Dashboard API Response headers:', response.headers);
+                        // Теперь тестируем простой dashboard API
+                        console.log('Testing simple dashboard stats API...');
+                        const response = await fetch('/api/reports/simple-dashboard-stats/');
+                        console.log('Simple Dashboard API Response status:', response.status);
+                        console.log('Simple Dashboard API Response headers:', response.headers);
                         
                         if (response.ok) {
                             const data = await response.json();
-                            console.log('Dashboard API Data received:', data);
+                            console.log('Simple Dashboard API Data received:', data);
                             resultDiv.innerHTML = `
                                 <div class="text-green-600">
-                                    ✅ Оба API работают!<br>
+                                    ✅ Простые API работают!<br>
                                     Записей: ${data.total_records}<br>
                                     Поля: ${data.unique_fields}<br>
                                     Продукты: ${data.unique_products}<br>
@@ -412,10 +412,10 @@ def get_dashboard_improved():
                             
                         } else {
                             const errorText = await response.text();
-                            console.error('Dashboard API Error:', response.status, errorText);
+                            console.error('Simple Dashboard API Error:', response.status, errorText);
                             resultDiv.innerHTML = `
                                 <div class="text-red-600">
-                                    ❌ Ошибка основного API: ${response.status}<br>
+                                    ❌ Ошибка простого dashboard API: ${response.status}<br>
                                     ${errorText}
                                 </div>
                             `;
