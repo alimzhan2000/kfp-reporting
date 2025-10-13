@@ -1,10 +1,10 @@
 """
-Дашборд с авторизацией для KFP Reporting
+Улучшенный дашборд с правильной авторизацией для KFP Reporting
 """
 from django.http import HttpResponse
 
-def get_dashboard_with_auth():
-    """Возвращает дашборд с проверкой авторизации"""
+def get_dashboard_improved():
+    """Возвращает дашборд с улучшенной проверкой авторизации"""
     return """
     <!DOCTYPE html>
     <html lang="ru">
@@ -219,23 +219,45 @@ def get_dashboard_with_auth():
             // Initialize Lucide icons
             lucide.createIcons();
 
-            // Check authentication
+            // Check authentication - improved version
             function checkAuth() {
                 const userData = localStorage.getItem('kfp_user');
                 if (!userData) {
+                    // If no user data, redirect to login
                     window.location.href = '/login/';
                     return null;
                 }
                 
-                const user = JSON.parse(userData);
-                document.getElementById('user-info').textContent = `${user.username} (${user.role})`;
-                
-                // Show admin section for admin users
-                if (user.role === 'admin') {
-                    document.getElementById('admin-section').classList.remove('hidden');
+                try {
+                    const user = JSON.parse(userData);
+                    
+                    // Check if login is still valid (24 hours)
+                    const loginTime = new Date(user.loginTime);
+                    const now = new Date();
+                    const hoursDiff = (now - loginTime) / (1000 * 60 * 60);
+                    
+                    if (hoursDiff > 24) {
+                        // Session expired
+                        localStorage.removeItem('kfp_user');
+                        window.location.href = '/login/';
+                        return null;
+                    }
+                    
+                    // Display user info
+                    document.getElementById('user-info').textContent = `${user.username} (${user.role})`;
+                    
+                    // Show admin section for admin users
+                    if (user.role === 'admin') {
+                        document.getElementById('admin-section').classList.remove('hidden');
+                    }
+                    
+                    return user;
+                } catch (error) {
+                    // Invalid user data
+                    localStorage.removeItem('kfp_user');
+                    window.location.href = '/login/';
+                    return null;
                 }
-                
-                return user;
             }
 
             // Logout function
@@ -265,18 +287,18 @@ def get_dashboard_with_auth():
 
             // Admin functions
             function addUser() {
-                alert('Функция "Добавить пользователя" будет реализована в следующих версиях.\n\nПока что используйте:\n- admin / admin123 (администратор)\n- manager / manager123 (менеджер)\n- user / user123 (пользователь)');
+                alert('Функция "Добавить пользователя" будет реализована в следующих версиях.\\n\\nПока что используйте:\\n- admin / admin123 (администратор)\\n- manager / manager123 (менеджер)\\n- user / user123 (пользователь)');
             }
 
             function manageAccess() {
-                alert('Функция "Управление доступом" будет реализована в следующих версиях.\n\nТекущие роли:\n- admin: полный доступ\n- manager: просмотр и загрузка данных\n- user: только просмотр отчетов');
+                alert('Функция "Управление доступом" будет реализована в следующих версиях.\\n\\nТекущие роли:\\n- admin: полный доступ\\n- manager: просмотр и загрузка данных\\n- user: только просмотр отчетов');
             }
 
             function viewLogs() {
-                alert('Функция "Логи системы" будет реализована в следующих версиях.\n\nДля просмотра логов используйте Django Admin: /admin/');
+                alert('Функция "Логи системы" будет реализована в следующих версиях.\\n\\nДля просмотра логов используйте Django Admin: /admin/');
             }
 
-            // Initialize dashboard
+            // Initialize dashboard immediately - no redirect
             const user = checkAuth();
             if (user) {
                 loadStats();

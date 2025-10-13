@@ -14,6 +14,7 @@ from field_efficiency_report import get_field_efficiency_report
 from variety_performance_report import get_variety_performance_report
 from login_page import get_login_page
 from dashboard_with_auth import get_dashboard_with_auth
+from dashboard_improved import get_dashboard_improved
 
 @csrf_exempt
 def health_check(request):
@@ -45,7 +46,7 @@ def home(request):
     """
     Главная страница - показывает KFP Reporting dashboard с авторизацией
     """
-    return HttpResponse(get_dashboard_with_auth(), content_type="text/html")
+    return HttpResponse(get_dashboard_improved(), content_type="text/html")
 
 @csrf_exempt
 def login_page(request):
