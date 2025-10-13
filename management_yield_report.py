@@ -433,7 +433,7 @@ def get_management_yield_comparison_report():
                                         console.log('Tooltip label called:', context);
                                         const value = context.parsed.y;
                                         console.log('Value:', value);
-                                        return `${value.toFixed(1)} ц/га`;
+                                        return `${(parseFloat(value) || 0).toFixed(1)} ц/га`;
                                     }
                                 }
                             }
@@ -582,7 +582,7 @@ def get_management_yield_comparison_report():
                                         console.log('Tooltip label called:', context);
                                         const value = context.parsed.y;
                                         console.log('Value:', value);
-                                        return `${value.toFixed(1)} ц/га`;
+                                        return `${(parseFloat(value) || 0).toFixed(1)} ц/га`;
                                     }
                                 }
                             }
@@ -661,8 +661,8 @@ def get_management_yield_comparison_report():
                         tr.innerHTML = `
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${row.variety || '-'}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${row.final_product || '-'}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${row.avg_yield?.toFixed(2) || '0.00'} ц/га</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${row.max_yield?.toFixed(2) || '0.00'} ц/га</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${(parseFloat(row.avg_yield) || 0).toFixed(2)} ц/га</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${(parseFloat(row.max_yield) || 0).toFixed(2)} ц/га</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${row.count || 0}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${row.fields || '-'}</td>
                         `;
@@ -683,8 +683,8 @@ def get_management_yield_comparison_report():
                         tr.className = 'hover:bg-gray-50';
                         tr.innerHTML = `
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${row.field_name || '-'}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${row.avg_yield?.toFixed(2) || '0.00'} ц/га</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${row.total_area?.toFixed(2) || '0.00'} га</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${(parseFloat(row.avg_yield) || 0).toFixed(2)} ц/га</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${(parseFloat(row.total_area) || 0).toFixed(2)} га</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${row.product_count || 0}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${row.year_count || 0}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${row.record_count || 0}</td>
