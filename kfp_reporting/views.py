@@ -17,6 +17,7 @@ from dashboard_with_auth import get_dashboard_with_auth
 from dashboard_improved import get_dashboard_improved
 from database_user_management import get_database_user_management_page
 from simple_user_management import get_simple_user_management_page
+from ultra_simple_user_management import get_ultra_simple_user_management_page
 
 @csrf_exempt
 def health_check(request):
@@ -60,9 +61,9 @@ def login_page(request):
 @csrf_exempt
 def user_management_page(request):
     """
-    Страница управления пользователями - простая версия для тестирования
+    Страница управления пользователями - ультра простая версия для тестирования
     """
-    return HttpResponse(get_simple_user_management_page(), content_type="text/html")
+    return HttpResponse(get_ultra_simple_user_management_page(), content_type="text/html")
 
 @csrf_exempt
 def upload_page(request):
