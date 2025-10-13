@@ -74,6 +74,12 @@ def get_upload_page_with_history():
                             <a href="/reports/" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded">Отчеты</a>
                             <a href="/user-management/" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded">Admin</a>
                         </div>
+                        <div class="flex items-center space-x-2">
+                            <span id="user-info" class="text-sm text-gray-600">Гость</span>
+                            <button onclick="logout()" class="text-red-600 hover:text-red-800 px-2 py-1 rounded text-sm">
+                                Выйти
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -412,7 +418,34 @@ def get_upload_page_with_history():
             // Refresh history button
             refreshHistoryBtn.addEventListener('click', loadUploadHistory);
 
+            // Logout function
+            function logout() {
+                console.log('Logout function called');
+                localStorage.removeItem('kfp_user');
+                // Redirect to login page
+                window.location.href = '/login/';
+            }
+
+            // Check authentication and update user info
+            function checkAuth() {
+                const userData = localStorage.getItem('kfp_user');
+                const userInfoElement = document.getElementById('user-info');
+                
+                if (userData) {
+                    try {
+                        const user = JSON.parse(userData);
+                        userInfoElement.textContent = `${user.username} (${user.role})`;
+                    } catch (error) {
+                        console.error('Error parsing user data:', error);
+                        userInfoElement.textContent = 'Гость';
+                    }
+                } else {
+                    userInfoElement.textContent = 'Гость';
+                }
+            }
+
             // Load history on page load
+            checkAuth();
             loadUploadHistory();
         </script>
     </body>

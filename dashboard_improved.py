@@ -287,9 +287,10 @@ def get_dashboard_improved():
 
             // Logout function
             function logout() {
+                console.log('Logout function called');
                 localStorage.removeItem('kfp_user');
-                // Refresh the page to show as guest
-                window.location.reload();
+                // Redirect to login page
+                window.location.href = '/login/';
             }
 
             // Load dashboard statistics

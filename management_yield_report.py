@@ -124,11 +124,17 @@ def get_management_yield_comparison_report():
                         <h1 class="text-gray-900 text-xl font-bold">Reporting KFP</h1>
                     </div>
                     <div class="flex items-center space-x-4">
-                        <a href="/" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded">Дашборд</a>
+                        <a href="/dashboard/" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded">Дашборд</a>
                         <a href="/upload/" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded">Загрузка</a>
                         <a href="/reports/" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded">Отчеты</a>
                         <a href="/reports/yield-comparison/" class="text-blue-600 hover:text-blue-800 px-3 py-2 rounded font-medium">Сравнение урожайности</a>
-                        <a href="/admin/" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded">Admin</a>
+                        <a href="/user-management/" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded">Admin</a>
+                        <div class="flex items-center space-x-2">
+                            <span id="user-info" class="text-sm text-gray-600">Гость</span>
+                            <button onclick="logout()" class="text-red-600 hover:text-red-800 px-2 py-1 rounded text-sm">
+                                Выйти
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -807,10 +813,39 @@ def get_management_yield_comparison_report():
                 // Don't monitor continuously to avoid interfering with tooltips
             }
 
+            // Logout function
+            function logout() {
+                console.log('Logout function called');
+                localStorage.removeItem('kfp_user');
+                // Redirect to login page
+                window.location.href = '/login/';
+            }
+
+            // Check authentication and update user info
+            function checkAuth() {
+                const userData = localStorage.getItem('kfp_user');
+                const userInfoElement = document.getElementById('user-info');
+                
+                if (userData) {
+                    try {
+                        const user = JSON.parse(userData);
+                        userInfoElement.textContent = `${user.username} (${user.role})`;
+                    } catch (error) {
+                        console.error('Error parsing user data:', error);
+                        userInfoElement.textContent = 'Гость';
+                    }
+                } else {
+                    userInfoElement.textContent = 'Гость';
+                }
+            }
+
             // Load data on page load
             document.addEventListener('DOMContentLoaded', function() {
                 console.log('DOM loaded, Chart.js available:', typeof Chart !== 'undefined');
                 console.log('Chart.js version:', Chart ? Chart.version : 'Not loaded');
+                
+                // Check authentication
+                checkAuth();
                 
                 // Start dimension monitoring
                 startDimensionMonitoring();
