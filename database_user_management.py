@@ -66,6 +66,10 @@ def get_database_user_management_page():
                 class="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition-colors">
             🔧 Тест модального окна
         </button>
+        <button onclick="testOpenModal()" 
+                class="bg-pink-600 text-white px-4 py-2 rounded-md hover:bg-pink-700 transition-colors">
+            🧪 Тест модала
+        </button>
         <button onclick="alert('Кнопка работает!')" 
                 class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors">
             ✅ Тест кнопки
@@ -73,6 +77,10 @@ def get_database_user_management_page():
         <button onclick="loadUsers()" 
                 class="bg-orange-600 text-white px-4 py-2 rounded-md hover:bg-orange-700 transition-colors">
             🔄 Загрузить пользователей
+        </button>
+        <button onclick="testLoadUsers()" 
+                class="bg-cyan-600 text-white px-4 py-2 rounded-md hover:bg-cyan-700 transition-colors">
+            🧪 Тест загрузки
         </button>
                     </div>
                 </div>
@@ -329,19 +337,42 @@ def get_database_user_management_page():
 
             // Load users from database via API
             async function loadUsers() {
+                console.log('🔄 Starting loadUsers function...');
                 try {
+                    console.log('📡 Fetching from /api/reports/simple-users-list/...');
                     const response = await fetch('/api/reports/simple-users-list/');
+                    console.log('📡 Response status:', response.status);
+                    console.log('📡 Response headers:', response.headers);
+                    
                     const data = await response.json();
+                    console.log('📡 Response data:', data);
                     
                     if (data.success) {
                         currentUsers = data.users;
                         renderUsersTable(data.users);
+                        console.log('✅ Users loaded successfully:', data.users.length);
                     } else {
+                        console.error('❌ API returned error:', data.error);
                         showMessage('Ошибка загрузки пользователей: ' + data.error, 'error');
                     }
                 } catch (error) {
-                    console.error('Error loading users:', error);
-                    showMessage('Ошибка загрузки пользователей', 'error');
+                    console.error('❌ Error loading users:', error);
+                    showMessage('Ошибка загрузки пользователей: ' + error.message, 'error');
+                }
+            }
+
+            // Simple test function for loading users
+            function testLoadUsers() {
+                console.log('🧪 Testing loadUsers function...');
+                const tbody = document.getElementById('users-table-body');
+                if (tbody) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="6" class="px-6 py-4 text-center text-blue-500">
+                                🧪 Тестовая загрузка пользователей работает!
+                            </td>
+                        </tr>
+                    `;
                 }
             }
 
@@ -526,8 +557,39 @@ def get_database_user_management_page():
 
             // Create user modal functions
             function openCreateUserModal() {
-                document.getElementById('create-user-modal').classList.remove('hidden');
-                document.getElementById('create-user-form').reset();
+                console.log('🔄 Starting openCreateUserModal function...');
+                try {
+                    const modal = document.getElementById('create-user-modal');
+                    const form = document.getElementById('create-user-form');
+                    
+                    console.log('🔍 Modal element:', modal);
+                    console.log('🔍 Form element:', form);
+                    
+                    if (modal) {
+                        modal.classList.remove('hidden');
+                        console.log('✅ Modal opened successfully');
+                    } else {
+                        console.error('❌ Modal element not found');
+                        alert('Модальное окно не найдено!');
+                        return;
+                    }
+                    
+                    if (form) {
+                        form.reset();
+                        console.log('✅ Form reset successfully');
+                    } else {
+                        console.error('❌ Form element not found');
+                    }
+                } catch (error) {
+                    console.error('❌ Error opening modal:', error);
+                    alert('Ошибка открытия модального окна: ' + error.message);
+                }
+            }
+
+            // Simple test function for modal
+            function testOpenModal() {
+                console.log('🧪 Testing modal function...');
+                alert('Тест модального окна работает!');
             }
 
             function closeCreateUserModal() {
