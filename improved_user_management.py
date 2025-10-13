@@ -306,7 +306,7 @@ def get_improved_user_management_page():
                             <tbody class="bg-white divide-y divide-gray-200">
                 `;
                 
-                users.forEach(user => {
+                users.forEach((user, index) => {
                     const statusColor = user.is_active ? 'text-green-600' : 'text-red-600';
                     const statusText = user.is_active ? 'Активен' : 'Неактивен';
                     const roleColor = user.role === 'admin' ? 'bg-red-100 text-red-800' : 
@@ -315,7 +315,7 @@ def get_improved_user_management_page():
                     
                     html += `
                         <tr data-user-id="${user.id}">
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${user.id}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${index + 1}</td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="text-sm font-medium text-gray-900">${user.username}</div>
                                 <div class="text-sm text-gray-500">${user.first_name} ${user.last_name}</div>
