@@ -34,6 +34,7 @@ urlpatterns = [
     path('user-management/', views.user_management_page, name='user_management'),
     path('init-database/', views.init_database_page, name='init_database'),
     path('init-database-action/', views.init_database_action_view, name='init_database_action'),
+    path('robust-init-database-action/', views.robust_init_database_action_view, name='robust_init_database_action'),
     
     # API endpoints
     path('api/auth/', include('accounts.urls')),
