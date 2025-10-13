@@ -32,6 +32,7 @@ urlpatterns = [
     
     # User management
     path('user-management/', views.user_management_page, name='user_management'),
+    path('init-database/', views.init_database_page, name='init_database'),
     
     # API endpoints
     path('api/auth/', include('accounts.urls')),
