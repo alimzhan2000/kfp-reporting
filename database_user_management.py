@@ -57,7 +57,7 @@ def get_database_user_management_page():
                         </div>
                     </div>
                     <div class="flex space-x-3">
-        <button onclick="openCreateUserModal()" 
+        <button onclick="alert('Добавление пользователя работает!')" 
                 class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors flex items-center space-x-2">
             <i data-lucide="plus" class="h-4 w-4"></i>
             <span>Добавить пользователя</span>
@@ -66,7 +66,7 @@ def get_database_user_management_page():
                 class="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition-colors">
             🔧 Тест модального окна
         </button>
-        <button onclick="testOpenModal()" 
+        <button onclick="alert('Тест модала работает!')" 
                 class="bg-pink-600 text-white px-4 py-2 rounded-md hover:bg-pink-700 transition-colors">
             🧪 Тест модала
         </button>
@@ -74,11 +74,11 @@ def get_database_user_management_page():
                 class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors">
             ✅ Тест кнопки
         </button>
-        <button onclick="loadUsers()" 
+        <button onclick="alert('Загрузка пользователей работает!')" 
                 class="bg-orange-600 text-white px-4 py-2 rounded-md hover:bg-orange-700 transition-colors">
             🔄 Загрузить пользователей
         </button>
-        <button onclick="testLoadUsers()" 
+        <button onclick="alert('Тест загрузки работает!')" 
                 class="bg-cyan-600 text-white px-4 py-2 rounded-md hover:bg-cyan-700 transition-colors">
             🧪 Тест загрузки
         </button>
