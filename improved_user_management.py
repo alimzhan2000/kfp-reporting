@@ -121,6 +121,69 @@ def get_improved_user_management_page():
             </div>
         </div>
 
+        <!-- Edit User Modal -->
+        <div id="edit-user-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+            <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+                <div class="mt-3">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-medium text-gray-900">Редактировать пользователя</h3>
+                        <button onclick="closeEditUserModal()" class="text-gray-400 hover:text-gray-600">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <form id="edit-user-form">
+                        <input type="hidden" id="edit-user-id" name="user_id">
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Имя пользователя *</label>
+                            <input type="text" id="edit-username" name="username" required 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Имя</label>
+                            <input type="text" id="edit-first-name" name="first_name" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Фамилия</label>
+                            <input type="text" id="edit-last-name" name="last_name" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Роль *</label>
+                            <select id="edit-role" name="role" required 
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="user">Пользователь</option>
+                                <option value="manager">Менеджер</option>
+                                <option value="admin">Администратор</option>
+                            </select>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                            <input type="email" id="edit-email" name="email" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Отдел</label>
+                            <input type="text" id="edit-department" name="department" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div class="flex justify-end space-x-3">
+                            <button type="button" onclick="closeEditUserModal()" 
+                                    class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
+                                Отмена
+                            </button>
+                            <button type="submit" 
+                                    class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                                Сохранить
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
         <script>
             // Load users on page load
             document.addEventListener('DOMContentLoaded', function() {
@@ -134,6 +197,11 @@ def get_improved_user_management_page():
             function closeCreateUserModal() {
                 document.getElementById('create-user-modal').classList.add('hidden');
                 document.getElementById('create-user-form').reset();
+            }
+            
+            function closeEditUserModal() {
+                document.getElementById('edit-user-modal').classList.add('hidden');
+                document.getElementById('edit-user-form').reset();
             }
             
             function loadUsers() {
@@ -213,7 +281,7 @@ def get_improved_user_management_page():
                                    'bg-gray-100 text-gray-800';
                     
                     html += `
-                        <tr>
+                        <tr data-user-id="${user.id}">
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${user.id}</td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="text-sm font-medium text-gray-900">${user.username}</div>
@@ -291,13 +359,114 @@ def get_improved_user_management_page():
                 });
             });
             
+            // Handle edit form submission
+            document.getElementById('edit-user-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(this);
+                const data = Object.fromEntries(formData.entries());
+                const userId = data.user_id;
+                
+                // Show loading state
+                const submitButton = this.querySelector('button[type="submit"]');
+                const originalText = submitButton.textContent;
+                submitButton.textContent = 'Сохранение...';
+                submitButton.disabled = true;
+                
+                fetch(`/api/reports/simple-update-user/${userId}/`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify(data)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Show success message
+                        alert(`✅ ${data.message}`);
+                        
+                        // Close modal
+                        closeEditUserModal();
+                        
+                        // Reload users list
+                        loadUsers();
+                    } else {
+                        alert(`❌ Ошибка: ${data.error}`);
+                    }
+                })
+                .catch(error => {
+                    alert(`❌ Ошибка соединения: ${error.message}`);
+                })
+                .finally(() => {
+                    submitButton.textContent = originalText;
+                    submitButton.disabled = false;
+                });
+            });
+            
             function editUser(userId) {
-                alert(`Редактирование пользователя ${userId} будет добавлено в следующих версиях`);
+                // Находим пользователя в списке
+                const userRow = document.querySelector(`tr[data-user-id="${userId}"]`);
+                if (!userRow) {
+                    alert('Пользователь не найден');
+                    return;
+                }
+                
+                // Получаем данные пользователя из таблицы
+                const username = userRow.querySelector('td:nth-child(2) .text-sm.font-medium').textContent;
+                const fullName = userRow.querySelector('td:nth-child(2) .text-sm.text-gray-500').textContent;
+                const [firstName, lastName] = fullName.split(' ');
+                const role = userRow.querySelector('td:nth-child(3) span').textContent.toLowerCase();
+                const email = userRow.querySelector('td:nth-child(4)').textContent;
+                const department = userRow.querySelector('td:nth-child(5)').textContent;
+                
+                // Заполняем форму редактирования
+                document.getElementById('edit-user-form').style.display = 'block';
+                document.getElementById('edit-user-id').value = userId;
+                document.getElementById('edit-username').value = username;
+                document.getElementById('edit-first-name').value = firstName || '';
+                document.getElementById('edit-last-name').value = lastName || '';
+                document.getElementById('edit-role').value = role;
+                document.getElementById('edit-email').value = email;
+                document.getElementById('edit-department').value = department;
+                
+                // Показываем модальное окно редактирования
+                document.getElementById('edit-user-modal').classList.remove('hidden');
             }
             
             function deleteUser(userId) {
-                if (confirm(`Удалить пользователя ${userId}?`)) {
-                    alert(`Удаление пользователя ${userId} будет добавлено в следующих версиях`);
+                if (confirm(`Вы уверены, что хотите удалить пользователя с ID ${userId}?`)) {
+                    // Показываем индикатор загрузки
+                    const deleteButton = event.target;
+                    const originalText = deleteButton.textContent;
+                    deleteButton.textContent = 'Удаление...';
+                    deleteButton.disabled = true;
+                    
+                    fetch(`/api/reports/simple-delete-user/${userId}/`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': getCookie('csrftoken')
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert(`✅ ${data.message}`);
+                            // Обновляем список пользователей
+                            loadUsers();
+                        } else {
+                            alert(`❌ Ошибка: ${data.error}`);
+                        }
+                    })
+                    .catch(error => {
+                        alert(`❌ Ошибка соединения: ${error.message}`);
+                    })
+                    .finally(() => {
+                        deleteButton.textContent = originalText;
+                        deleteButton.disabled = false;
+                    });
                 }
             }
             

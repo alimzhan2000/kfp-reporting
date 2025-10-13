@@ -19,6 +19,8 @@ urlpatterns = [
     path('simple-database-status/', simple_views.simple_database_status, name='simple_database_status'),
            path('simple-force-initialize/', simple_views.simple_force_initialize_database, name='simple_force_initialize_database'),
            path('simple-create-user/', simple_views.simple_create_user, name='simple_create_user'),
+           path('simple-delete-user/<int:user_id>/', simple_views.simple_delete_user, name='simple_delete_user'),
+           path('simple-update-user/<int:user_id>/', simple_views.simple_update_user, name='simple_update_user'),
 ]
 
 

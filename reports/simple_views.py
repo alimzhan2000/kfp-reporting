@@ -216,6 +216,139 @@ def simple_users_list(request):
 
 
 @csrf_exempt
+@require_http_methods(["DELETE"])
+def simple_delete_user(request, user_id):
+    """
+    Удаление пользователя без аутентификации
+    """
+    try:
+        from django.contrib.auth.models import User
+        from accounts.models import UserProfile
+        
+        # Проверяем, что пользователь существует
+        try:
+            user = User.objects.get(id=user_id)
+        except User.DoesNotExist:
+            return JsonResponse({
+                'success': False,
+                'error': 'Пользователь не найден'
+            }, status=404)
+        
+        # Нельзя удалить суперпользователя
+        if user.is_superuser:
+            return JsonResponse({
+                'success': False,
+                'error': 'Нельзя удалить суперпользователя'
+            }, status=400)
+        
+        # Удаляем профиль пользователя (если существует)
+        try:
+            profile = UserProfile.objects.get(user=user)
+            profile.delete()
+        except UserProfile.DoesNotExist:
+            pass  # Профиль уже не существует
+        
+        # Удаляем пользователя
+        username = user.username
+        user.delete()
+        
+        return JsonResponse({
+            'success': True,
+            'message': f'Пользователь {username} успешно удален'
+        })
+        
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': f'Ошибка удаления пользователя: {str(e)}'
+        }, status=500)
+
+
+@csrf_exempt
+@require_http_methods(["PUT"])
+def simple_update_user(request, user_id):
+    """
+    Обновление пользователя без аутентификации
+    """
+    try:
+        from django.contrib.auth.models import User
+        from accounts.models import UserProfile
+        import json
+        
+        # Получаем данные из запроса
+        data = json.loads(request.body)
+        
+        # Проверяем, что пользователь существует
+        try:
+            user = User.objects.get(id=user_id)
+        except User.DoesNotExist:
+            return JsonResponse({
+                'success': False,
+                'error': 'Пользователь не найден'
+            }, status=404)
+        
+        # Обновляем основные данные пользователя
+        if 'username' in data:
+            user.username = data['username']
+        if 'first_name' in data:
+            user.first_name = data['first_name']
+        if 'last_name' in data:
+            user.last_name = data['last_name']
+        if 'email' in data:
+            user.email = data['email']
+        if 'is_active' in data:
+            user.is_active = data['is_active']
+        
+        user.save()
+        
+        # Получаем или создаем профиль пользователя
+        profile, created = UserProfile.objects.get_or_create(
+            user=user,
+            defaults={
+                'role': 'user',
+                'phone': '',
+                'department': '',
+                'is_active_user': True
+            }
+        )
+        
+        # Обновляем данные профиля
+        if 'role' in data:
+            profile.role = data['role']
+        if 'phone' in data:
+            profile.phone = data['phone']
+        if 'department' in data:
+            profile.department = data['department']
+        if 'is_active_user' in data:
+            profile.is_active_user = data['is_active_user']
+        
+        profile.save()
+        
+        return JsonResponse({
+            'success': True,
+            'message': f'Пользователь {user.username} успешно обновлен',
+            'user': {
+                'id': user.id,
+                'username': user.username,
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+                'email': user.email,
+                'is_active': user.is_active,
+                'role': profile.role,
+                'phone': profile.phone or '',
+                'department': profile.department or '',
+                'is_active_user': profile.is_active_user,
+            }
+        })
+        
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': f'Ошибка обновления пользователя: {str(e)}'
+        }, status=500)
+
+
+@csrf_exempt
 @require_http_methods(["GET"])
 def simple_database_status(request):
     """
