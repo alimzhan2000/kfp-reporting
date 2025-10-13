@@ -1,5 +1,5 @@
 """
-API views для управления пользователями
+API views для управления пользователями с базой данных
 """
 from django.contrib.auth import authenticate
 from django.contrib.auth.hashers import make_password
@@ -8,6 +8,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
+from django.contrib.auth.models import User
+from .models import UserProfile
 import json
 import logging
 
@@ -38,9 +40,6 @@ def create_user(request):
             }, status=400)
         
         # Создание пользователя
-        from django.contrib.auth.models import User
-        from accounts.models import UserProfile
-        
         user = User.objects.create(
             username=data['username'],
             password=make_password(data['password']),
@@ -66,11 +65,13 @@ def create_user(request):
                 'id': user.id,
                 'username': user.username,
                 'role': profile.role,
+                'role_display': profile.role_display,
                 'full_name': profile.get_full_name(),
                 'email': user.email,
                 'phone': profile.phone,
                 'department': profile.department,
                 'is_active_user': profile.is_active_user,
+                'is_active': user.is_active,
                 'created_at': profile.created_at.isoformat()
             }
         })
@@ -104,9 +105,6 @@ def create_user(request):
 def list_users(request):
     """Получение списка всех пользователей"""
     try:
-        from django.contrib.auth.models import User
-        from accounts.models import UserProfile
-        
         users = User.objects.select_related('profile').all().order_by('-date_joined')
         
         users_data = []
@@ -116,7 +114,7 @@ def list_users(request):
                 'id': user.id,
                 'username': user.username,
                 'role': profile.role if profile else 'user',
-                'role_display': profile.get_role_display() if profile else 'Пользователь',
+                'role_display': profile.role_display if profile else 'Пользователь',
                 'full_name': profile.get_full_name() if profile else f"{user.first_name} {user.last_name}".strip() or user.username,
                 'email': user.email,
                 'phone': profile.phone if profile else '',
@@ -148,21 +146,35 @@ def update_user(request, user_id):
     try:
         data = json.loads(request.body)
         
-        from accounts.models import CustomUser
-        
         try:
-            user = CustomUser.objects.get(id=user_id)
-        except CustomUser.DoesNotExist:
+            user = User.objects.get(id=user_id)
+        except User.DoesNotExist:
             return JsonResponse({
                 'success': False,
                 'error': 'Пользователь не найден'
             }, status=404)
         
-        # Обновление полей
+        # Получаем или создаем профиль
+        profile, created = UserProfile.objects.get_or_create(
+            user=user,
+            defaults={'role': 'user', 'is_active_user': True}
+        )
+        
+        # Обновление полей пользователя
         if 'username' in data:
             user.username = data['username']
         if 'password' in data and data['password']:
             user.password = make_password(data['password'])
+        if 'first_name' in data:
+            user.first_name = data['first_name']
+        if 'last_name' in data:
+            user.last_name = data['last_name']
+        if 'email' in data:
+            user.email = data['email']
+        if 'is_active' in data:
+            user.is_active = data['is_active']
+        
+        # Обновление полей профиля
         if 'role' in data:
             valid_roles = ['admin', 'manager', 'user']
             if data['role'] not in valid_roles:
@@ -170,23 +182,16 @@ def update_user(request, user_id):
                     'success': False,
                     'error': f'Недопустимая роль. Доступные роли: {", ".join(valid_roles)}'
                 }, status=400)
-            user.role = data['role']
-        if 'first_name' in data:
-            user.first_name = data['first_name']
-        if 'last_name' in data:
-            user.last_name = data['last_name']
-        if 'email' in data:
-            user.email = data['email']
+            profile.role = data['role']
         if 'phone' in data:
-            user.phone = data['phone']
+            profile.phone = data['phone']
         if 'department' in data:
-            user.department = data['department']
+            profile.department = data['department']
         if 'is_active_user' in data:
-            user.is_active_user = data['is_active_user']
-        if 'is_active' in data:
-            user.is_active = data['is_active']
+            profile.is_active_user = data['is_active_user']
         
         user.save()
+        profile.save()
         
         return JsonResponse({
             'success': True,
@@ -194,14 +199,15 @@ def update_user(request, user_id):
             'user': {
                 'id': user.id,
                 'username': user.username,
-                'role': user.role,
-                'full_name': user.get_full_name(),
+                'role': profile.role,
+                'role_display': profile.role_display,
+                'full_name': profile.get_full_name(),
                 'email': user.email,
-                'phone': user.phone,
-                'department': user.department,
-                'is_active_user': user.is_active_user,
+                'phone': profile.phone,
+                'department': profile.department,
+                'is_active_user': profile.is_active_user,
                 'is_active': user.is_active,
-                'updated_at': user.updated_at.isoformat()
+                'updated_at': profile.updated_at.isoformat()
             }
         })
         
@@ -228,18 +234,16 @@ def update_user(request, user_id):
 def delete_user(request, user_id):
     """Удаление пользователя"""
     try:
-        from accounts.models import CustomUser
-        
         try:
-            user = CustomUser.objects.get(id=user_id)
-        except CustomUser.DoesNotExist:
+            user = User.objects.get(id=user_id)
+        except User.DoesNotExist:
             return JsonResponse({
                 'success': False,
                 'error': 'Пользователь не найден'
             }, status=404)
         
         username = user.username
-        user.delete()
+        user.delete()  # Это также удалит связанный профиль из-за CASCADE
         
         return JsonResponse({
             'success': True,
@@ -258,32 +262,32 @@ def delete_user(request, user_id):
 def get_user(request, user_id):
     """Получение информации о конкретном пользователе"""
     try:
-        from accounts.models import CustomUser
-        
         try:
-            user = CustomUser.objects.get(id=user_id)
-        except CustomUser.DoesNotExist:
+            user = User.objects.get(id=user_id)
+        except User.DoesNotExist:
             return JsonResponse({
                 'success': False,
                 'error': 'Пользователь не найден'
             }, status=404)
+        
+        profile = getattr(user, 'profile', None)
         
         return JsonResponse({
             'success': True,
             'user': {
                 'id': user.id,
                 'username': user.username,
-                'role': user.role,
-                'role_display': user.get_role_display(),
-                'full_name': user.get_full_name(),
+                'role': profile.role if profile else 'user',
+                'role_display': profile.role_display if profile else 'Пользователь',
+                'full_name': profile.get_full_name() if profile else f"{user.first_name} {user.last_name}".strip() or user.username,
                 'email': user.email,
-                'phone': user.phone,
-                'department': user.department,
-                'is_active_user': user.is_active_user,
+                'phone': profile.phone if profile else '',
+                'department': profile.department if profile else '',
+                'is_active_user': profile.is_active_user if profile else True,
                 'is_active': user.is_active,
                 'last_login': user.last_login.isoformat() if user.last_login else None,
-                'created_at': user.created_at.isoformat(),
-                'updated_at': user.updated_at.isoformat()
+                'created_at': profile.created_at.isoformat() if profile else user.date_joined.isoformat(),
+                'updated_at': profile.updated_at.isoformat() if profile else user.date_joined.isoformat()
             }
         })
         
@@ -292,4 +296,79 @@ def get_user(request, user_id):
         return JsonResponse({
             'success': False,
             'error': 'Ошибка получения информации о пользователе'
+        }, status=500)
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def initialize_demo_users(request):
+    """Инициализация демо-пользователей в базе данных"""
+    try:
+        demo_users = [
+            {
+                'username': 'admin',
+                'password': 'admin123',
+                'role': 'admin',
+                'first_name': 'Администратор',
+                'last_name': 'Системы',
+                'email': 'admin@kfp.com',
+                'phone': '+7 (777) 123-45-67',
+                'department': 'IT',
+                'is_active_user': True
+            },
+            {
+                'username': 'manager',
+                'password': 'manager123',
+                'role': 'manager',
+                'first_name': 'Менеджер',
+                'last_name': 'Отдела',
+                'email': 'manager@kfp.com',
+                'phone': '+7 (777) 234-56-78',
+                'department': 'Агрономия',
+                'is_active_user': True
+            },
+            {
+                'username': 'user',
+                'password': 'user123',
+                'role': 'user',
+                'first_name': 'Пользователь',
+                'last_name': 'Обычный',
+                'email': 'user@kfp.com',
+                'phone': '+7 (777) 345-67-89',
+                'department': 'Поле',
+                'is_active_user': True
+            }
+        ]
+        
+        created_count = 0
+        for user_data in demo_users:
+            if not User.objects.filter(username=user_data['username']).exists():
+                user = User.objects.create(
+                    username=user_data['username'],
+                    password=make_password(user_data['password']),
+                    first_name=user_data['first_name'],
+                    last_name=user_data['last_name'],
+                    email=user_data['email'],
+                    is_active=True
+                )
+                
+                UserProfile.objects.create(
+                    user=user,
+                    role=user_data['role'],
+                    phone=user_data['phone'],
+                    department=user_data['department'],
+                    is_active_user=user_data['is_active_user']
+                )
+                created_count += 1
+        
+        return JsonResponse({
+            'success': True,
+            'message': f'Создано {created_count} демо-пользователей',
+            'created_count': created_count
+        })
+        
+    except Exception as e:
+        logger.error(f'Error initializing demo users: {str(e)}')
+        return JsonResponse({
+            'success': False,
+            'error': 'Ошибка инициализации демо-пользователей'
         }, status=500)

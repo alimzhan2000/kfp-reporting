@@ -60,3 +60,8 @@ class UserProfile(models.Model):
     
     def get_full_name(self):
         return f"{self.user.first_name} {self.user.last_name}".strip() or self.user.username
+    
+    @property
+    def role_display(self):
+        """Возвращает отображаемое название роли"""
+        return dict(self.ROLES).get(self.role, self.role)
