@@ -138,7 +138,13 @@ def get_simple_user_management_page():
                 document.getElementById('create-user-modal').classList.add('hidden');
             }
             
-            async function loadUsers() {
+            function loadUsers() {
+                alert('Загрузка пользователей запущена!');
+                // Call real function in background
+                realLoadUsers();
+            }
+            
+            async function realLoadUsers() {
                 try {
                     const response = await fetch('/api/reports/simple-users-list/');
                     const data = await response.json();
@@ -198,7 +204,7 @@ def get_simple_user_management_page():
             }
             
             // Handle form submission
-            document.getElementById('create-user-form').addEventListener('submit', async function(e) {
+            document.getElementById('create-user-form').addEventListener('submit', function(e) {
                 e.preventDefault();
                 const formData = new FormData(this);
                 const userData = {
@@ -207,7 +213,13 @@ def get_simple_user_management_page():
                     role: formData.get('role'),
                     email: formData.get('email')
                 };
-                
+                alert('Пользователь будет создан: ' + JSON.stringify(userData, null, 2));
+                closeCreateUserModal();
+                // Call real function in background
+                realCreateUser(userData);
+            });
+            
+            async function realCreateUser(userData) {
                 try {
                     const response = await fetch('/api/reports/simple-create-user/', {
                         method: 'POST',
@@ -221,15 +233,14 @@ def get_simple_user_management_page():
                     
                     if (result.success) {
                         alert('Пользователь успешно создан!');
-                        closeCreateUserModal();
-                        loadUsers(); // Reload users list
+                        realLoadUsers(); // Reload users list
                     } else {
                         alert('Ошибка создания пользователя: ' + result.error);
                     }
                 } catch (error) {
                     alert('Ошибка создания пользователя: ' + error.message);
                 }
-            });
+            }
             
             // Edit and delete functions
             function editUser(userId) {
@@ -242,7 +253,13 @@ def get_simple_user_management_page():
                 }
             }
             
-            async function initializeDatabase() {
+            function initializeDatabase() {
+                alert('Инициализация базы данных запущена!');
+                // Call real function in background
+                realInitializeDatabase();
+            }
+            
+            async function realInitializeDatabase() {
                 if (confirm('ВНИМАНИЕ! Инициализация базы данных:\n\n• Применит все миграции Django\n• Создаст демо-пользователей\n• Это может занять несколько секунд\n\nПродолжить?')) {
                     try {
                         const response = await fetch('/api/reports/simple-force-initialize/', {
@@ -256,7 +273,7 @@ def get_simple_user_management_page():
                         
                         if (result.success) {
                             alert('База данных успешно инициализирована! Создано пользователей: ' + result.created_count);
-                            loadUsers(); // Reload users list
+                            realLoadUsers(); // Reload users list
                         } else {
                             alert('Ошибка инициализации базы данных: ' + result.error);
                         }
