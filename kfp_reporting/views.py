@@ -15,6 +15,7 @@ from variety_performance_report import get_variety_performance_report
 from login_page import get_login_page
 from dashboard_with_auth import get_dashboard_with_auth
 from dashboard_improved import get_dashboard_improved
+from demo_user_management import get_demo_user_management_page
 
 @csrf_exempt
 def health_check(request):
@@ -54,6 +55,13 @@ def login_page(request):
     Страница авторизации
     """
     return HttpResponse(get_login_page(), content_type="text/html")
+
+@csrf_exempt
+def user_management_page(request):
+    """
+    Страница управления пользователями (только для админов) - Демо-версия
+    """
+    return HttpResponse(get_demo_user_management_page(), content_type="text/html")
 
 @csrf_exempt
 def upload_page(request):

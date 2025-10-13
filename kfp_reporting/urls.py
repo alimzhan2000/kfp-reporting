@@ -30,6 +30,9 @@ urlpatterns = [
     path('reports/variety-performance/', views.variety_performance_report, name='variety_performance_report'),
     path('data/', views.home, name='data_page'),  # Redirect to dashboard
     
+    # User management
+    path('user-management/', views.user_management_page, name='user_management'),
+    
     # API endpoints
     path('api/auth/', include('accounts.urls')),
     path('api/reports/', include('reports.urls')),

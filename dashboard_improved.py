@@ -287,15 +287,15 @@ def get_dashboard_improved():
 
             // Admin functions
             function addUser() {
-                alert('Функция "Добавить пользователя" будет реализована в следующих версиях.\\n\\nПока что используйте:\\n- admin / admin123 (администратор)\\n- manager / manager123 (менеджер)\\n- user / user123 (пользователь)');
+                window.location.href = '/user-management/';
             }
 
             function manageAccess() {
-                alert('Функция "Управление доступом" будет реализована в следующих версиях.\\n\\nТекущие роли:\\n- admin: полный доступ\\n- manager: просмотр и загрузка данных\\n- user: только просмотр отчетов');
+                window.location.href = '/user-management/';
             }
 
             function viewLogs() {
-                alert('Функция "Логи системы" будет реализована в следующих версиях.\\n\\nДля просмотра логов используйте Django Admin: /admin/');
+                window.open('/admin/', '_blank');
             }
 
             // Initialize dashboard immediately - no redirect
