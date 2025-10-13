@@ -10,6 +10,7 @@ from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.db import transaction
+from django.shortcuts import get_object_or_404
 import os
 
 # Импортируем простой тест
@@ -96,12 +97,12 @@ class FileUploadView(APIView):
 
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([])  # Убираем требование аутентификации
 def upload_history(request):
     """
     История загрузок
     """
-    uploads = DataUpload.objects.filter(uploaded_by=request.user).order_by('-created_at')
+    uploads = DataUpload.objects.all().order_by('-created_at')
     serializer = DataUploadSerializer(uploads, many=True)
     return Response(serializer.data)
 
@@ -124,31 +125,36 @@ def upload_status(request, upload_id):
 
 
 @api_view(['DELETE'])
-@permission_classes([IsAuthenticated])
+@permission_classes([])  # Убираем требование аутентификации
 def delete_upload_data(request, upload_id):
     """
-    Удаление данных конкретной загрузки (только для администраторов)
+    Удаление данных конкретной загрузки
     """
-    # Проверяем, что пользователь - администратор
-    if not request.user.is_staff and not request.user.role == 'admin':
-        return Response(
-            {'error': 'Недостаточно прав для выполнения операции'},
-            status=status.HTTP_403_FORBIDDEN
-        )
-    
     try:
-        upload = DataUpload.objects.get(id=upload_id)
+        upload = get_object_or_404(DataUpload, id=upload_id)
         
         with transaction.atomic():
             # Удаляем все данные, загруженные этим файлом
-            deleted_count = AgriculturalData.objects.filter(uploaded_by=upload.uploaded_by).count()
-            AgriculturalData.objects.filter(uploaded_by=upload.uploaded_by).delete()
+            # Используем created_at для связи с загрузкой
+            deleted_count = AgriculturalData.objects.filter(
+                created_at__gte=upload.created_at,
+                created_at__lte=upload.created_at + timezone.timedelta(minutes=5)
+            ).count()
+            
+            AgriculturalData.objects.filter(
+                created_at__gte=upload.created_at,
+                created_at__lte=upload.created_at + timezone.timedelta(minutes=5)
+            ).delete()
+            
+            # Удаляем файл с диска
+            if upload.file_path and default_storage.exists(upload.file_path):
+                default_storage.delete(upload.file_path)
             
             # Удаляем запись о загрузке
             upload.delete()
             
             return Response({
-                'message': f'Данные успешно удалены',
+                'message': f'Файл и данные успешно удалены',
                 'deleted_records': deleted_count,
                 'upload_id': upload_id
             }, status=status.HTTP_200_OK)

@@ -16,7 +16,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     
     # Frontend pages
-    path('upload/', views.upload_page, name='upload_page'),
+    path('upload/', views.upload_page_with_history, name='upload_page'),
     path('upload-test/', views.test_upload_page, name='test_upload_page'),
     path('simple-test/', views.simple_test_page, name='simple_test_page'),
     path('ultra-test/', views.ultra_simple_test_page, name='ultra_simple_test_page'),

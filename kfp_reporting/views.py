@@ -24,6 +24,7 @@ from simple_init_database import get_simple_init_database_page
 from init_database_action import init_database_action
 from robust_init_database import get_robust_init_database_page
 from robust_init_database_action import robust_init_database_action
+from upload_page_with_history import get_upload_page_with_history
 
 @csrf_exempt
 def health_check(request):
@@ -91,6 +92,13 @@ def robust_init_database_action_view(request):
     Надежное действие инициализации базы данных
     """
     return robust_init_database_action(request)
+
+@csrf_exempt
+def upload_page_with_history(request):
+    """
+    Страница загрузки файлов с историей загрузок
+    """
+    return HttpResponse(get_upload_page_with_history(), content_type="text/html")
 
 @csrf_exempt
 def upload_page(request):

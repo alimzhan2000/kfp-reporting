@@ -4,6 +4,10 @@ from . import views
 urlpatterns = [
     path('', views.FileUploadView.as_view(), name='file_upload_main'),
     path('file/', views.FileUploadView.as_view(), name='file_upload'),
+    path('history/', views.upload_history, name='upload_history'),
+    path('status/<int:upload_id>/', views.upload_status, name='upload_status'),
+    path('delete/<int:upload_id>/', views.delete_upload_data, name='delete_upload_data'),
+    path('delete-all/', views.delete_all_data, name='delete_all_data'),
     path('test/', views.TestFileProcessingView.as_view(), name='test_file_upload'),
     path('simple-test/', views.SimpleFileTestView.as_view(), name='simple_file_test'),
     path('ultra-test/', views.UltraSimpleTestView.as_view(), name='ultra_simple_test'),
@@ -11,9 +15,5 @@ urlpatterns = [
     path('basic-python-test/', views.BasicPythonTestView.as_view(), name='basic_python_test'),
     path('pandas-isolation-test/', views.PandasIsolationTestView.as_view(), name='pandas_isolation_test'),
     path('minimal-pandas-test/', views.MinimalPandasTestView.as_view(), name='minimal_pandas_test'),
-    path('history/', views.upload_history, name='upload_history'),
-    path('status/<int:upload_id>/', views.upload_status, name='upload_status'),
-    path('delete/<int:upload_id>/', views.delete_upload_data, name='delete_upload_data'),
-    path('delete-all/', views.delete_all_data, name='delete_all_data'),
 ]
 
