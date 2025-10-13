@@ -77,6 +77,14 @@ def get_management_yield_comparison_report():
                 -webkit-user-select: none !important;
                 -moz-user-select: none !important;
                 -ms-user-select: none !important;
+                cursor: pointer !important;
+            }
+            
+            /* Ensure tooltips can appear */
+            .chartjs-tooltip {
+                pointer-events: none !important;
+                z-index: 9999 !important;
+                position: absolute !important;
             }
             
             .max-w-7xl {
@@ -392,46 +400,33 @@ def get_management_yield_comparison_report():
                             },
                             tooltip: {
                                 enabled: true,
-                                mode: 'index',
+                                mode: 'nearest',
                                 intersect: false,
-                                backgroundColor: 'rgba(0, 0, 0, 0.9)',
+                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
                                 titleColor: 'white',
                                 bodyColor: 'white',
-                                borderColor: 'rgba(255, 255, 255, 0.3)',
+                                borderColor: 'white',
                                 borderWidth: 1,
-                                cornerRadius: 6,
-                                displayColors: true,
+                                cornerRadius: 4,
+                                displayColors: false,
                                 titleFont: {
-                                    size: 14,
-                                    family: 'Arial, sans-serif',
+                                    size: 12,
                                     weight: 'bold'
                                 },
                                 bodyFont: {
-                                    size: 13,
-                                    family: 'Arial, sans-serif',
-                                    weight: 'normal'
+                                    size: 11
                                 },
-                                padding: 12,
+                                padding: 8,
                                 callbacks: {
                                     title: function(context) {
-                                        console.log('Tooltip title:', context);
-                                        return context[0].label || '';
+                                        console.log('Tooltip title called:', context);
+                                        return context[0].label || 'Данные';
                                     },
                                     label: function(context) {
-                                        console.log('Tooltip label context:', context);
-                                        const label = context.dataset.label || '';
-                                        const value = context.parsed.y || context.parsed;
-                                        console.log('Value:', value, 'Label:', label);
-                                        
-                                        // For bar chart, show product name and yield
-                                        if (context.chart.config.type === 'bar') {
-                                            const result = `${context.label}: ${value.toFixed(1)} ц/га`;
-                                            console.log('Bar chart result:', result);
-                                            return result;
-                                        }
-                                        const result = `${label}: ${value.toFixed(1)} ц/га`;
-                                        console.log('Line chart result:', result);
-                                        return result;
+                                        console.log('Tooltip label called:', context);
+                                        const value = context.parsed.y;
+                                        console.log('Value:', value);
+                                        return `${value.toFixed(1)} ц/га`;
                                     }
                                 }
                             }
@@ -484,6 +479,9 @@ def get_management_yield_comparison_report():
                             // Allow tooltips but prevent stretching
                             event.target.style.cursor = 'pointer';
                             console.log('Chart hover detected, elements:', elements);
+                            if (elements.length > 0) {
+                                console.log('Hovering over element:', elements[0]);
+                            }
                         },
                         onClick: function(event, elements) {
                             // Allow clicks for tooltips
@@ -544,46 +542,33 @@ def get_management_yield_comparison_report():
                             },
                             tooltip: {
                                 enabled: true,
-                                mode: 'index',
+                                mode: 'nearest',
                                 intersect: false,
-                                backgroundColor: 'rgba(0, 0, 0, 0.9)',
+                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
                                 titleColor: 'white',
                                 bodyColor: 'white',
-                                borderColor: 'rgba(255, 255, 255, 0.3)',
+                                borderColor: 'white',
                                 borderWidth: 1,
-                                cornerRadius: 6,
-                                displayColors: true,
+                                cornerRadius: 4,
+                                displayColors: false,
                                 titleFont: {
-                                    size: 14,
-                                    family: 'Arial, sans-serif',
+                                    size: 12,
                                     weight: 'bold'
                                 },
                                 bodyFont: {
-                                    size: 13,
-                                    family: 'Arial, sans-serif',
-                                    weight: 'normal'
+                                    size: 11
                                 },
-                                padding: 12,
+                                padding: 8,
                                 callbacks: {
                                     title: function(context) {
-                                        console.log('Tooltip title:', context);
-                                        return context[0].label || '';
+                                        console.log('Tooltip title called:', context);
+                                        return context[0].label || 'Данные';
                                     },
                                     label: function(context) {
-                                        console.log('Tooltip label context:', context);
-                                        const label = context.dataset.label || '';
-                                        const value = context.parsed.y || context.parsed;
-                                        console.log('Value:', value, 'Label:', label);
-                                        
-                                        // For bar chart, show product name and yield
-                                        if (context.chart.config.type === 'bar') {
-                                            const result = `${context.label}: ${value.toFixed(1)} ц/га`;
-                                            console.log('Bar chart result:', result);
-                                            return result;
-                                        }
-                                        const result = `${label}: ${value.toFixed(1)} ц/га`;
-                                        console.log('Line chart result:', result);
-                                        return result;
+                                        console.log('Tooltip label called:', context);
+                                        const value = context.parsed.y;
+                                        console.log('Value:', value);
+                                        return `${value.toFixed(1)} ц/га`;
                                     }
                                 }
                             }
@@ -636,6 +621,9 @@ def get_management_yield_comparison_report():
                             // Allow tooltips but prevent stretching
                             event.target.style.cursor = 'pointer';
                             console.log('Chart hover detected, elements:', elements);
+                            if (elements.length > 0) {
+                                console.log('Hovering over element:', elements[0]);
+                            }
                         },
                         onClick: function(event, elements) {
                             // Allow clicks for tooltips
@@ -804,6 +792,9 @@ def get_management_yield_comparison_report():
 
             // Load data on page load
             document.addEventListener('DOMContentLoaded', function() {
+                console.log('DOM loaded, Chart.js available:', typeof Chart !== 'undefined');
+                console.log('Chart.js version:', Chart ? Chart.version : 'Not loaded');
+                
                 // Start dimension monitoring
                 startDimensionMonitoring();
                 
