@@ -36,15 +36,15 @@ def get_ultra_simple_user_management_page():
                                 class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
                             🔧 Тест функции
                         </button>
-                        <button onclick="alert('Модальное окно будет открыто!')" 
+                        <button onclick="openCreateUserModal()" 
                                 class="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700">
                             👤 Добавить пользователя
                         </button>
-                        <button onclick="alert('Загрузка пользователей запущена!')" 
+                        <button onclick="loadUsers()" 
                                 class="bg-orange-600 text-white px-4 py-2 rounded-md hover:bg-orange-700">
                             📋 Загрузить пользователей
                         </button>
-                        <button onclick="alert('Инициализация базы данных запущена!')" 
+                        <button onclick="initializeDatabase()" 
                                 class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700">
                             🔧 Инициализировать БД
                         </button>
@@ -79,7 +79,75 @@ def get_ultra_simple_user_management_page():
             </div>
         </div>
 
+        <!-- Create User Modal -->
+        <div id="create-user-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+            <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+                <div class="mt-3">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Добавить пользователя</h3>
+                    <form id="create-user-form" action="/api/reports/simple-create-user/" method="POST">
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Имя пользователя</label>
+                            <input type="text" name="username" required 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Пароль</label>
+                            <input type="password" name="password" required 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Роль</label>
+                            <select name="role" required 
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="user">Пользователь</option>
+                                <option value="manager">Менеджер</option>
+                                <option value="admin">Администратор</option>
+                            </select>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                            <input type="email" name="email" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div class="flex justify-end space-x-3">
+                            <button type="button" onclick="closeCreateUserModal()" 
+                                    class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
+                                Отмена
+                            </button>
+                            <button type="submit" 
+                                    class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                                Создать
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
         <script>
+            // Simple functions
+            function openCreateUserModal() {
+                document.getElementById('create-user-modal').classList.remove('hidden');
+            }
+            
+            function closeCreateUserModal() {
+                document.getElementById('create-user-modal').classList.add('hidden');
+            }
+            
+            function loadUsers() {
+                alert('Загрузка пользователей запущена!');
+                // Simple redirect to load users
+                window.location.href = '/api/reports/simple-users-list/';
+            }
+            
+            function initializeDatabase() {
+                if (confirm('Инициализировать базу данных?')) {
+                    alert('Инициализация базы данных запущена!');
+                    // Simple redirect to initialize
+                    window.location.href = '/api/reports/simple-force-initialize/';
+                }
+            }
+            
             console.log('Ultra simple user management page loaded');
         </script>
     </body>
