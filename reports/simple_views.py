@@ -219,38 +219,62 @@ def simple_users_list(request):
 @require_http_methods(["DELETE"])
 def simple_delete_user(request, user_id):
     """
-    Удаление пользователя без аутентификации
+    Удаление пользователя без аутентификации через прямые SQL запросы
     """
     try:
-        from django.contrib.auth.models import User
-        from accounts.models import UserProfile
+        from django.db import connection
         
-        # Проверяем, что пользователь существует
-        try:
-            user = User.objects.get(id=user_id)
-        except User.DoesNotExist:
-            return JsonResponse({
-                'success': False,
-                'error': 'Пользователь не найден'
-            }, status=404)
-        
-        # Нельзя удалить суперпользователя
-        if user.is_superuser:
-            return JsonResponse({
-                'success': False,
-                'error': 'Нельзя удалить суперпользователя'
-            }, status=400)
-        
-        # Удаляем профиль пользователя (если существует)
-        try:
-            profile = UserProfile.objects.get(user=user)
-            profile.delete()
-        except UserProfile.DoesNotExist:
-            pass  # Профиль уже не существует
-        
-        # Удаляем пользователя
-        username = user.username
-        user.delete()
+        with connection.cursor() as cursor:
+            # Проверяем, что пользователь существует
+            cursor.execute("SELECT id, username, is_superuser FROM auth_user WHERE id = %s", [user_id])
+            user_row = cursor.fetchone()
+            
+            if not user_row:
+                return JsonResponse({
+                    'success': False,
+                    'error': 'Пользователь не найден'
+                }, status=404)
+            
+            user_id_db, username, is_superuser = user_row
+            
+            # Нельзя удалить суперпользователя
+            if is_superuser:
+                return JsonResponse({
+                    'success': False,
+                    'error': 'Нельзя удалить суперпользователя'
+                }, status=400)
+            
+            # Удаляем связанные данные пользователя (если таблицы существуют)
+            try:
+                # Удаляем профиль пользователя
+                cursor.execute("DELETE FROM accounts_userprofile WHERE user_id = %s", [user_id])
+            except Exception:
+                pass  # Таблица может не существовать
+            
+            try:
+                # Удаляем группы пользователя (если таблица существует)
+                cursor.execute("DELETE FROM auth_user_groups WHERE user_id = %s", [user_id])
+            except Exception:
+                pass  # Таблица может не существовать
+            
+            try:
+                # Удаляем права пользователя (если таблица существует)
+                cursor.execute("DELETE FROM auth_user_user_permissions WHERE user_id = %s", [user_id])
+            except Exception:
+                pass  # Таблица может не существовать
+            
+            # Удаляем самого пользователя
+            cursor.execute("DELETE FROM auth_user WHERE id = %s", [user_id])
+            
+            # Проверяем, что пользователь действительно удален
+            cursor.execute("SELECT COUNT(*) FROM auth_user WHERE id = %s", [user_id])
+            remaining_count = cursor.fetchone()[0]
+            
+            if remaining_count > 0:
+                return JsonResponse({
+                    'success': False,
+                    'error': 'Не удалось удалить пользователя'
+                }, status=500)
         
         return JsonResponse({
             'success': True,

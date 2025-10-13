@@ -85,6 +85,42 @@ def robust_init_database_action(request):
                 )
             """)
             
+            # Создаем дополнительные таблицы Django Auth, если они не существуют
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS auth_user_groups (
+                    id SERIAL PRIMARY KEY,
+                    user_id INTEGER NOT NULL REFERENCES auth_user(id) ON DELETE CASCADE,
+                    group_id INTEGER NOT NULL,
+                    UNIQUE(user_id, group_id)
+                )
+            """)
+            
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS auth_user_user_permissions (
+                    id SERIAL PRIMARY KEY,
+                    user_id INTEGER NOT NULL REFERENCES auth_user(id) ON DELETE CASCADE,
+                    permission_id INTEGER NOT NULL,
+                    UNIQUE(user_id, permission_id)
+                )
+            """)
+            
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS auth_group (
+                    id SERIAL PRIMARY KEY,
+                    name VARCHAR(150) NOT NULL UNIQUE
+                )
+            """)
+            
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS auth_permission (
+                    id SERIAL PRIMARY KEY,
+                    name VARCHAR(255) NOT NULL,
+                    content_type_id INTEGER NOT NULL,
+                    codename VARCHAR(100) NOT NULL,
+                    UNIQUE(content_type_id, codename)
+                )
+            """)
+            
             logger.info('Database tables created successfully')
         
         # Создаем демо-пользователей
