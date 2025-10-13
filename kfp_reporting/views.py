@@ -18,6 +18,7 @@ from dashboard_improved import get_dashboard_improved
 from database_user_management import get_database_user_management_page
 from simple_user_management import get_simple_user_management_page
 from ultra_simple_user_management import get_ultra_simple_user_management_page
+from improved_user_management import get_improved_user_management_page
 from init_database_page import get_init_database_page
 from simple_init_database import get_simple_init_database_page
 from init_database_action import init_database_action
@@ -66,9 +67,9 @@ def login_page(request):
 @csrf_exempt
 def user_management_page(request):
     """
-    Страница управления пользователями - ультра простая версия для тестирования
+    Страница управления пользователями - улучшенная версия с полным функционалом
     """
-    return HttpResponse(get_ultra_simple_user_management_page(), content_type="text/html")
+    return HttpResponse(get_improved_user_management_page(), content_type="text/html")
 
 @csrf_exempt
 def init_database_page(request):

@@ -1,0 +1,323 @@
+def get_improved_user_management_page():
+    return """
+    <!DOCTYPE html>
+    <html lang="ru">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Управление пользователями</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+    </head>
+    <body class="bg-gray-50">
+        <div class="min-h-screen">
+            <!-- Header -->
+            <div class="bg-white shadow">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="flex justify-between items-center py-6">
+                        <div>
+                            <h1 class="text-3xl font-bold text-gray-900">Управление пользователями</h1>
+                            <p class="text-gray-600">Создание и управление пользователями системы</p>
+                        </div>
+                        <div class="flex space-x-3">
+                            <button onclick="loadUsers()" 
+                                    class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
+                                🔄 Обновить список
+                            </button>
+                            <button onclick="openCreateUserModal()" 
+                                    class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700">
+                                👤 Добавить пользователя
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <!-- Users List -->
+                <div class="bg-white rounded-lg shadow">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h2 class="text-lg font-medium text-gray-900">Список пользователей</h2>
+                    </div>
+                    <div id="users-list" class="p-6">
+                        <div class="text-center text-gray-500">
+                            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
+                            Загрузка пользователей...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Create User Modal -->
+        <div id="create-user-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+            <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+                <div class="mt-3">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-medium text-gray-900">Создать пользователя</h3>
+                        <button onclick="closeCreateUserModal()" class="text-gray-400 hover:text-gray-600">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <form id="create-user-form">
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Имя пользователя *</label>
+                            <input type="text" name="username" required 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Пароль *</label>
+                            <input type="password" name="password" required 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Имя</label>
+                            <input type="text" name="first_name" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Фамилия</label>
+                            <input type="text" name="last_name" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Роль *</label>
+                            <select name="role" required 
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="user">Пользователь</option>
+                                <option value="manager">Менеджер</option>
+                                <option value="admin">Администратор</option>
+                            </select>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                            <input type="email" name="email" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Телефон</label>
+                            <input type="text" name="phone" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Отдел</label>
+                            <input type="text" name="department" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div class="flex justify-end space-x-3">
+                            <button type="button" onclick="closeCreateUserModal()" 
+                                    class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
+                                Отмена
+                            </button>
+                            <button type="submit" 
+                                    class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                                Создать
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            // Load users on page load
+            document.addEventListener('DOMContentLoaded', function() {
+                loadUsers();
+            });
+
+            function openCreateUserModal() {
+                document.getElementById('create-user-modal').classList.remove('hidden');
+            }
+            
+            function closeCreateUserModal() {
+                document.getElementById('create-user-modal').classList.add('hidden');
+                document.getElementById('create-user-form').reset();
+            }
+            
+            function loadUsers() {
+                const usersList = document.getElementById('users-list');
+                usersList.innerHTML = `
+                    <div class="text-center text-gray-500">
+                        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
+                        Загрузка пользователей...
+                    </div>
+                `;
+                
+                fetch('/api/reports/simple-users-list/')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        displayUsers(data.users);
+                    } else {
+                        usersList.innerHTML = `
+                            <div class="text-center text-red-600">
+                                <p>Ошибка загрузки пользователей: ${data.error}</p>
+                                <button onclick="loadUsers()" class="mt-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                                    Попробовать снова
+                                </button>
+                            </div>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    usersList.innerHTML = `
+                        <div class="text-center text-red-600">
+                            <p>Ошибка соединения: ${error.message}</p>
+                            <button onclick="loadUsers()" class="mt-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                                Попробовать снова
+                            </button>
+                        </div>
+                    `;
+                });
+            }
+            
+            function displayUsers(users) {
+                const usersList = document.getElementById('users-list');
+                
+                if (users.length === 0) {
+                    usersList.innerHTML = `
+                        <div class="text-center text-gray-500">
+                            <p>Пользователи не найдены</p>
+                            <button onclick="openCreateUserModal()" class="mt-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
+                                Создать первого пользователя
+                            </button>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                let html = `
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Пользователь</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Роль</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Отдел</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Статус</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                `;
+                
+                users.forEach(user => {
+                    const statusColor = user.is_active ? 'text-green-600' : 'text-red-600';
+                    const statusText = user.is_active ? 'Активен' : 'Неактивен';
+                    const roleColor = user.role === 'admin' ? 'bg-red-100 text-red-800' : 
+                                   user.role === 'manager' ? 'bg-blue-100 text-blue-800' : 
+                                   'bg-gray-100 text-gray-800';
+                    
+                    html += `
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${user.id}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm font-medium text-gray-900">${user.username}</div>
+                                <div class="text-sm text-gray-500">${user.first_name} ${user.last_name}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full ${roleColor}">
+                                    ${user.role}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${user.email || '-'}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${user.department || '-'}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="text-sm ${statusColor}">${statusText}</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <button onclick="editUser(${user.id})" class="text-blue-600 hover:text-blue-900 mr-3">Редактировать</button>
+                                <button onclick="deleteUser(${user.id})" class="text-red-600 hover:text-red-900">Удалить</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+                
+                html += `
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+                
+                usersList.innerHTML = html;
+            }
+            
+            // Handle form submission
+            document.getElementById('create-user-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(this);
+                const data = Object.fromEntries(formData.entries());
+                
+                // Show loading state
+                const submitButton = this.querySelector('button[type="submit"]');
+                const originalText = submitButton.textContent;
+                submitButton.textContent = 'Создание...';
+                submitButton.disabled = true;
+                
+                fetch('/api/reports/simple-create-user/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify(data)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Show success message
+                        alert(`✅ ${data.message}`);
+                        
+                        // Close modal
+                        closeCreateUserModal();
+                        
+                        // Reload users list
+                        loadUsers();
+                    } else {
+                        alert(`❌ Ошибка: ${data.error}`);
+                    }
+                })
+                .catch(error => {
+                    alert(`❌ Ошибка соединения: ${error.message}`);
+                })
+                .finally(() => {
+                    submitButton.textContent = originalText;
+                    submitButton.disabled = false;
+                });
+            });
+            
+            function editUser(userId) {
+                alert(`Редактирование пользователя ${userId} будет добавлено в следующих версиях`);
+            }
+            
+            function deleteUser(userId) {
+                if (confirm(`Удалить пользователя ${userId}?`)) {
+                    alert(`Удаление пользователя ${userId} будет добавлено в следующих версиях`);
+                }
+            }
+            
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+            
+            console.log('Improved user management page loaded');
+        </script>
+    </body>
+    </html>
+    """
