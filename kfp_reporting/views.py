@@ -19,6 +19,8 @@ from database_user_management import get_database_user_management_page
 from simple_user_management import get_simple_user_management_page
 from ultra_simple_user_management import get_ultra_simple_user_management_page
 from init_database_page import get_init_database_page
+from simple_init_database import get_simple_init_database_page
+from init_database_action import init_database_action
 
 @csrf_exempt
 def health_check(request):
@@ -69,9 +71,16 @@ def user_management_page(request):
 @csrf_exempt
 def init_database_page(request):
     """
-    Страница инициализации базы данных
+    Страница инициализации базы данных - простая версия
     """
-    return HttpResponse(get_init_database_page(), content_type="text/html")
+    return HttpResponse(get_simple_init_database_page(), content_type="text/html")
+
+@csrf_exempt
+def init_database_action_view(request):
+    """
+    Действие инициализации базы данных
+    """
+    return init_database_action(request)
 
 @csrf_exempt
 def upload_page(request):
