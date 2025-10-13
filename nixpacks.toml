@@ -2,7 +2,7 @@
 aptPkgs = ["python3-pip", "python3-dev", "build-essential", "libpq-dev"]
 
 [phases.build]
-commands = ["pip install -r requirements.txt", "python manage.py migrate", "python init_database.py"]
+commands = ["pip install -r requirements.txt", "python manage.py migrate", "python manage.py init_database --force"]
 
 [start]
 cmd = "python start_railway.py"

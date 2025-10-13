@@ -62,6 +62,11 @@ def get_database_user_management_page():
                             <i data-lucide="database" class="h-4 w-4"></i>
                             <span>Инициализировать демо</span>
                         </button>
+                        <button onclick="forceInitializeDatabase()" 
+                                class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors flex items-center space-x-2">
+                            <i data-lucide="refresh-cw" class="h-4 w-4"></i>
+                            <span>Принудительная инициализация</span>
+                        </button>
                         <button onclick="openCreateUserModal()" 
                                 class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors flex items-center space-x-2">
                             <i data-lucide="plus" class="h-4 w-4"></i>
@@ -335,6 +340,39 @@ def get_database_user_management_page():
                 } catch (error) {
                     console.error('Error loading users:', error);
                     showMessage('Ошибка загрузки пользователей', 'error');
+                }
+            }
+
+            // Force initialize database
+            async function forceInitializeDatabase() {
+                if (!confirm('ВНИМАНИЕ! Принудительная инициализация:\n\n• Применит все миграции Django\n• Удалит существующих демо-пользователей\n• Создаст новых демо-пользователей\n• Это может занять несколько секунд\n\nПродолжить?')) {
+                    return;
+                }
+                
+                try {
+                    showMessage('Инициализация базы данных...', 'info');
+                    
+                    const response = await fetch('/api/auth/users/force-initialize/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        showMessage(data.message, 'success');
+                        loadUsers(); // Перезагружаем список пользователей
+                    } else {
+                        showMessage('Ошибка инициализации: ' + data.error, 'error');
+                        if (data.errors && data.errors.length > 0) {
+                            console.error('Detailed errors:', data.errors);
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error force initializing database:', error);
+                    showMessage('Ошибка принудительной инициализации: ' + error.message, 'error');
                 }
             }
 
