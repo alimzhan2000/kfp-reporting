@@ -28,7 +28,7 @@ def get_dashboard_improved():
                         <a href="/dashboard/" class="text-blue-600 hover:text-blue-800 px-3 py-2 rounded font-medium">Дашборд</a>
                         <a href="/upload/" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded">Загрузка</a>
                         <a href="/reports/" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded">Отчеты</a>
-                        <a href="/admin/" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded">Admin</a>
+                        <a href="/user-management/" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded">Admin</a>
                         <div class="flex items-center space-x-2">
                             <span id="user-info" class="text-sm text-gray-600"></span>
                             <button onclick="logout()" class="text-red-600 hover:text-red-800 px-2 py-1 rounded text-sm">
@@ -221,9 +221,9 @@ def get_dashboard_improved():
             function checkAuth() {
                 const userData = localStorage.getItem('kfp_user');
                 if (!userData) {
-                    // If no user data, redirect to login
-                    window.location.href = '/login/';
-                    return null;
+                    // If no user data, show as guest
+                    document.getElementById('user-info').textContent = 'Гость';
+                    return { username: 'Гость', role: 'guest' };
                 }
                 
                 try {
@@ -235,10 +235,10 @@ def get_dashboard_improved():
                     const hoursDiff = (now - loginTime) / (1000 * 60 * 60);
                     
                     if (hoursDiff > 24) {
-                        // Session expired
+                        // Session expired, show as guest
                         localStorage.removeItem('kfp_user');
-                        window.location.href = '/login/';
-                        return null;
+                        document.getElementById('user-info').textContent = 'Гость';
+                        return { username: 'Гость', role: 'guest' };
                     }
                     
                     // Display user info
@@ -251,17 +251,18 @@ def get_dashboard_improved():
                     
                     return user;
                 } catch (error) {
-                    // Invalid user data
+                    // Invalid user data, show as guest
                     localStorage.removeItem('kfp_user');
-                    window.location.href = '/login/';
-                    return null;
+                    document.getElementById('user-info').textContent = 'Гость';
+                    return { username: 'Гость', role: 'guest' };
                 }
             }
 
             // Logout function
             function logout() {
                 localStorage.removeItem('kfp_user');
-                window.location.href = '/login/';
+                // Refresh the page to show as guest
+                window.location.reload();
             }
 
             // Load dashboard statistics
