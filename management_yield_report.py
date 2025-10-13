@@ -112,6 +112,35 @@ def get_management_yield_comparison_report():
                 max-width: 100% !important;
                 height: auto !important;
             }
+            
+            /* Improve text quality and readability */
+            body {
+                font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+                font-smooth: always !important;
+                -webkit-font-smoothing: antialiased !important;
+                -moz-osx-font-smoothing: grayscale !important;
+                text-rendering: optimizeLegibility !important;
+            }
+            
+            /* High quality text for headings and labels */
+            h1, h2, h3, h4, h5, h6 {
+                font-weight: 600 !important;
+                letter-spacing: -0.025em !important;
+                text-rendering: optimizeLegibility !important;
+            }
+            
+            /* Improve chart text quality */
+            .chart-container {
+                image-rendering: -webkit-optimize-contrast !important;
+                image-rendering: crisp-edges !important;
+            }
+            
+            /* Better button and form styling */
+            button, input, select, textarea {
+                font-family: inherit !important;
+                font-smooth: always !important;
+                -webkit-font-smoothing: antialiased !important;
+            }
         </style>
     </head>
     <body class="bg-gray-50">
@@ -123,7 +152,9 @@ def get_management_yield_comparison_report():
                         <div class="text-2xl mr-3">🌾</div>
                         <h1 class="text-gray-900 text-xl font-bold">Reporting KFP</h1>
                     </div>
-                    <div class="flex items-center space-x-4">
+                    
+                    <!-- Desktop Navigation -->
+                    <div class="hidden md:flex items-center space-x-4">
                         <a href="/dashboard/" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded">Дашборд</a>
                         <a href="/upload/" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded">Загрузка</a>
                         <a href="/reports/" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded">Отчеты</a>
@@ -135,6 +166,28 @@ def get_management_yield_comparison_report():
                                 Выйти
                             </button>
                         </div>
+                    </div>
+                    
+                    <!-- Mobile Menu Button -->
+                    <div class="md:hidden flex items-center space-x-2">
+                        <span id="user-info-mobile" class="text-sm text-gray-600">Гость</span>
+                        <button onclick="toggleMobileMenu()" class="text-gray-600 hover:text-gray-900 p-2 rounded">
+                            <i data-lucide="menu" class="h-6 w-6"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Mobile Navigation Menu -->
+                <div id="mobile-menu" class="hidden md:hidden border-t border-gray-200 py-4">
+                    <div class="flex flex-col space-y-2">
+                        <a href="/dashboard/" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded">Дашборд</a>
+                        <a href="/upload/" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded">Загрузка</a>
+                        <a href="/reports/" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded">Отчеты</a>
+                        <a href="/reports/yield-comparison/" class="text-blue-600 hover:text-blue-800 px-3 py-2 rounded font-medium">Сравнение урожайности</a>
+                        <a href="/user-management/" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded">Admin</a>
+                        <button onclick="logout()" class="text-red-600 hover:text-red-800 px-3 py-2 rounded text-left">
+                            Выйти
+                        </button>
                     </div>
                 </div>
             </div>
@@ -392,18 +445,18 @@ def get_management_yield_comparison_report():
                     options: {
                         responsive: false,
                         maintainAspectRatio: false,
-                        devicePixelRatio: window.devicePixelRatio || 1,
+                        devicePixelRatio: Math.min(window.devicePixelRatio || 1, 2),
                         resizeDelay: 0,
                         plugins: {
                             legend: {
                                 display: true,
                                 position: 'top',
                                 labels: {
-                                    font: {
-                                        size: 15,
-                                        family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif',
-                                        weight: '600'
-                                    },
+                                        font: {
+                                            size: 16,
+                                            family: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif',
+                                            weight: '600'
+                                        },
                                     color: '#1f2937',
                                     usePointStyle: false
                                 }
@@ -450,17 +503,17 @@ def get_management_yield_comparison_report():
                                 title: {
                                     display: true,
                                     text: 'Урожайность (ц/га)',
-                                    font: {
-                                        size: 15,
-                                        family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif',
-                                        weight: '600'
-                                    },
+                                        font: {
+                                            size: 16,
+                                            family: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif',
+                                            weight: '600'
+                                        },
                                     color: '#1f2937'
                                 },
                                 ticks: {
                                     font: {
-                                        size: 13,
-                                        family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif',
+                                        size: 15,
+                                        family: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif',
                                         weight: '500'
                                     },
                                     color: '#374151',
@@ -473,8 +526,8 @@ def get_management_yield_comparison_report():
                             x: {
                                 ticks: {
                                     font: {
-                                        size: 13,
-                                        family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif',
+                                        size: 15,
+                                        family: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif',
                                         weight: '500'
                                     },
                                     color: '#374151',
@@ -541,18 +594,18 @@ def get_management_yield_comparison_report():
                     options: {
                         responsive: false,
                         maintainAspectRatio: false,
-                        devicePixelRatio: window.devicePixelRatio || 1,
+                        devicePixelRatio: Math.min(window.devicePixelRatio || 1, 2),
                         resizeDelay: 0,
                         plugins: {
                             legend: {
                                 display: true,
                                 position: 'top',
                                 labels: {
-                                    font: {
-                                        size: 15,
-                                        family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif',
-                                        weight: '600'
-                                    },
+                                        font: {
+                                            size: 16,
+                                            family: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif',
+                                            weight: '600'
+                                        },
                                     color: '#1f2937',
                                     usePointStyle: false
                                 }
@@ -599,17 +652,17 @@ def get_management_yield_comparison_report():
                                 title: {
                                     display: true,
                                     text: 'Урожайность (ц/га)',
-                                    font: {
-                                        size: 15,
-                                        family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif',
-                                        weight: '600'
-                                    },
+                                        font: {
+                                            size: 16,
+                                            family: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif',
+                                            weight: '600'
+                                        },
                                     color: '#1f2937'
                                 },
                                 ticks: {
                                     font: {
-                                        size: 13,
-                                        family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif',
+                                        size: 15,
+                                        family: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif',
                                         weight: '500'
                                     },
                                     color: '#374151',
@@ -622,8 +675,8 @@ def get_management_yield_comparison_report():
                             x: {
                                 ticks: {
                                     font: {
-                                        size: 13,
-                                        family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif',
+                                        size: 15,
+                                        family: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif',
                                         weight: '500'
                                     },
                                     color: '#374151',
@@ -813,6 +866,16 @@ def get_management_yield_comparison_report():
                 // Don't monitor continuously to avoid interfering with tooltips
             }
 
+            // Toggle mobile menu
+            function toggleMobileMenu() {
+                const mobileMenu = document.getElementById('mobile-menu');
+                if (mobileMenu.classList.contains('hidden')) {
+                    mobileMenu.classList.remove('hidden');
+                } else {
+                    mobileMenu.classList.add('hidden');
+                }
+            }
+
             // Logout function
             async function logout() {
                 console.log('Logout function called');
@@ -839,17 +902,21 @@ def get_management_yield_comparison_report():
             function checkAuth() {
                 const userData = localStorage.getItem('kfp_user');
                 const userInfoElement = document.getElementById('user-info');
+                const userInfoMobileElement = document.getElementById('user-info-mobile');
                 
                 if (userData) {
                     try {
                         const user = JSON.parse(userData);
                         userInfoElement.textContent = `${user.username} (${user.role})`;
+                        userInfoMobileElement.textContent = `${user.username} (${user.role})`;
                     } catch (error) {
                         console.error('Error parsing user data:', error);
                         userInfoElement.textContent = 'Гость';
+                        userInfoMobileElement.textContent = 'Гость';
                     }
                 } else {
                     userInfoElement.textContent = 'Гость';
+                    userInfoMobileElement.textContent = 'Гость';
                 }
             }
 

@@ -24,7 +24,9 @@ def get_dashboard_improved():
                         <div class="text-2xl mr-3">🌾</div>
                         <h1 class="text-gray-900 text-xl font-bold">Reporting KFP</h1>
                     </div>
-                    <div class="flex items-center space-x-4">
+                    
+                    <!-- Desktop Navigation -->
+                    <div class="hidden md:flex items-center space-x-4">
                         <a href="/dashboard/" class="text-blue-600 hover:text-blue-800 px-3 py-2 rounded font-medium">Дашборд</a>
                         <a href="/upload/" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded">Загрузка</a>
                         <a href="/reports/" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded">Отчеты</a>
@@ -35,6 +37,27 @@ def get_dashboard_improved():
                                 Выйти
                             </button>
                         </div>
+                    </div>
+                    
+                    <!-- Mobile Menu Button -->
+                    <div class="md:hidden flex items-center space-x-2">
+                        <span id="user-info-mobile" class="text-sm text-gray-600"></span>
+                        <button onclick="toggleMobileMenu()" class="text-gray-600 hover:text-gray-900 p-2 rounded">
+                            <i data-lucide="menu" class="h-6 w-6"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Mobile Navigation Menu -->
+                <div id="mobile-menu" class="hidden md:hidden border-t border-gray-200 py-4">
+                    <div class="flex flex-col space-y-2">
+                        <a href="/dashboard/" class="text-blue-600 hover:text-blue-800 px-3 py-2 rounded font-medium">Дашборд</a>
+                        <a href="/upload/" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded">Загрузка</a>
+                        <a href="/reports/" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded">Отчеты</a>
+                        <a href="/user-management/" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded">Admin</a>
+                        <button onclick="logout()" class="text-red-600 hover:text-red-800 px-3 py-2 rounded text-left">
+                            Выйти
+                        </button>
                     </div>
                 </div>
             </div>
@@ -250,6 +273,7 @@ def get_dashboard_improved():
                 if (!userData) {
                     // If no user data, show as guest
                     document.getElementById('user-info').textContent = 'Гость';
+                    document.getElementById('user-info-mobile').textContent = 'Гость';
                     return { username: 'Гость', role: 'guest' };
                 }
                 
@@ -265,11 +289,13 @@ def get_dashboard_improved():
                         // Session expired, show as guest
                         localStorage.removeItem('kfp_user');
                         document.getElementById('user-info').textContent = 'Гость';
+                        document.getElementById('user-info-mobile').textContent = 'Гость';
                         return { username: 'Гость', role: 'guest' };
                     }
                     
                     // Display user info
                     document.getElementById('user-info').textContent = `${user.username} (${user.role})`;
+                    document.getElementById('user-info-mobile').textContent = `${user.username} (${user.role})`;
                     
                     // Show admin section for admin users
                     if (user.role === 'admin') {
@@ -281,7 +307,18 @@ def get_dashboard_improved():
                     // Invalid user data, show as guest
                     localStorage.removeItem('kfp_user');
                     document.getElementById('user-info').textContent = 'Гость';
+                    document.getElementById('user-info-mobile').textContent = 'Гость';
                     return { username: 'Гость', role: 'guest' };
+                }
+            }
+
+            // Toggle mobile menu
+            function toggleMobileMenu() {
+                const mobileMenu = document.getElementById('mobile-menu');
+                if (mobileMenu.classList.contains('hidden')) {
+                    mobileMenu.classList.remove('hidden');
+                } else {
+                    mobileMenu.classList.add('hidden');
                 }
             }
 
