@@ -17,7 +17,8 @@ urlpatterns = [
     path('simple-variety-performance/', simple_views.simple_variety_performance, name='simple_variety_performance'),
     path('simple-users-list/', simple_views.simple_users_list, name='simple_users_list'),
     path('simple-database-status/', simple_views.simple_database_status, name='simple_database_status'),
-    path('simple-force-initialize/', simple_views.simple_force_initialize_database, name='simple_force_initialize_database'),
+           path('simple-force-initialize/', simple_views.simple_force_initialize_database, name='simple_force_initialize_database'),
+           path('simple-create-user/', simple_views.simple_create_user, name='simple_create_user'),
 ]
 
 

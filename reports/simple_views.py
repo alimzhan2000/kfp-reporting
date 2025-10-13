@@ -384,7 +384,71 @@ def simple_force_initialize_database(request):
     except Exception as e:
         error_msg = f'Критическая ошибка инициализации базы данных: {str(e)}'
         logger.error(error_msg)
+               return JsonResponse({
+                   'success': False,
+                   'error': error_msg
+               }, status=500)
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def simple_create_user(request):
+    """
+    Простое создание пользователя без аутентификации
+    """
+    try:
+        from django.contrib.auth.models import User
+        from accounts.models import UserProfile
+        from django.contrib.auth.hashers import make_password
+        from django.utils import timezone
+        
+        # Get form data
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        role = request.POST.get('role', 'user')
+        email = request.POST.get('email', '')
+        
+        if not username or not password:
+            return JsonResponse({
+                'success': False,
+                'error': 'Имя пользователя и пароль обязательны'
+            }, status=400)
+        
+        # Check if user already exists
+        if User.objects.filter(username=username).exists():
+            return JsonResponse({
+                'success': False,
+                'error': 'Пользователь с таким именем уже существует'
+            }, status=400)
+        
+        # Create user
+        user = User.objects.create(
+            username=username,
+            password=make_password(password),
+            email=email,
+            is_active=True,
+            date_joined=timezone.now()
+        )
+        
+        # Create profile
+        profile = UserProfile.objects.create(
+            user=user,
+            role=role,
+            phone='',
+            department='',
+            is_active_user=True,
+            created_at=timezone.now(),
+            updated_at=timezone.now()
+        )
+        
+        return JsonResponse({
+            'success': True,
+            'message': f'Пользователь {username} успешно создан',
+            'user_id': user.id
+        })
+        
+    except Exception as e:
         return JsonResponse({
             'success': False,
-            'error': error_msg
+            'error': f'Ошибка создания пользователя: {str(e)}'
         }, status=500)
