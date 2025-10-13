@@ -335,7 +335,7 @@ def get_management_yield_comparison_report():
                     if (product) params.append('final_product', product);
                     if (field) params.append('field_name', field);
 
-                    const response = await fetch(`/api/reports/yield-comparison/?${params}`);
+                    const response = await fetch(`/api/reports/simple-yield-comparison/?${params}`);
                     
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);

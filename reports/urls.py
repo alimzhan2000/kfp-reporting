@@ -12,6 +12,9 @@ urlpatterns = [
     path('simple-test/', views.simple_test, name='simple_test'),
     path('simple-dashboard-stats/', simple_views.simple_dashboard_stats, name='simple_dashboard_stats'),
     path('simple-test-view/', simple_views.simple_test_view, name='simple_test_view'),
+    path('simple-yield-comparison/', simple_views.simple_yield_comparison, name='simple_yield_comparison'),
+    path('simple-field-efficiency/', simple_views.simple_field_efficiency, name='simple_field_efficiency'),
+    path('simple-variety-performance/', simple_views.simple_variety_performance, name='simple_variety_performance'),
 ]
 
 

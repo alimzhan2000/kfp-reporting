@@ -57,3 +57,89 @@ def simple_test_view(request):
         'status': 'success',
         'timestamp': timezone.now().isoformat()
     })
+
+
+@csrf_exempt
+@require_http_methods(["GET"])
+def simple_yield_comparison(request):
+    """
+    Простое сравнение урожайности без аутентификации
+    """
+    try:
+        from .services import ReportService
+        
+        filters = {
+            'field_name': request.GET.get('field_name'),
+            'year_from': request.GET.get('year_from'),
+            'year_to': request.GET.get('year_to'),
+            'final_product': request.GET.get('final_product'),
+            'variety': request.GET.get('variety'),
+        }
+        
+        # Убираем None значения
+        filters = {k: v for k, v in filters.items() if v is not None}
+        
+        data = ReportService.get_yield_comparison_data(filters)
+        return JsonResponse(data)
+        
+    except Exception as e:
+        return JsonResponse({
+            'error': f'Ошибка генерации отчета: {str(e)}'
+        }, status=500)
+
+
+@csrf_exempt
+@require_http_methods(["GET"])
+def simple_field_efficiency(request):
+    """
+    Простая эффективность полей без аутентификации
+    """
+    try:
+        from .services import ReportService
+        
+        filters = {
+            'field_name': request.GET.get('field_name'),
+            'year_from': request.GET.get('year_from'),
+            'year_to': request.GET.get('year_to'),
+            'final_product': request.GET.get('final_product'),
+        }
+        
+        # Убираем None значения
+        filters = {k: v for k, v in filters.items() if v is not None}
+        
+        data = ReportService.get_field_efficiency_data(filters)
+        return JsonResponse(data)
+        
+    except Exception as e:
+        return JsonResponse({
+            'error': f'Ошибка генерации отчета: {str(e)}'
+        }, status=500)
+
+
+@csrf_exempt
+@require_http_methods(["GET"])
+def simple_variety_performance(request):
+    """
+    Простая производительность сортов без аутентификации
+    """
+    try:
+        from .services import ReportService
+        
+        filters = {
+            'field_name': request.GET.get('field_name'),
+            'year_from': request.GET.get('year_from'),
+            'year_to': request.GET.get('year_to'),
+            'final_product': request.GET.get('final_product'),
+            'variety': request.GET.get('variety'),
+        }
+        
+        # Убираем None значения
+        filters = {k: v for k, v in filters.items() if v is not None}
+        
+        data = ReportService.get_variety_performance_data(filters)
+        return JsonResponse(data)
+        
+    except Exception as e:
+        return JsonResponse({
+            'error': f'Ошибка генерации отчета: {str(e)}'
+        }, status=500)
