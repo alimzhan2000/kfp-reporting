@@ -65,15 +65,6 @@ def get_login_page():
                     </button>
                 </div>
 
-                <!-- Demo credentials -->
-                <div class="mt-6 p-4 bg-blue-50 rounded-md">
-                    <h3 class="text-sm font-medium text-blue-800 mb-2">Демо-доступ:</h3>
-                    <div class="text-xs text-blue-700 space-y-1">
-                        <div><strong>Администратор:</strong> admin / admin123</div>
-                        <div><strong>Менеджер:</strong> manager / manager123</div>
-                        <div><strong>Пользователь:</strong> user / user123</div>
-                    </div>
-                </div>
             </form>
 
             <!-- Error message -->
