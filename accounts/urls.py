@@ -9,6 +9,7 @@ urlpatterns = [
     # Authentication endpoints
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
+    path('status/', views.auth_status_view, name='auth_status'),
     
     # User management endpoints
     path('users/', views.list_users, name='list_users'),

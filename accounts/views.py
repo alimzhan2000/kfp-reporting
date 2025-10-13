@@ -1,7 +1,7 @@
 """
 API views для управления пользователями с базой данных
 """
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.hashers import make_password
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -9,6 +9,7 @@ from django.views.decorators.http import require_http_methods
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 from .models import UserProfile
 import json
 import logging
@@ -579,7 +580,7 @@ def force_initialize_database(request):
 @csrf_exempt
 @require_http_methods(["POST"])
 def login_view(request):
-    """Аутентификация пользователя"""
+    """Аутентификация пользователя с Django сессиями"""
     try:
         data = json.loads(request.body)
         username = data.get('username')
@@ -605,6 +606,9 @@ def login_view(request):
                 'success': False,
                 'error': 'Пользователь деактивирован'
             }, status=401)
+        
+        # Создаем Django сессию
+        login(request, user)
         
         # Получаем роль пользователя
         try:
@@ -642,10 +646,11 @@ def login_view(request):
 @csrf_exempt
 @require_http_methods(["POST"])
 def logout_view(request):
-    """Выход пользователя"""
+    """Выход пользователя с очисткой Django сессии"""
     try:
-        # В Django REST Framework обычно используется сессия
-        # Для простоты возвращаем успешный ответ
+        # Выходим из Django сессии
+        logout(request)
+        
         return JsonResponse({
             'success': True,
             'message': 'Успешный выход из системы'
@@ -655,4 +660,46 @@ def logout_view(request):
         return JsonResponse({
             'success': False,
             'error': 'Ошибка выхода из системы'
+        }, status=500)
+
+@csrf_exempt
+@require_http_methods(["GET"])
+def auth_status_view(request):
+    """Проверка статуса аутентификации пользователя"""
+    try:
+        if request.user.is_authenticated:
+            # Получаем роль пользователя
+            try:
+                user_profile = request.user.profile
+                role = user_profile.role
+            except UserProfile.DoesNotExist:
+                role = 'user'  # По умолчанию
+            
+            return JsonResponse({
+                'success': True,
+                'authenticated': True,
+                'user': {
+                    'id': request.user.id,
+                    'username': request.user.username,
+                    'first_name': request.user.first_name,
+                    'last_name': request.user.last_name,
+                    'email': request.user.email,
+                    'role': role,
+                    'is_staff': request.user.is_staff,
+                    'is_superuser': request.user.is_superuser
+                }
+            })
+        else:
+            return JsonResponse({
+                'success': True,
+                'authenticated': False,
+                'message': 'Пользователь не авторизован'
+            })
+            
+    except Exception as e:
+        logger.error(f'Ошибка проверки статуса аутентификации: {str(e)}')
+        return JsonResponse({
+            'success': False,
+            'authenticated': False,
+            'error': 'Ошибка проверки статуса аутентификации'
         }, status=500)

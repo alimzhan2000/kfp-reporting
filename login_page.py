@@ -136,10 +136,30 @@ def get_login_page():
                 }
             });
 
-            // Check if user is already logged in
-            if (localStorage.getItem('kfp_user')) {
-                window.location.href = '/dashboard/';
+            // Check if user is already logged in via server session
+            async function checkAuthStatus() {
+                try {
+                    const response = await fetch('/api/auth/status/', {
+                        method: 'GET',
+                        credentials: 'include'  // Include cookies for session
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success && data.authenticated) {
+                        // Store user info in localStorage for client-side use
+                        localStorage.setItem('kfp_user', JSON.stringify(data.user));
+                        window.location.href = '/dashboard/';
+                    }
+                } catch (error) {
+                    console.log('Auth check failed:', error);
+                    // Clear any stale localStorage data
+                    localStorage.removeItem('kfp_user');
+                }
             }
+            
+            // Check authentication status on page load
+            checkAuthStatus();
         </script>
     </body>
     </html>

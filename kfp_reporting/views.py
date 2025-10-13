@@ -1,6 +1,7 @@
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
+from auth_required import auth_required
 from simple_test_view import simple_test_page
 from ultra_simple_view import ultra_simple_test_page
 from no_pandas_view import no_pandas_test_page
@@ -52,6 +53,7 @@ def minimal_health(request):
     return HttpResponse("OK")
 
 @csrf_exempt
+@auth_required
 def home(request):
     """
     Главная страница - показывает KFP Reporting dashboard с авторизацией
@@ -66,6 +68,7 @@ def login_page(request):
     return HttpResponse(get_login_page(), content_type="text/html")
 
 @csrf_exempt
+@auth_required
 def user_management_page(request):
     """
     Страница управления пользователями - улучшенная версия с полным функционалом
@@ -94,6 +97,7 @@ def robust_init_database_action_view(request):
     return robust_init_database_action(request)
 
 @csrf_exempt
+@auth_required
 def upload_page_with_history(request):
     """
     Страница загрузки файлов с историей загрузок
@@ -382,6 +386,7 @@ def reports_page(request):
     return HttpResponse(html_content, content_type="text/html")
 
 @csrf_exempt
+@auth_required
 def yield_comparison_report(request):
     """Отчет сравнения урожайности для менеджмента"""
     return HttpResponse(get_management_yield_comparison_report(), content_type="text/html")

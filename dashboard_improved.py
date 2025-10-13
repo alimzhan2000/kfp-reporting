@@ -290,12 +290,13 @@ def get_dashboard_improved():
                 console.log('Logout function called');
                 
                 try {
-                    // Call logout API
+                    // Call logout API with credentials to clear server session
                     await fetch('/api/auth/logout/', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
-                        }
+                        },
+                        credentials: 'include'  // Include cookies for session
                     });
                 } catch (error) {
                     console.error('Logout API error:', error);
