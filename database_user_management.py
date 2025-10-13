@@ -81,6 +81,10 @@ def get_database_user_management_page():
                 class="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition-colors">
             🧪 Тест API
         </button>
+        <button onclick="alert('API тест работает!')" 
+                class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors">
+            🔬 Простой API тест
+        </button>
         <button onclick="simpleTest()" 
                 class="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors">
             ✅ Тест JS
@@ -719,9 +723,10 @@ def get_database_user_management_page():
             // Test User Management API
             async function testUserManagementAPI() {
                 console.log('🧪 Testing User Management API...');
-                showMessage('🧪 Начинаем тестирование API...', 'info');
                 
                 try {
+                    showMessage('🧪 Начинаем тестирование API...', 'info');
+                    
                     // Test 1: Simple test endpoint
                     console.log('Test 1: Testing simple test endpoint...');
                     const testResponse = await fetch('/api/reports/simple-test-view/');
@@ -775,6 +780,13 @@ def get_database_user_management_page():
                     console.error('API Test Error:', error);
                     showMessage(`❌ Ошибка подключения: ${error.message}`, 'error');
                 }
+            }
+
+            // Simple alternative API test
+            function simpleAPITest() {
+                console.log('🔬 Simple API test started');
+                showMessage('🔬 Простой API тест запущен', 'info');
+                alert('Простой API тест работает!');
             }
 
             // Initialize page
