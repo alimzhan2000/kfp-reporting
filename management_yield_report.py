@@ -49,6 +49,9 @@ def get_management_yield_comparison_report():
                 box-sizing: border-box !important;
                 flex-shrink: 0 !important;
                 flex-grow: 0 !important;
+                image-rendering: -webkit-optimize-contrast !important;
+                image-rendering: crisp-edges !important;
+                image-rendering: pixelated !important;
             }
             
             /* ABSOLUTE PREVENTION of any size changes */
@@ -383,7 +386,7 @@ def get_management_yield_comparison_report():
                     options: {
                         responsive: false,
                         maintainAspectRatio: false,
-                        devicePixelRatio: 1,
+                        devicePixelRatio: window.devicePixelRatio || 1,
                         resizeDelay: 0,
                         plugins: {
                             legend: {
@@ -391,11 +394,12 @@ def get_management_yield_comparison_report():
                                 position: 'top',
                                 labels: {
                                     font: {
-                                        size: 14,
-                                        family: 'Arial, sans-serif',
-                                        weight: 'bold'
+                                        size: 15,
+                                        family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif',
+                                        weight: '600'
                                     },
-                                    color: '#333'
+                                    color: '#1f2937',
+                                    usePointStyle: false
                                 }
                             },
                             tooltip: {
@@ -410,11 +414,14 @@ def get_management_yield_comparison_report():
                                 cornerRadius: 4,
                                 displayColors: false,
                                 titleFont: {
-                                    size: 12,
-                                    weight: 'bold'
+                                    size: 14,
+                                    family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif',
+                                    weight: '600'
                                 },
                                 bodyFont: {
-                                    size: 11
+                                    size: 13,
+                                    family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif',
+                                    weight: '500'
                                 },
                                 padding: 8,
                                 callbacks: {
@@ -438,18 +445,20 @@ def get_management_yield_comparison_report():
                                     display: true,
                                     text: 'Урожайность (ц/га)',
                                     font: {
-                                        size: 14,
-                                        family: 'Arial, sans-serif',
-                                        weight: 'bold'
+                                        size: 15,
+                                        family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif',
+                                        weight: '600'
                                     },
-                                    color: '#333'
+                                    color: '#1f2937'
                                 },
                                 ticks: {
                                     font: {
-                                        size: 12,
-                                        family: 'Arial, sans-serif'
+                                        size: 13,
+                                        family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif',
+                                        weight: '500'
                                     },
-                                    color: '#666'
+                                    color: '#374151',
+                                    maxTicksLimit: 8
                                 },
                                 grid: {
                                     color: 'rgba(0,0,0,0.1)'
@@ -458,13 +467,16 @@ def get_management_yield_comparison_report():
                             x: {
                                 ticks: {
                                     font: {
-                                        size: 12,
-                                        family: 'Arial, sans-serif'
+                                        size: 13,
+                                        family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif',
+                                        weight: '500'
                                     },
-                                    color: '#666'
+                                    color: '#374151',
+                                    maxTicksLimit: 10
                                 },
                                 grid: {
-                                    color: 'rgba(0,0,0,0.1)'
+                                    color: 'rgba(0,0,0,0.08)',
+                                    display: false
                                 }
                             }
                         },
@@ -523,7 +535,7 @@ def get_management_yield_comparison_report():
                     options: {
                         responsive: false,
                         maintainAspectRatio: false,
-                        devicePixelRatio: 1,
+                        devicePixelRatio: window.devicePixelRatio || 1,
                         resizeDelay: 0,
                         plugins: {
                             legend: {
@@ -531,11 +543,12 @@ def get_management_yield_comparison_report():
                                 position: 'top',
                                 labels: {
                                     font: {
-                                        size: 14,
-                                        family: 'Arial, sans-serif',
-                                        weight: 'bold'
+                                        size: 15,
+                                        family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif',
+                                        weight: '600'
                                     },
-                                    color: '#333'
+                                    color: '#1f2937',
+                                    usePointStyle: false
                                 }
                             },
                             tooltip: {
@@ -550,11 +563,14 @@ def get_management_yield_comparison_report():
                                 cornerRadius: 4,
                                 displayColors: false,
                                 titleFont: {
-                                    size: 12,
-                                    weight: 'bold'
+                                    size: 14,
+                                    family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif',
+                                    weight: '600'
                                 },
                                 bodyFont: {
-                                    size: 11
+                                    size: 13,
+                                    family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif',
+                                    weight: '500'
                                 },
                                 padding: 8,
                                 callbacks: {
@@ -578,18 +594,20 @@ def get_management_yield_comparison_report():
                                     display: true,
                                     text: 'Урожайность (ц/га)',
                                     font: {
-                                        size: 14,
-                                        family: 'Arial, sans-serif',
-                                        weight: 'bold'
+                                        size: 15,
+                                        family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif',
+                                        weight: '600'
                                     },
-                                    color: '#333'
+                                    color: '#1f2937'
                                 },
                                 ticks: {
                                     font: {
-                                        size: 12,
-                                        family: 'Arial, sans-serif'
+                                        size: 13,
+                                        family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif',
+                                        weight: '500'
                                     },
-                                    color: '#666'
+                                    color: '#374151',
+                                    maxTicksLimit: 8
                                 },
                                 grid: {
                                     color: 'rgba(0,0,0,0.1)'
@@ -598,13 +616,16 @@ def get_management_yield_comparison_report():
                             x: {
                                 ticks: {
                                     font: {
-                                        size: 12,
-                                        family: 'Arial, sans-serif'
+                                        size: 13,
+                                        family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif',
+                                        weight: '500'
                                     },
-                                    color: '#666'
+                                    color: '#374151',
+                                    maxTicksLimit: 10
                                 },
                                 grid: {
-                                    color: 'rgba(0,0,0,0.1)'
+                                    color: 'rgba(0,0,0,0.08)',
+                                    display: false
                                 }
                             }
                         },
