@@ -78,9 +78,12 @@ def get_database_user_management_page():
             <span>Добавить пользователя</span>
         </button>
         <button onclick="testUserManagementAPI()" 
-                class="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition-colors flex items-center space-x-2">
-            <i data-lucide="test-tube" class="h-4 w-4"></i>
-            <span>Тест API</span>
+                class="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition-colors">
+            🧪 Тест API
+        </button>
+        <button onclick="simpleTest()" 
+                class="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors">
+            ✅ Тест JS
         </button>
                     </div>
                 </div>
@@ -703,9 +706,16 @@ def get_database_user_management_page():
                 }, 5000);
             }
 
+            // Simple test function first
+            function simpleTest() {
+                console.log('🧪 Simple test clicked!');
+                showMessage('✅ Кнопка работает! JavaScript функционирует.', 'success');
+            }
+
             // Test User Management API
             async function testUserManagementAPI() {
                 console.log('🧪 Testing User Management API...');
+                showMessage('🧪 Начинаем тестирование API...', 'info');
                 
                 try {
                     // Test 1: Simple test endpoint
