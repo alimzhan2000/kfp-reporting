@@ -134,12 +134,67 @@ def get_simple_user_management_page():
                 document.getElementById('create-user-modal').classList.add('hidden');
             }
             
-            function loadUsers() {
-                alert('Загрузка пользователей запущена!');
+            async function loadUsers() {
+                try {
+                    const response = await fetch('/api/reports/simple-users-list/');
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        renderUsersTable(data.users);
+                    } else {
+                        alert('Ошибка загрузки пользователей: ' + data.error);
+                    }
+                } catch (error) {
+                    alert('Ошибка загрузки пользователей: ' + error.message);
+                }
+            }
+            
+            function renderUsersTable(users) {
+                const tbody = document.getElementById('users-table-body');
+                
+                if (users.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="4" class="px-6 py-4 text-center text-gray-500">
+                                Пользователи не найдены
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+                
+                tbody.innerHTML = users.map(user => `
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-medium text-gray-900">${user.username}</div>
+                            <div class="text-sm text-gray-500">${user.email || '-'}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                                user.role === 'admin' ? 'bg-red-100 text-red-800' :
+                                user.role === 'manager' ? 'bg-blue-100 text-blue-800' :
+                                'bg-green-100 text-green-800'
+                            }">
+                                ${user.role}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                                user.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                            }">
+                                ${user.is_active ? 'Активен' : 'Неактивен'}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <button onclick="editUser(${user.id})" class="text-blue-600 hover:text-blue-900 mr-3">Редактировать</button>
+                            <button onclick="deleteUser(${user.id})" class="text-red-600 hover:text-red-900">Удалить</button>
+                        </td>
+                    </tr>
+                `).join('');
             }
             
             // Handle form submission
-            document.getElementById('create-user-form').addEventListener('submit', function(e) {
+            document.getElementById('create-user-form').addEventListener('submit', async function(e) {
                 e.preventDefault();
                 const formData = new FormData(this);
                 const userData = {
@@ -148,12 +203,48 @@ def get_simple_user_management_page():
                     role: formData.get('role'),
                     email: formData.get('email')
                 };
-                alert('Пользователь будет создан: ' + JSON.stringify(userData, null, 2));
-                closeCreateUserModal();
+                
+                try {
+                    const response = await fetch('/api/reports/simple-create-user/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(userData)
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        alert('Пользователь успешно создан!');
+                        closeCreateUserModal();
+                        loadUsers(); // Reload users list
+                    } else {
+                        alert('Ошибка создания пользователя: ' + result.error);
+                    }
+                } catch (error) {
+                    alert('Ошибка создания пользователя: ' + error.message);
+                }
             });
+            
+            // Edit and delete functions
+            function editUser(userId) {
+                alert('Редактирование пользователя ID: ' + userId);
+            }
+            
+            function deleteUser(userId) {
+                if (confirm('Вы уверены, что хотите удалить этого пользователя?')) {
+                    alert('Удаление пользователя ID: ' + userId);
+                }
+            }
             
             // Initialize page
             console.log('Simple user management page loaded');
+            
+            // Auto-load users on page load
+            document.addEventListener('DOMContentLoaded', function() {
+                loadUsers();
+            });
         </script>
     </body>
     </html>
