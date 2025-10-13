@@ -159,7 +159,16 @@ def simple_users_list(request):
         users = []
         for user in User.objects.all():
             try:
-                profile = user.userprofile
+                # Используем get_or_create для получения или создания профиля
+                profile, created = UserProfile.objects.get_or_create(
+                    user=user,
+                    defaults={
+                        'role': 'user',
+                        'phone': '',
+                        'department': '',
+                        'is_active_user': True
+                    }
+                )
                 users.append({
                     'id': user.id,
                     'username': user.username,
@@ -169,13 +178,14 @@ def simple_users_list(request):
                     'is_active': user.is_active,
                     'date_joined': user.date_joined.isoformat(),
                     'role': profile.role,
-                    'phone': profile.phone,
-                    'department': profile.department,
+                    'phone': profile.phone or '',
+                    'department': profile.department or '',
                     'is_active_user': profile.is_active_user,
                     'created_at': profile.created_at.isoformat() if hasattr(profile, 'created_at') and profile.created_at else None,
                     'updated_at': profile.updated_at.isoformat() if hasattr(profile, 'updated_at') and profile.updated_at else None,
                 })
-            except UserProfile.DoesNotExist:
+            except Exception as e:
+                # Если что-то пошло не так, создаем базовую запись пользователя
                 users.append({
                     'id': user.id,
                     'username': user.username,
