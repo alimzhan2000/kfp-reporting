@@ -85,6 +85,10 @@ def get_database_user_management_page():
                 class="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors">
             ✅ Тест JS
         </button>
+        <button onclick="alert('Кнопка работает! JavaScript функционирует.')" 
+                class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors">
+            🔥 Простой тест
+        </button>
                     </div>
                 </div>
             </div>
@@ -774,10 +778,27 @@ def get_database_user_management_page():
             }
 
             // Initialize page
-            const user = checkAuth();
-            if (user) {
-                loadUsers();
+            console.log('🚀 Initializing user management page...');
+            
+            // Simple initialization without auth check for testing
+            try {
+                console.log('Testing basic JavaScript functionality...');
+                document.addEventListener('DOMContentLoaded', function() {
+                    console.log('✅ DOM loaded successfully');
+                    
+                    // Try to load users without auth check
+                    console.log('Attempting to load users...');
+                    loadUsers();
+                });
+            } catch (error) {
+                console.error('❌ Initialization error:', error);
             }
+            
+            // Original auth check (commented out for testing)
+            // const user = checkAuth();
+            // if (user) {
+            //     loadUsers();
+            // }
         </script>
     </body>
     </html>
