@@ -345,6 +345,17 @@ def get_database_user_management_page():
                 }
                 
                 try {
+                    // Сначала проверяем состояние базы данных
+                    const statusResponse = await fetch('/api/auth/users/database-status/');
+                    const statusData = await statusResponse.json();
+                    
+                    if (!statusData.success) {
+                        showMessage('Проблема с базой данных: ' + statusData.error, 'error');
+                        return;
+                    }
+                    
+                    console.log('Database status:', statusData);
+                    
                     const response = await fetch('/api/auth/users/initialize-demo/', {
                         method: 'POST',
                         headers: {
@@ -359,10 +370,13 @@ def get_database_user_management_page():
                         loadUsers(); // Перезагружаем список пользователей
                     } else {
                         showMessage('Ошибка инициализации: ' + data.error, 'error');
+                        if (data.errors && data.errors.length > 0) {
+                            console.error('Detailed errors:', data.errors);
+                        }
                     }
                 } catch (error) {
                     console.error('Error initializing demo users:', error);
-                    showMessage('Ошибка инициализации демо-пользователей', 'error');
+                    showMessage('Ошибка инициализации демо-пользователей: ' + error.message, 'error');
                 }
             }
 

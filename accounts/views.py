@@ -12,6 +12,7 @@ from django.contrib.auth.models import User
 from .models import UserProfile
 import json
 import logging
+import traceback
 
 logger = logging.getLogger(__name__)
 
@@ -303,6 +304,10 @@ def get_user(request, user_id):
 def initialize_demo_users(request):
     """Инициализация демо-пользователей в базе данных"""
     try:
+        # Проверяем подключение к базе данных
+        from django.db import connection
+        connection.ensure_connection()
+        
         demo_users = [
             {
                 'username': 'admin',
@@ -340,8 +345,16 @@ def initialize_demo_users(request):
         ]
         
         created_count = 0
+        errors = []
+        
         for user_data in demo_users:
-            if not User.objects.filter(username=user_data['username']).exists():
+            try:
+                # Проверяем, существует ли пользователь
+                if User.objects.filter(username=user_data['username']).exists():
+                    logger.info(f'User {user_data["username"]} already exists, skipping')
+                    continue
+                
+                # Создаем пользователя
                 user = User.objects.create(
                     username=user_data['username'],
                     password=make_password(user_data['password']),
@@ -350,15 +363,32 @@ def initialize_demo_users(request):
                     email=user_data['email'],
                     is_active=True
                 )
+                logger.info(f'Created user: {user.username}')
                 
-                UserProfile.objects.create(
+                # Создаем профиль
+                profile = UserProfile.objects.create(
                     user=user,
                     role=user_data['role'],
                     phone=user_data['phone'],
                     department=user_data['department'],
                     is_active_user=user_data['is_active_user']
                 )
+                logger.info(f'Created profile for user: {user.username} with role: {profile.role}')
+                
                 created_count += 1
+                
+            except Exception as user_error:
+                error_msg = f'Error creating user {user_data["username"]}: {str(user_error)}'
+                logger.error(error_msg)
+                errors.append(error_msg)
+        
+        if errors:
+            return JsonResponse({
+                'success': False,
+                'error': f'Частичная ошибка. Создано: {created_count}, Ошибки: {"; ".join(errors)}',
+                'created_count': created_count,
+                'errors': errors
+            }, status=500)
         
         return JsonResponse({
             'success': True,
@@ -367,8 +397,62 @@ def initialize_demo_users(request):
         })
         
     except Exception as e:
-        logger.error(f'Error initializing demo users: {str(e)}')
+        error_msg = f'Критическая ошибка инициализации: {str(e)}'
+        logger.error(error_msg)
+        logger.error(f'Full traceback: {traceback.format_exc()}')
         return JsonResponse({
             'success': False,
-            'error': 'Ошибка инициализации демо-пользователей'
+            'error': error_msg
+        }, status=500)
+
+@csrf_exempt
+@require_http_methods(["GET"])
+def check_database_status(request):
+    """Проверка состояния базы данных"""
+    try:
+        from django.db import connection
+        
+        # Проверяем подключение к базе данных
+        connection.ensure_connection()
+        
+        # Проверяем, существуют ли нужные таблицы
+        auth_user_exists = False
+        userprofile_exists = False
+        
+        try:
+            # Пытаемся выполнить простой запрос к таблицам
+            User.objects.count()
+            auth_user_exists = True
+        except:
+            pass
+            
+        try:
+            UserProfile.objects.count()
+            userprofile_exists = True
+        except:
+            pass
+        
+        # Проверяем, есть ли пользователи
+        user_count = User.objects.count()
+        profile_count = UserProfile.objects.count()
+        
+        return JsonResponse({
+            'success': True,
+            'database_connection': True,
+            'tables': {
+                'auth_user': auth_user_exists,
+                'accounts_userprofile': userprofile_exists
+            },
+            'counts': {
+                'users': user_count,
+                'profiles': profile_count
+            },
+            'message': 'База данных работает корректно'
+        })
+        
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'database_connection': False,
+            'error': f'Ошибка подключения к базе данных: {str(e)}'
         }, status=500)
