@@ -307,6 +307,15 @@ def get_database_user_management_page():
         <script>
             // Initialize Lucide icons
             lucide.createIcons();
+            
+            // Simple working functions - defined first
+            function openCreateUserModal() {
+                alert('Модальное окно для добавления пользователя будет открыто!');
+            }
+            
+            function loadUsers() {
+                alert('Загрузка пользователей запущена!');
+            }
 
             let currentUsers = [];
 
@@ -335,10 +344,7 @@ def get_database_user_management_page():
                 window.location.href = '/login/';
             }
 
-            // Load users from database via API
-            function loadUsers() {
-                alert('Загрузка пользователей запущена!');
-            }
+            // Load users from database via API - function defined above
 
             // Simple test function for loading users
             function testLoadUsers() {
@@ -534,10 +540,7 @@ def get_database_user_management_page():
                 `).join('');
             }
 
-            // Create user modal functions
-            function openCreateUserModal() {
-                alert('Модальное окно для добавления пользователя будет открыто!');
-            }
+            // Create user modal functions - function defined above
 
             // Simple test function for modal
             function testOpenModal() {
