@@ -138,8 +138,19 @@ def get_simple_user_management_page():
                 document.getElementById('create-user-modal').classList.add('hidden');
             }
             
-            function loadUsers() {
-                alert('Загрузка пользователей запущена!');
+            async function loadUsers() {
+                try {
+                    const response = await fetch('/api/reports/simple-users-list/');
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        renderUsersTable(data.users);
+                    } else {
+                        alert('Ошибка загрузки пользователей: ' + data.error);
+                    }
+                } catch (error) {
+                    alert('Ошибка загрузки пользователей: ' + error.message);
+                }
             }
             
             function renderUsersTable(users) {
@@ -187,7 +198,7 @@ def get_simple_user_management_page():
             }
             
             // Handle form submission
-            document.getElementById('create-user-form').addEventListener('submit', function(e) {
+            document.getElementById('create-user-form').addEventListener('submit', async function(e) {
                 e.preventDefault();
                 const formData = new FormData(this);
                 const userData = {
@@ -196,8 +207,28 @@ def get_simple_user_management_page():
                     role: formData.get('role'),
                     email: formData.get('email')
                 };
-                alert('Пользователь будет создан: ' + JSON.stringify(userData, null, 2));
-                closeCreateUserModal();
+                
+                try {
+                    const response = await fetch('/api/reports/simple-create-user/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(userData)
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        alert('Пользователь успешно создан!');
+                        closeCreateUserModal();
+                        loadUsers(); // Reload users list
+                    } else {
+                        alert('Ошибка создания пользователя: ' + result.error);
+                    }
+                } catch (error) {
+                    alert('Ошибка создания пользователя: ' + error.message);
+                }
             });
             
             // Edit and delete functions
@@ -211,8 +242,28 @@ def get_simple_user_management_page():
                 }
             }
             
-            function initializeDatabase() {
-                alert('Инициализация базы данных запущена!');
+            async function initializeDatabase() {
+                if (confirm('ВНИМАНИЕ! Инициализация базы данных:\n\n• Применит все миграции Django\n• Создаст демо-пользователей\n• Это может занять несколько секунд\n\nПродолжить?')) {
+                    try {
+                        const response = await fetch('/api/reports/simple-force-initialize/', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            }
+                        });
+                        
+                        const result = await response.json();
+                        
+                        if (result.success) {
+                            alert('База данных успешно инициализирована! Создано пользователей: ' + result.created_count);
+                            loadUsers(); // Reload users list
+                        } else {
+                            alert('Ошибка инициализации базы данных: ' + result.error);
+                        }
+                    } catch (error) {
+                        alert('Ошибка инициализации базы данных: ' + error.message);
+                    }
+                }
             }
             
             // Initialize page
