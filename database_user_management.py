@@ -67,6 +67,11 @@ def get_database_user_management_page():
                             <i data-lucide="refresh-cw" class="h-4 w-4"></i>
                             <span>Принудительная инициализация</span>
                         </button>
+                        <button onclick="checkDatabaseStatus()" 
+                                class="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700 transition-colors flex items-center space-x-2">
+                            <i data-lucide="database" class="h-4 w-4"></i>
+                            <span>Проверить БД</span>
+                        </button>
                         <button onclick="openCreateUserModal()" 
                                 class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors flex items-center space-x-2">
                             <i data-lucide="plus" class="h-4 w-4"></i>
@@ -352,6 +357,17 @@ def get_database_user_management_page():
                 try {
                     showMessage('Инициализация базы данных...', 'info');
                     
+                    // Сначала проверяем состояние базы данных
+                    const statusResponse = await fetch('/api/auth/users/database-status/');
+                    const statusData = await statusResponse.json();
+                    
+                    console.log('Database status before initialization:', statusData);
+                    
+                    if (!statusData.success) {
+                        showMessage('Проблема с базой данных: ' + statusData.error, 'error');
+                        return;
+                    }
+                    
                     const response = await fetch('/api/auth/users/force-initialize/', {
                         method: 'POST',
                         headers: {
@@ -360,6 +376,8 @@ def get_database_user_management_page():
                     });
                     
                     const data = await response.json();
+                    
+                    console.log('Force initialize response:', data);
                     
                     if (data.success) {
                         showMessage(data.message, 'success');
@@ -373,6 +391,27 @@ def get_database_user_management_page():
                 } catch (error) {
                     console.error('Error force initializing database:', error);
                     showMessage('Ошибка принудительной инициализации: ' + error.message, 'error');
+                }
+            }
+
+            // Check database status
+            async function checkDatabaseStatus() {
+                try {
+                    showMessage('Проверка состояния базы данных...', 'info');
+                    
+                    const response = await fetch('/api/auth/users/database-status/');
+                    const data = await response.json();
+                    
+                    console.log('Database status:', data);
+                    
+                    if (data.success) {
+                        showMessage(`✅ База данных работает! Пользователей: ${data.counts.users}, Профилей: ${data.counts.profiles}`, 'success');
+                    } else {
+                        showMessage('❌ Проблема с базой данных: ' + data.error, 'error');
+                    }
+                } catch (error) {
+                    console.error('Error checking database status:', error);
+                    showMessage('Ошибка проверки базы данных: ' + error.message, 'error');
                 }
             }
 

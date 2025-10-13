@@ -3,6 +3,7 @@ URL маршруты для управления пользователями
 """
 from django.urls import path
 from . import views
+from . import migration_views
 
 urlpatterns = [
     path('users/', views.list_users, name='list_users'),
@@ -13,4 +14,6 @@ urlpatterns = [
     path('users/initialize-demo/', views.initialize_demo_users, name='initialize_demo_users'),
     path('users/force-initialize/', views.force_initialize_database, name='force_initialize_database'),
     path('users/database-status/', views.check_database_status, name='check_database_status'),
+    path('migrations/status/', migration_views.check_migrations_status, name='check_migrations_status'),
+    path('migrations/apply/', migration_views.apply_migrations, name='apply_migrations'),
 ]
