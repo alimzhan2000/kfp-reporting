@@ -72,11 +72,16 @@ def get_database_user_management_page():
                             <i data-lucide="database" class="h-4 w-4"></i>
                             <span>Проверить БД</span>
                         </button>
-                        <button onclick="openCreateUserModal()" 
-                                class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors flex items-center space-x-2">
-                            <i data-lucide="plus" class="h-4 w-4"></i>
-                            <span>Добавить пользователя</span>
-                        </button>
+        <button onclick="openCreateUserModal()" 
+                class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors flex items-center space-x-2">
+            <i data-lucide="plus" class="h-4 w-4"></i>
+            <span>Добавить пользователя</span>
+        </button>
+        <button onclick="testUserManagementAPI()" 
+                class="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition-colors flex items-center space-x-2">
+            <i data-lucide="test-tube" class="h-4 w-4"></i>
+            <span>Тест API</span>
+        </button>
                     </div>
                 </div>
             </div>
@@ -696,6 +701,66 @@ def get_database_user_management_page():
                         messageDiv.remove();
                     }
                 }, 5000);
+            }
+
+            // Test User Management API
+            async function testUserManagementAPI() {
+                console.log('🧪 Testing User Management API...');
+                
+                try {
+                    // Test 1: Simple test endpoint
+                    console.log('Test 1: Testing simple test endpoint...');
+                    const testResponse = await fetch('/api/reports/simple-test-view/');
+                    console.log('Simple test response status:', testResponse.status);
+                    
+                    if (testResponse.ok) {
+                        const testData = await testResponse.json();
+                        console.log('Simple test data:', testData);
+                        showMessage('✅ Простой API работает! Тестируем user management API...', 'success');
+                        
+                        // Test 2: Database status
+                        console.log('Test 2: Testing database status...');
+                        const statusResponse = await fetch('/api/reports/simple-database-status/');
+                        console.log('Database status response status:', statusResponse.status);
+                        
+                        if (statusResponse.ok) {
+                            const statusData = await statusResponse.json();
+                            console.log('Database status data:', statusData);
+                            showMessage(`✅ Database Status API работает! Статус: ${statusData.success ? 'OK' : 'Error'}<br>Ошибка: ${statusData.error || 'Нет'}`, 'success');
+                            
+                            // Test 3: Users list
+                            console.log('Test 3: Testing users list...');
+                            const usersResponse = await fetch('/api/reports/simple-users-list/');
+                            console.log('Users list response status:', usersResponse.status);
+                            
+                            if (usersResponse.ok) {
+                                const usersData = await usersResponse.json();
+                                console.log('Users list data:', usersData);
+                                showMessage(`✅ Users List API работает! Пользователей: ${usersData.count || 0}<br>Успех: ${usersData.success ? 'Да' : 'Нет'}`, 'success');
+                                
+                                // Auto-load users if API works
+                                if (usersData.success) {
+                                    loadUsers();
+                                }
+                            } else {
+                                const usersError = await usersResponse.text();
+                                console.error('Users list error:', usersError);
+                                showMessage(`❌ Users List API ошибка: ${usersResponse.status}<br>${usersError}`, 'error');
+                            }
+                        } else {
+                            const statusError = await statusResponse.text();
+                            console.error('Database status error:', statusError);
+                            showMessage(`❌ Database Status API ошибка: ${statusResponse.status}<br>${statusError}`, 'error');
+                        }
+                    } else {
+                        const testError = await testResponse.text();
+                        console.error('Simple test error:', testError);
+                        showMessage(`❌ Простой API ошибка: ${testResponse.status}<br>${testError}`, 'error');
+                    }
+                } catch (error) {
+                    console.error('API Test Error:', error);
+                    showMessage(`❌ Ошибка подключения: ${error.message}`, 'error');
+                }
             }
 
             // Initialize page
