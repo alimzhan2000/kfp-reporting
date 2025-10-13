@@ -384,10 +384,10 @@ def simple_force_initialize_database(request):
     except Exception as e:
         error_msg = f'Критическая ошибка инициализации базы данных: {str(e)}'
         logger.error(error_msg)
-               return JsonResponse({
-                   'success': False,
-                   'error': error_msg
-               }, status=500)
+        return JsonResponse({
+            'success': False,
+            'error': error_msg
+        }, status=500)
 
 
 @csrf_exempt
