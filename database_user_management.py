@@ -62,6 +62,18 @@ def get_database_user_management_page():
             <i data-lucide="plus" class="h-4 w-4"></i>
             <span>Добавить пользователя</span>
         </button>
+        <button onclick="alert('Модальное окно будет открыто!')" 
+                class="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition-colors">
+            🔧 Тест модального окна
+        </button>
+        <button onclick="alert('Кнопка работает!')" 
+                class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors">
+            ✅ Тест кнопки
+        </button>
+        <button onclick="loadUsers()" 
+                class="bg-orange-600 text-white px-4 py-2 rounded-md hover:bg-orange-700 transition-colors">
+            🔄 Загрузить пользователей
+        </button>
                     </div>
                 </div>
             </div>
@@ -765,8 +777,31 @@ def get_database_user_management_page():
             document.addEventListener('DOMContentLoaded', function() {
                 console.log('✅ DOM loaded successfully');
                 console.log('Loading users automatically...');
-                loadUsers();
+                
+                // Try to load users with error handling
+                try {
+                    loadUsers();
+                } catch (error) {
+                    console.error('❌ Error loading users:', error);
+                    // Show error in table
+                    const tbody = document.getElementById('users-table-body');
+                    if (tbody) {
+                        tbody.innerHTML = `
+                            <tr>
+                                <td colspan="6" class="px-6 py-4 text-center text-red-500">
+                                    Ошибка загрузки пользователей: ${error.message}
+                                </td>
+                            </tr>
+                        `;
+                    }
+                }
             });
+
+            // Simple test function for buttons
+            function testButton() {
+                console.log('Button test clicked');
+                alert('Кнопка работает!');
+            }
         </script>
     </body>
     </html>
