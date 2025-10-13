@@ -82,6 +82,10 @@ def get_database_user_management_page():
                 class="bg-cyan-600 text-white px-4 py-2 rounded-md hover:bg-cyan-700 transition-colors">
             🧪 Тест загрузки
         </button>
+        <button onclick="testFunction()" 
+                class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors">
+            🔥 Тест функции
+        </button>
                     </div>
                 </div>
             </div>
@@ -305,9 +309,6 @@ def get_database_user_management_page():
         <div id="message-container" class="fixed top-4 right-4 z-50"></div>
 
         <script>
-            // Initialize Lucide icons
-            lucide.createIcons();
-            
             // Simple working functions - defined first
             function openCreateUserModal() {
                 alert('Модальное окно для добавления пользователя будет открыто!');
@@ -315,6 +316,18 @@ def get_database_user_management_page():
             
             function loadUsers() {
                 alert('Загрузка пользователей запущена!');
+            }
+            
+            // Test functions
+            function testFunction() {
+                alert('Тестовая функция работает!');
+            }
+            
+            // Initialize Lucide icons
+            try {
+                lucide.createIcons();
+            } catch (error) {
+                console.log('Lucide icons not available');
             }
 
             let currentUsers = [];
