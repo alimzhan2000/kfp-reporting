@@ -13,7 +13,7 @@ def get_management_yield_comparison_report():
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>KFP Reporting - Сравнение урожайности</title>
         <script src="https://cdn.tailwindcss.com"></script>
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
         <style>
             /* Prevent table from stretching the page */
             body {
@@ -476,8 +476,6 @@ def get_management_yield_comparison_report():
                             mode: 'index'
                         },
                         onHover: function(event, elements) {
-                            // Allow tooltips but prevent stretching
-                            event.target.style.cursor = 'pointer';
                             console.log('Chart hover detected, elements:', elements);
                             if (elements.length > 0) {
                                 console.log('Hovering over element:', elements[0]);
@@ -618,8 +616,6 @@ def get_management_yield_comparison_report():
                             mode: 'index'
                         },
                         onHover: function(event, elements) {
-                            // Allow tooltips but prevent stretching
-                            event.target.style.cursor = 'pointer';
                             console.log('Chart hover detected, elements:', elements);
                             if (elements.length > 0) {
                                 console.log('Hovering over element:', elements[0]);
