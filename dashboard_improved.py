@@ -214,6 +214,33 @@ def get_dashboard_improved():
         </div>
 
         <script>
+            // Prevent any redirects to login page and ensure dashboard loads immediately
+            (function() {
+                // If we're on login page, redirect to dashboard immediately
+                if (window.location.href.includes('/login/')) {
+                    window.location.href = '/dashboard/';
+                    return;
+                }
+                
+                // Prevent any future redirects to login
+                const originalReplaceState = history.replaceState;
+                const originalPushState = history.pushState;
+                
+                history.replaceState = function(state, title, url) {
+                    if (url && url.includes('/login/')) {
+                        url = '/dashboard/';
+                    }
+                    return originalReplaceState.call(this, state, title, url);
+                };
+                
+                history.pushState = function(state, title, url) {
+                    if (url && url.includes('/login/')) {
+                        url = '/dashboard/';
+                    }
+                    return originalPushState.call(this, state, title, url);
+                };
+            })();
+
             // Initialize Lucide icons
             lucide.createIcons();
 
@@ -353,10 +380,20 @@ def get_dashboard_improved():
 
 
             // Initialize dashboard immediately - no redirect
+            // Force immediate display of dashboard content
+            document.body.style.display = 'block';
+            
             const user = checkAuth();
             if (user) {
                 loadStats();
             }
+            
+            // Additional protection against any login redirects
+            setTimeout(function() {
+                if (window.location.href.includes('/login/')) {
+                    window.location.href = '/dashboard/';
+                }
+            }, 100);
         </script>
     </body>
     </html>
