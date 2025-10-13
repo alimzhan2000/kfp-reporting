@@ -575,3 +575,84 @@ def force_initialize_database(request):
             'success': False,
             'error': error_msg
         }, status=500)
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def login_view(request):
+    """Аутентификация пользователя"""
+    try:
+        data = json.loads(request.body)
+        username = data.get('username')
+        password = data.get('password')
+        
+        if not username or not password:
+            return JsonResponse({
+                'success': False,
+                'error': 'Необходимо указать имя пользователя и пароль'
+            }, status=400)
+        
+        # Аутентификация пользователя
+        user = authenticate(username=username, password=password)
+        
+        if user is None:
+            return JsonResponse({
+                'success': False,
+                'error': 'Неверное имя пользователя или пароль'
+            }, status=401)
+        
+        if not user.is_active:
+            return JsonResponse({
+                'success': False,
+                'error': 'Пользователь деактивирован'
+            }, status=401)
+        
+        # Получаем роль пользователя
+        try:
+            user_profile = user.profile
+            role = user_profile.role
+        except UserProfile.DoesNotExist:
+            role = 'user'  # По умолчанию
+        
+        return JsonResponse({
+            'success': True,
+            'user': {
+                'id': user.id,
+                'username': user.username,
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+                'email': user.email,
+                'role': role,
+                'is_staff': user.is_staff,
+                'is_superuser': user.is_superuser
+            }
+        })
+        
+    except json.JSONDecodeError:
+        return JsonResponse({
+            'success': False,
+            'error': 'Неверный формат JSON'
+        }, status=400)
+    except Exception as e:
+        logger.error(f'Ошибка аутентификации: {str(e)}')
+        return JsonResponse({
+            'success': False,
+            'error': 'Внутренняя ошибка сервера'
+        }, status=500)
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def logout_view(request):
+    """Выход пользователя"""
+    try:
+        # В Django REST Framework обычно используется сессия
+        # Для простоты возвращаем успешный ответ
+        return JsonResponse({
+            'success': True,
+            'message': 'Успешный выход из системы'
+        })
+    except Exception as e:
+        logger.error(f'Ошибка выхода: {str(e)}')
+        return JsonResponse({
+            'success': False,
+            'error': 'Ошибка выхода из системы'
+        }, status=500)

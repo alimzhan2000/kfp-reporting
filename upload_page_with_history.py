@@ -419,10 +419,24 @@ def get_upload_page_with_history():
             refreshHistoryBtn.addEventListener('click', loadUploadHistory);
 
             // Logout function
-            function logout() {
+            async function logout() {
                 console.log('Logout function called');
+                
+                try {
+                    // Call logout API
+                    await fetch('/api/auth/logout/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    });
+                } catch (error) {
+                    console.error('Logout API error:', error);
+                    // Continue with logout even if API fails
+                }
+                
+                // Clear local storage and redirect
                 localStorage.removeItem('kfp_user');
-                // Redirect to login page
                 window.location.href = '/login/';
             }
 

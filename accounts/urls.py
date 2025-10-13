@@ -6,6 +6,11 @@ from . import views
 from . import migration_views
 
 urlpatterns = [
+    # Authentication endpoints
+    path('login/', views.login_view, name='login'),
+    path('logout/', views.logout_view, name='logout'),
+    
+    # User management endpoints
     path('users/', views.list_users, name='list_users'),
     path('users/create/', views.create_user, name='create_user'),
     path('users/<int:user_id>/', views.get_user, name='get_user'),

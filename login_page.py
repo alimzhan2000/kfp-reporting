@@ -94,25 +94,44 @@ def get_login_page():
                 // Hide error message
                 errorDiv.classList.add('hidden');
                 
-                // Simple demo authentication
-                const validCredentials = {
-                    'admin': 'admin123',
-                    'manager': 'manager123', 
-                    'user': 'user123'
-                };
-                
-                if (validCredentials[username] && validCredentials[username] === password) {
-                    // Store user info in localStorage
-                    localStorage.setItem('kfp_user', JSON.stringify({
-                        username: username,
-                        role: username === 'admin' ? 'admin' : username === 'manager' ? 'manager' : 'user',
-                        loginTime: new Date().toISOString()
-                    }));
+                try {
+                    // Real authentication with API
+                    const response = await fetch('/api/auth/login/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            username: username,
+                            password: password
+                        })
+                    });
                     
-                    // Redirect to dashboard
-                    window.location.href = '/dashboard/';
-                } else {
-                    errorText.textContent = 'Неверное имя пользователя или пароль';
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        // Store user info in localStorage
+                        localStorage.setItem('kfp_user', JSON.stringify({
+                            username: data.user.username,
+                            role: data.user.role,
+                            id: data.user.id,
+                            first_name: data.user.first_name,
+                            last_name: data.user.last_name,
+                            email: data.user.email,
+                            is_staff: data.user.is_staff,
+                            is_superuser: data.user.is_superuser,
+                            loginTime: new Date().toISOString()
+                        }));
+                        
+                        // Redirect to dashboard
+                        window.location.href = '/dashboard/';
+                    } else {
+                        errorText.textContent = data.error || 'Ошибка аутентификации';
+                        errorDiv.classList.remove('hidden');
+                    }
+                } catch (error) {
+                    console.error('Login error:', error);
+                    errorText.textContent = 'Ошибка подключения к серверу';
                     errorDiv.classList.remove('hidden');
                 }
             });
