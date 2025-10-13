@@ -5,35 +5,60 @@ def get_improved_user_management_page():
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Управление пользователями</title>
+        <title>Управление пользователями - Reporting KFP</title>
         <script src="https://cdn.tailwindcss.com"></script>
+        <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     </head>
     <body class="bg-gray-50">
         <div class="min-h-screen">
             <!-- Header -->
-            <div class="bg-white shadow">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="flex justify-between items-center py-6">
+            <nav class="bg-white shadow">
+                <div class="max-w-7xl mx-auto px-4">
+                    <div class="flex justify-between items-center py-4">
+                        <div class="flex items-center">
+                            <div class="text-2xl mr-3">🌾</div>
+                            <h1 class="text-gray-900 text-xl font-bold">Reporting KFP</h1>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                            <a href="/dashboard/" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded">Дашборд</a>
+                            <a href="/reports/yield-comparison/" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded">Отчеты</a>
+                            <a href="/user-management/" class="text-blue-600 hover:text-blue-800 px-3 py-2 rounded font-medium">Пользователи</a>
+                            <a href="/admin/" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded">Admin</a>
+                            <div class="flex items-center space-x-2">
+                                <button onclick="goToDashboard()" class="text-blue-600 hover:text-blue-800 px-2 py-1 rounded text-sm">
+                                    ← Назад к дашборду
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Main Content -->
+            <div class="max-w-7xl mx-auto px-4 py-8">
+                <div class="mb-8">
+                    <div class="flex justify-between items-center">
                         <div>
-                            <h1 class="text-3xl font-bold text-gray-900">Управление пользователями</h1>
-                            <p class="text-gray-600">Создание и управление пользователями системы</p>
+                            <h1 class="text-2xl font-bold text-gray-900">Управление пользователями</h1>
+                            <p class="mt-1 text-sm text-gray-500">
+                                Создание и управление пользователями системы
+                            </p>
                         </div>
                         <div class="flex space-x-3">
                             <button onclick="loadUsers()" 
-                                    class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
-                                🔄 Обновить список
+                                    class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center">
+                                <i data-lucide="refresh-cw" class="w-4 h-4 mr-2"></i>
+                                Обновить список
                             </button>
                             <button onclick="openCreateUserModal()" 
-                                    class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700">
-                                👤 Добавить пользователя
+                                    class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 flex items-center">
+                                <i data-lucide="user-plus" class="w-4 h-4 mr-2"></i>
+                                Добавить пользователя
                             </button>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Main Content -->
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <!-- Users List -->
                 <div class="bg-white rounded-lg shadow">
                     <div class="px-6 py-4 border-b border-gray-200">
@@ -188,7 +213,15 @@ def get_improved_user_management_page():
             // Load users on page load
             document.addEventListener('DOMContentLoaded', function() {
                 loadUsers();
+                // Initialize Lucide icons
+                if (typeof lucide !== 'undefined') {
+                    lucide.createIcons();
+                }
             });
+            
+            function goToDashboard() {
+                window.location.href = '/dashboard/';
+            }
 
             function openCreateUserModal() {
                 document.getElementById('create-user-modal').classList.remove('hidden');
@@ -298,8 +331,18 @@ def get_improved_user_management_page():
                                 <span class="text-sm ${statusColor}">${statusText}</span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                <button onclick="editUser(${user.id})" class="text-blue-600 hover:text-blue-900 mr-3">Редактировать</button>
-                                <button onclick="deleteUser(${user.id})" class="text-red-600 hover:text-red-900">Удалить</button>
+                                <div class="flex space-x-2">
+                                    <button onclick="editUser(${user.id})" 
+                                            class="text-blue-600 hover:text-blue-900 px-2 py-1 rounded hover:bg-blue-50 flex items-center">
+                                        <i data-lucide="edit" class="w-4 h-4 mr-1"></i>
+                                        Редактировать
+                                    </button>
+                                    <button onclick="deleteUser(${user.id})" 
+                                            class="text-red-600 hover:text-red-900 px-2 py-1 rounded hover:bg-red-50 flex items-center">
+                                        <i data-lucide="trash-2" class="w-4 h-4 mr-1"></i>
+                                        Удалить
+                                    </button>
+                                </div>
                             </td>
                         </tr>
                     `;
@@ -312,6 +355,11 @@ def get_improved_user_management_page():
                 `;
                 
                 usersList.innerHTML = html;
+                
+                // Reinitialize Lucide icons after DOM update
+                if (typeof lucide !== 'undefined') {
+                    lucide.createIcons();
+                }
             }
             
             // Handle form submission
