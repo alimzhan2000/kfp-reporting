@@ -568,17 +568,39 @@ def simple_create_user(request):
         from accounts.models import UserProfile
         from django.contrib.auth.hashers import make_password
         from django.utils import timezone
+        import json
         
-        # Get form data
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        role = request.POST.get('role', 'user')
-        email = request.POST.get('email', '')
+        # Get form data - handle both POST and JSON
+        if request.content_type == 'application/json':
+            data = json.loads(request.body)
+            username = data.get('username')
+            password = data.get('password')
+            role = data.get('role', 'user')
+            email = data.get('email', '')
+            first_name = data.get('first_name', '')
+            last_name = data.get('last_name', '')
+            phone = data.get('phone', '')
+            department = data.get('department', '')
+        else:
+            username = request.POST.get('username')
+            password = request.POST.get('password')
+            role = request.POST.get('role', 'user')
+            email = request.POST.get('email', '')
+            first_name = request.POST.get('first_name', '')
+            last_name = request.POST.get('last_name', '')
+            phone = request.POST.get('phone', '')
+            department = request.POST.get('department', '')
+        
+        # Debug logging
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.info(f'Create user request - Content-Type: {request.content_type}')
+        logger.info(f'Create user data - username: {username}, password: {"***" if password else "None"}')
         
         if not username or not password:
             return JsonResponse({
                 'success': False,
-                'error': 'Имя пользователя и пароль обязательны'
+                'error': f'Имя пользователя и пароль обязательны. Получено: username="{username}", password={"***" if password else "None"}"'
             }, status=400)
         
         # Check if user already exists
@@ -593,6 +615,8 @@ def simple_create_user(request):
             username=username,
             password=make_password(password),
             email=email,
+            first_name=first_name,
+            last_name=last_name,
             is_active=True,
             date_joined=timezone.now()
         )
@@ -601,8 +625,8 @@ def simple_create_user(request):
         profile = UserProfile.objects.create(
             user=user,
             role=role,
-            phone='',
-            department='',
+            phone=phone,
+            department=department,
             is_active_user=True,
             created_at=timezone.now(),
             updated_at=timezone.now()
