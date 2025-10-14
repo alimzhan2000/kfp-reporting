@@ -145,8 +145,8 @@ def get_management_yield_comparison_report():
             /* Mobile responsive improvements */
             @media (max-width: 768px) {
                 /* Mobile navigation fixes */
-                .md\\:hidden {
-                    display: block !important;
+                .mobile-menu-button {
+                    display: flex !important;
                 }
                 
                 .hidden.md\\:flex {
@@ -229,6 +229,19 @@ def get_management_yield_comparison_report():
                 .desktop-menu {
                     display: none !important;
                 }
+            }
+            
+            /* Mobile menu behavior */
+            #mobile-menu {
+                transition: all 0.3s ease-in-out;
+            }
+            
+            #mobile-menu.hidden {
+                display: none !important;
+            }
+            
+            #mobile-menu:not(.hidden) {
+                display: block !important;
             }
             
             /* Tablet responsive */
