@@ -82,6 +82,83 @@ def get_variety_performance_report():
                 max-width: 100% !important;
                 max-height: 400px !important;
             }
+            
+            /* Mobile responsive improvements */
+            @media (max-width: 768px) {
+                /* Mobile navigation fixes */
+                .md\\:hidden {
+                    display: block !important;
+                }
+                
+                .hidden.md\\:flex {
+                    display: none !important;
+                }
+                
+                /* Mobile table improvements */
+                .overflow-x-auto {
+                    -webkit-overflow-scrolling: touch;
+                }
+                
+                table {
+                    font-size: 14px;
+                    min-width: 600px;
+                }
+                
+                th, td {
+                    padding: 8px 12px !important;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    max-width: 120px;
+                }
+                
+                /* Mobile button improvements */
+                button {
+                    padding: 8px 12px !important;
+                    font-size: 14px;
+                    min-height: 44px; /* Touch target size */
+                }
+                
+                /* Mobile spacing */
+                .p-6 {
+                    padding: 16px !important;
+                }
+                
+                .py-8 {
+                    padding-top: 16px !important;
+                    padding-bottom: 16px !important;
+                }
+                
+                /* Mobile chart containers */
+                .chart-container {
+                    height: 300px !important;
+                }
+                
+                /* Mobile text sizing */
+                h1 {
+                    font-size: 1.5rem !important;
+                }
+                
+                h3 {
+                    font-size: 1.125rem !important;
+                }
+                
+                /* Mobile menu button visibility */
+                .md\\:hidden .lucide {
+                    display: block !important;
+                }
+            }
+            
+            /* Ensure burger menu is always visible on mobile */
+            @media (max-width: 767px) {
+                .mobile-menu-button {
+                    display: flex !important;
+                }
+                
+                .desktop-menu {
+                    display: none !important;
+                }
+            }
         </style>
     </head>
     <body class="bg-gray-50">
@@ -93,7 +170,26 @@ def get_variety_performance_report():
                         <div class="text-2xl mr-3">🌾</div>
                         <h1 class="text-gray-900 text-xl font-bold">Reporting KFP</h1>
                     </div>
-                    <div class="flex items-center space-x-4">
+                    <!-- Desktop Navigation -->
+                    <div class="hidden md:flex items-center space-x-4 desktop-menu">
+                        <a href="/" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded">Дашборд</a>
+                        <a href="/upload/" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded">Загрузка</a>
+                        <a href="/reports/" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded">Отчеты</a>
+                        <a href="/reports/variety-performance/" class="text-blue-600 hover:text-blue-800 px-3 py-2 rounded font-medium">Производительность сортов</a>
+                        <a href="/admin/" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded">Admin</a>
+                    </div>
+                    
+                    <!-- Mobile Menu Button -->
+                    <div class="md:hidden flex items-center space-x-2 mobile-menu-button">
+                        <button onclick="toggleMobileMenu()" class="text-gray-600 hover:text-gray-900 p-2 rounded">
+                            <i data-lucide="menu" class="h-6 w-6"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Mobile Navigation Menu -->
+                <div id="mobile-menu" class="hidden md:hidden border-t border-gray-200 py-4">
+                    <div class="flex flex-col space-y-2">
                         <a href="/" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded">Дашборд</a>
                         <a href="/upload/" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded">Загрузка</a>
                         <a href="/reports/" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded">Отчеты</a>
@@ -239,6 +335,16 @@ def get_variety_performance_report():
 
         <script>
             let varietyPerformanceChart, varietyByProductChart;
+            
+            // Toggle mobile menu
+            function toggleMobileMenu() {
+                const mobileMenu = document.getElementById('mobile-menu');
+                if (mobileMenu.classList.contains('hidden')) {
+                    mobileMenu.classList.remove('hidden');
+                } else {
+                    mobileMenu.classList.add('hidden');
+                }
+            }
 
             async function loadReport() {
                 const loadingState = document.getElementById('loading-state');

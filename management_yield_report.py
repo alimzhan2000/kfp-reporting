@@ -141,6 +141,107 @@ def get_management_yield_comparison_report():
                 font-smooth: always !important;
                 -webkit-font-smoothing: antialiased !important;
             }
+            
+            /* Mobile responsive improvements */
+            @media (max-width: 768px) {
+                /* Mobile navigation fixes */
+                .md\\:hidden {
+                    display: block !important;
+                }
+                
+                .hidden.md\\:flex {
+                    display: none !important;
+                }
+                
+                /* Mobile table improvements */
+                .overflow-x-auto {
+                    -webkit-overflow-scrolling: touch;
+                }
+                
+                table {
+                    font-size: 14px;
+                    min-width: 600px;
+                }
+                
+                th, td {
+                    padding: 8px 12px !important;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    max-width: 120px;
+                }
+                
+                /* Mobile button improvements */
+                button {
+                    padding: 8px 12px !important;
+                    font-size: 14px;
+                    min-height: 44px; /* Touch target size */
+                }
+                
+                /* Mobile form improvements */
+                select, input {
+                    min-height: 44px;
+                    font-size: 16px; /* Prevents zoom on iOS */
+                }
+                
+                /* Mobile grid improvements */
+                .grid-cols-1.md\\:grid-cols-5 {
+                    grid-template-columns: 1fr !important;
+                    gap: 16px;
+                }
+                
+                /* Mobile spacing */
+                .p-6 {
+                    padding: 16px !important;
+                }
+                
+                .py-8 {
+                    padding-top: 16px !important;
+                    padding-bottom: 16px !important;
+                }
+                
+                /* Mobile chart containers */
+                .chart-container {
+                    height: 300px !important;
+                }
+                
+                /* Mobile text sizing */
+                h1 {
+                    font-size: 1.5rem !important;
+                }
+                
+                h3 {
+                    font-size: 1.125rem !important;
+                }
+                
+                /* Mobile menu button visibility */
+                .md\\:hidden .lucide {
+                    display: block !important;
+                }
+            }
+            
+            /* Ensure burger menu is always visible on mobile */
+            @media (max-width: 767px) {
+                .mobile-menu-button {
+                    display: flex !important;
+                }
+                
+                .desktop-menu {
+                    display: none !important;
+                }
+            }
+            
+            /* Tablet responsive */
+            @media (min-width: 768px) and (max-width: 1024px) {
+                table {
+                    font-size: 15px;
+                }
+                
+                th, td {
+                    padding: 10px 14px !important;
+                    max-width: 150px;
+                }
+            }
         </style>
     </head>
     <body class="bg-gray-50">
@@ -154,7 +255,7 @@ def get_management_yield_comparison_report():
                     </div>
                     
                     <!-- Desktop Navigation -->
-                    <div class="hidden md:flex items-center space-x-4">
+                    <div class="hidden md:flex items-center space-x-4 desktop-menu">
                         <a href="/dashboard/" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded">Дашборд</a>
                         <a href="/upload/" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded">Загрузка</a>
                         <a href="/reports/" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded">Отчеты</a>
@@ -169,7 +270,7 @@ def get_management_yield_comparison_report():
                     </div>
                     
                     <!-- Mobile Menu Button -->
-                    <div class="md:hidden flex items-center space-x-2">
+                    <div class="md:hidden flex items-center space-x-2 mobile-menu-button">
                         <span id="user-info-mobile" class="text-sm text-gray-600">Гость</span>
                         <button onclick="toggleMobileMenu()" class="text-gray-600 hover:text-gray-900 p-2 rounded">
                             <i data-lucide="menu" class="h-6 w-6"></i>
@@ -318,12 +419,12 @@ def get_management_yield_comparison_report():
                     <table id="variety-table" class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Сорт</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Конечный продукт</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Средняя урожайность</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Максимальная урожайность</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Количество записей</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Поля</th>
+                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Сорт</th>
+                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Конечный продукт</th>
+                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Средняя урожайность</th>
+                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Максимальная урожайность</th>
+                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Количество записей</th>
+                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Поля</th>
                             </tr>
                         </thead>
                         <tbody id="variety-table-body" class="bg-white divide-y divide-gray-200">
@@ -352,12 +453,12 @@ def get_management_yield_comparison_report():
                     <table id="field-table" class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Поле</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Средняя урожайность</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Общая площадь</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Количество продуктов</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Годы данных</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Количество записей</th>
+                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Поле</th>
+                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Средняя урожайность</th>
+                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Общая площадь</th>
+                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Количество продуктов</th>
+                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Годы данных</th>
+                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Количество записей</th>
                             </tr>
                         </thead>
                         <tbody id="field-table-body" class="bg-white divide-y divide-gray-200">
@@ -718,12 +819,12 @@ def get_management_yield_comparison_report():
                         const tr = document.createElement('tr');
                         tr.className = 'hover:bg-gray-50';
                         tr.innerHTML = `
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${row.variety || '-'}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${row.final_product || '-'}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${(parseFloat(row.avg_yield) || 0).toFixed(2)} ц/га</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${(parseFloat(row.max_yield) || 0).toFixed(2)} ц/га</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${row.count || 0}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${row.fields || '-'}</td>
+                            <td class="px-3 py-3 whitespace-nowrap text-sm text-gray-900 truncate" title="${row.variety || '-'}">${row.variety || '-'}</td>
+                            <td class="px-3 py-3 whitespace-nowrap text-sm text-gray-900 truncate" title="${row.final_product || '-'}">${row.final_product || '-'}</td>
+                            <td class="px-3 py-3 whitespace-nowrap text-sm text-gray-900">${(parseFloat(row.avg_yield) || 0).toFixed(2)} ц/га</td>
+                            <td class="px-3 py-3 whitespace-nowrap text-sm text-gray-900">${(parseFloat(row.max_yield) || 0).toFixed(2)} ц/га</td>
+                            <td class="px-3 py-3 whitespace-nowrap text-sm text-gray-900">${row.count || 0}</td>
+                            <td class="px-3 py-3 whitespace-nowrap text-sm text-gray-900 truncate" title="${row.fields || '-'}">${row.fields || '-'}</td>
                         `;
                         tbody.appendChild(tr);
                     });
@@ -741,12 +842,12 @@ def get_management_yield_comparison_report():
                         const tr = document.createElement('tr');
                         tr.className = 'hover:bg-gray-50';
                         tr.innerHTML = `
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${row.field_name || '-'}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${(parseFloat(row.avg_yield) || 0).toFixed(2)} ц/га</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${(parseFloat(row.total_area) || 0).toFixed(2)} га</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${row.product_count || 0}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${row.year_count || 0}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${row.record_count || 0}</td>
+                            <td class="px-3 py-3 whitespace-nowrap text-sm text-gray-900 truncate" title="${row.field_name || '-'}">${row.field_name || '-'}</td>
+                            <td class="px-3 py-3 whitespace-nowrap text-sm text-gray-900">${(parseFloat(row.avg_yield) || 0).toFixed(2)} ц/га</td>
+                            <td class="px-3 py-3 whitespace-nowrap text-sm text-gray-900">${(parseFloat(row.total_area) || 0).toFixed(2)} га</td>
+                            <td class="px-3 py-3 whitespace-nowrap text-sm text-gray-900">${row.product_count || 0}</td>
+                            <td class="px-3 py-3 whitespace-nowrap text-sm text-gray-900">${row.year_count || 0}</td>
+                            <td class="px-3 py-3 whitespace-nowrap text-sm text-gray-900">${row.record_count || 0}</td>
                         `;
                         tbody.appendChild(tr);
                     });

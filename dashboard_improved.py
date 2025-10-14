@@ -14,6 +14,73 @@ def get_dashboard_improved():
         <title>Reporting KFP</title>
         <script src="https://cdn.tailwindcss.com"></script>
         <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+        <style>
+            /* Mobile responsive improvements */
+            @media (max-width: 768px) {
+                /* Mobile navigation fixes */
+                .md\\:hidden {
+                    display: block !important;
+                }
+                
+                .hidden.md\\:flex {
+                    display: none !important;
+                }
+                
+                /* Mobile button improvements */
+                button {
+                    padding: 8px 12px !important;
+                    font-size: 14px;
+                    min-height: 44px; /* Touch target size */
+                }
+                
+                /* Mobile form improvements */
+                select, input {
+                    min-height: 44px;
+                    font-size: 16px; /* Prevents zoom on iOS */
+                }
+                
+                /* Mobile spacing */
+                .p-6 {
+                    padding: 16px !important;
+                }
+                
+                .py-8 {
+                    padding-top: 16px !important;
+                    padding-bottom: 16px !important;
+                }
+                
+                /* Mobile text sizing */
+                h1 {
+                    font-size: 1.5rem !important;
+                }
+                
+                h3 {
+                    font-size: 1.125rem !important;
+                }
+                
+                /* Mobile menu button visibility */
+                .md\\:hidden .lucide {
+                    display: block !important;
+                }
+                
+                /* Mobile grid improvements */
+                .grid-cols-1.sm\\:grid-cols-2.lg\\:grid-cols-4 {
+                    grid-template-columns: 1fr !important;
+                    gap: 16px;
+                }
+            }
+            
+            /* Ensure burger menu is always visible on mobile */
+            @media (max-width: 767px) {
+                .mobile-menu-button {
+                    display: flex !important;
+                }
+                
+                .desktop-menu {
+                    display: none !important;
+                }
+            }
+        </style>
     </head>
     <body class="bg-gray-50">
         <!-- Header -->
@@ -26,7 +93,7 @@ def get_dashboard_improved():
                     </div>
                     
                     <!-- Desktop Navigation -->
-                    <div class="hidden md:flex items-center space-x-4">
+                    <div class="hidden md:flex items-center space-x-4 desktop-menu">
                         <a href="/dashboard/" class="text-blue-600 hover:text-blue-800 px-3 py-2 rounded font-medium">Дашборд</a>
                         <a href="/upload/" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded">Загрузка</a>
                         <a href="/reports/" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded">Отчеты</a>
@@ -40,7 +107,7 @@ def get_dashboard_improved():
                     </div>
                     
                     <!-- Mobile Menu Button -->
-                    <div class="md:hidden flex items-center space-x-2">
+                    <div class="md:hidden flex items-center space-x-2 mobile-menu-button">
                         <span id="user-info-mobile" class="text-sm text-gray-600"></span>
                         <button onclick="toggleMobileMenu()" class="text-gray-600 hover:text-gray-900 p-2 rounded">
                             <i data-lucide="menu" class="h-6 w-6"></i>
